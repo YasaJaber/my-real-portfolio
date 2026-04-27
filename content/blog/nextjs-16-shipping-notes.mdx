@@ -1,0 +1,52 @@
+---
+title: "Next.js 16 — Shipping Notes from Production"
+summary: "Turbopack stable, the React Compiler, and async request APIs. After porting two real apps, here's what hurt and what shipped fast."
+date: "2026-04-10"
+category: "Programming"
+cover: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1600&q=80"
+tags: ["nextjs", "react", "performance"]
+---
+
+I've now upgraded two production apps to **Next.js 16**, and this is the
+honest field report.
+
+## The good
+
+- **Turbopack as the default `next dev`**. Cold start on a 600-component
+  codebase went from ~12s to ~1.8s. HMR is genuinely instant.
+- **React Compiler** turned on by default. We deleted ~40% of our manual
+  `useMemo` / `useCallback` calls and got slightly faster renders.
+- **Partial Prerendering** is finally stable. Static shell + streamed dynamic
+  islands without the boilerplate.
+
+## The "wait, what?"
+
+Async request APIs broke a *lot* of code:
+
+```ts
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  // ...
+}
+```
+
+`cookies()`, `headers()`, `params`, and `searchParams` are now Promises. The
+codemod handles 90% of it; the other 10% lived in deeply-nested helpers and we
+had to rewrite the threading.
+
+## The verdict
+
+Worth it. The dev-loop speedup alone justifies the migration. Schedule a
+half-day per app, run the codemod, ship.
+
+## What I'd watch next
+
+- Cache Components (the new explicit cache primitives)
+- The DevTools MCP (an agent that can read your build logs in-IDE)
+- Adapter API for non-Vercel platforms
+
+I'll write each up as I battle-test them.

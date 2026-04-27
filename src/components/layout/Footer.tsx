@@ -1,0 +1,84 @@
+"use client";
+
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { Github, Twitter, Linkedin, Mail } from "lucide-react";
+import { siteConfig } from "@/config/site";
+
+const easeOut = [0.22, 1, 0.36, 1] as const;
+
+export function Footer() {
+  return (
+    <footer className="relative z-10 mt-20 border-t border-white/10 bg-black/40 backdrop-blur-xl">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-6 py-14 md:flex-row md:items-end md:justify-between md:px-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.7, ease: easeOut }}
+        >
+          <h3 className="font-display text-xl font-semibold text-white">
+            {siteConfig.name}
+          </h3>
+          <p className="mt-2 text-sm text-white/55">
+            {siteConfig.author.role}
+          </p>
+        </motion.div>
+
+        <motion.ul
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-40px" }}
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.07 } },
+          }}
+          className="flex flex-wrap items-center gap-2"
+        >
+          {[
+            { href: siteConfig.links.github, icon: Github, label: "GitHub" },
+            { href: siteConfig.links.twitter, icon: Twitter, label: "Twitter" },
+            { href: siteConfig.links.linkedin, icon: Linkedin, label: "LinkedIn" },
+            { href: `mailto:${siteConfig.author.email}`, icon: Mail, label: "Email" },
+          ].map(({ href, icon: Icon, label }) => (
+            <motion.li
+              key={label}
+              variants={{
+                hidden: { opacity: 0, y: 12, scale: 0.9 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                  transition: { duration: 0.5, ease: easeOut },
+                },
+              }}
+            >
+              <motion.div
+                whileHover={{ y: -3, rotate: -3 }}
+                whileTap={{ scale: 0.92 }}
+              >
+                <Link
+                  href={href}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={label}
+                  className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.02] text-white/70 transition-colors duration-300 hover:border-white/25 hover:bg-white/[0.06] hover:text-white"
+                  data-cursor-grow
+                >
+                  <Icon size={15} />
+                </Link>
+              </motion.div>
+            </motion.li>
+          ))}
+        </motion.ul>
+      </div>
+
+      <div className="border-t border-white/10">
+        <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-3 px-6 py-5 font-mono text-[11px] uppercase tracking-[0.2em] text-white/40 md:flex-row md:px-10">
+          <p>© {new Date().getFullYear()} {siteConfig.name}</p>
+          <p>Built with Next.js</p>
+        </div>
+      </div>
+    </footer>
+  );
+}

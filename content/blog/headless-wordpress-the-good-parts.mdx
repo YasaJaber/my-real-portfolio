@@ -1,0 +1,53 @@
+---
+title: "Headless WordPress — Only the Good Parts"
+summary: "WordPress as a CMS, Next.js as the front. A pragmatic playbook for shipping an editorial site that loads in under a second."
+date: "2026-03-22"
+category: "WordPress"
+cover: "https://images.unsplash.com/photo-1558655146-9f40138edfeb?auto=format&fit=crop&w=1600&q=80"
+tags: ["wordpress", "nextjs", "headless", "cms"]
+---
+
+Most "Headless WordPress" tutorials show you how to wire up the REST API and
+call it a day. That's the easy part. The hard part is making editors *happy*
+while keeping the front-end pristine.
+
+## Why bother?
+
+- WordPress still owns content workflows. Editors love it. Don't fight that.
+- Next.js owns performance. Don't fight that either.
+- Together: editors get Gutenberg + plugins; users get a 95+ Lighthouse score.
+
+## The 3 traps to avoid
+
+### 1. Don't expose the REST API directly
+
+Wrap it. Always. Build a thin TypeScript SDK on the Next.js side that:
+- normalizes ACF field names
+- strips inline styles WordPress likes to inject
+- caches aggressively (with proper invalidation on `post_updated`)
+
+### 2. Don't fight the block editor — extend it
+
+Custom Gutenberg blocks beat shortcodes every single time. You get a real
+preview, your editors stop calling you, and serialization is JSON instead of
+fragile HTML.
+
+### 3. Cache invalidation is everything
+
+```ts
+// In the WP webhook receiver:
+revalidateTag(`post-${postId}`);
+revalidateTag("posts-index");
+```
+
+That single pattern makes the editorial team feel like the site is
+"instant-publish" while you keep static performance.
+
+## The result
+
+The last project I shipped this way:
+- 0.4s LCP on 4G
+- Editors publish with one click
+- Zero downtime in 6 months
+
+Headless isn't always the answer — but when it is, it's a knockout.
