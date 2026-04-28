@@ -2,10 +2,25 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Github, Twitter, Linkedin, Mail } from "lucide-react";
+import { Linkedin, Instagram, Facebook, Youtube, Mail } from "lucide-react";
 import { siteConfig } from "@/config/site";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
+
+function XIcon({ size = 15 }: { size?: number }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden
+    >
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  );
+}
 
 export function Footer() {
   return (
@@ -36,9 +51,11 @@ export function Footer() {
           className="flex flex-wrap items-center gap-2"
         >
           {[
-            { href: siteConfig.links.github, icon: Github, label: "GitHub" },
-            { href: siteConfig.links.twitter, icon: Twitter, label: "Twitter" },
             { href: siteConfig.links.linkedin, icon: Linkedin, label: "LinkedIn" },
+            { href: siteConfig.links.instagram, icon: Instagram, label: "Instagram" },
+            { href: siteConfig.links.x, icon: XIcon, label: "X" },
+            { href: siteConfig.links.facebook, icon: Facebook, label: "Facebook" },
+            { href: siteConfig.links.youtube, icon: Youtube, label: "YouTube" },
             { href: `mailto:${siteConfig.author.email}`, icon: Mail, label: "Email" },
           ].map(({ href, icon: Icon, label }) => (
             <motion.li
