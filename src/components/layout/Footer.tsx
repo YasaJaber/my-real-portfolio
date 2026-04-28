@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Linkedin, Instagram, Facebook, Youtube, Mail } from "lucide-react";
+import { FaBehance } from "react-icons/fa";
 import { siteConfig } from "@/config/site";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
@@ -53,6 +54,7 @@ export function Footer() {
           {[
             { href: siteConfig.links.linkedin, icon: Linkedin, label: "LinkedIn" },
             { href: siteConfig.links.instagram, icon: Instagram, label: "Instagram" },
+            { href: siteConfig.links.behance, icon: FaBehance, label: "Behance" },
             { href: siteConfig.links.x, icon: XIcon, label: "X" },
             { href: siteConfig.links.facebook, icon: Facebook, label: "Facebook" },
             { href: siteConfig.links.youtube, icon: Youtube, label: "YouTube" },
