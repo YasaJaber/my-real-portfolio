@@ -9,6 +9,8 @@ const nextConfig = {
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "cdn.jsdelivr.net" },
+      { protocol: "https", hostname: "image.thum.io" },
+      { protocol: "https", hostname: "raw.githubusercontent.com" },
     ],
   },
 };

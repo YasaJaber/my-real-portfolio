@@ -3,84 +3,165 @@ export type Project = {
   title: string;
   category: "Web App" | "Branding" | "WordPress" | "Motion";
   year: number;
-  cover: string;
+  /** Optional cover image — leave empty for the text-only card layout. */
+  cover?: string;
   summary: string;
+  description: string;
+  features: string[];
   stack: string[];
-  href?: string;
-  accent: string; // hex color used for hover glow
+  repoUrl: string;
+  liveUrl?: string;
+  /** Hex color used for the accent halo / glow */
+  accent: string;
+  /** Optional role label for collaborative projects */
+  role?: string;
+  roleLink?: {
+    label: string;
+    href: string;
+  };
 };
 
 export const projects: Project[] = [
   {
-    slug: "aurora-commerce",
-    title: "Aurora Commerce",
+    slug: "masar-e-learning-platform",
+    title: "Masar — E-Learning Platform",
     category: "Web App",
     year: 2026,
-    cover:
-      "https://images.unsplash.com/photo-1559028012-481c04fa702d?auto=format&fit=crop&w=1600&q=80",
     summary:
-      "A headless storefront with cinematic product reveals and sub-second navigation.",
-    stack: ["Next.js", "GSAP", "Shopify", "Tailwind"],
+      "A full-stack Arabic-first e-learning platform with three roles, DRM-ready video delivery, certificates, and a 4-layer device-protection system.",
+    description:
+      "Masar is a production-grade MERN e-learning platform with a full Arabic RTL interface and three role-tailored dashboards (Student, Instructor, Admin). It covers the entire learning lifecycle — course creation, dual-provider video delivery (YouTube for the demo, Bunny.net DRM for production), payment & order management, progress tracking, auto-generated PDF certificates, reviews, comments, coupons, wishlist, and a real-time notification system. A custom 4-layer device-protection layer (device agreement, monthly limit, cooldown, single active session) prevents account sharing.",
+    features: [
+      "Three role dashboards: Student, Instructor, Admin",
+      "JWT auth with HttpOnly cookies + refresh-token rotation",
+      "4-layer device protection with SHA-256 fingerprinting",
+      "Dual video provider system (YouTube + Bunny.net DRM-ready)",
+      "Manual & sandbox payment flows + coupon engine",
+      "Auto PDF certificates (pdf-lib) with public verification",
+      "Real-time notification bell + dedicated notifications page",
+      "80+ REST endpoints across 16 route modules, 11 Mongoose models",
+    ],
+    stack: [
+      "Next.js 16",
+      "React 19",
+      "TypeScript",
+      "Tailwind v4",
+      "Node.js",
+      "Express",
+      "MongoDB",
+      "Cloudinary",
+      "JWT",
+    ],
+    repoUrl: "https://github.com/Mo7amed-3bnaser/e-learning-platform",
+    role: "Full-Stack Developer · Co-built with",
+    roleLink: {
+      label: "Mohamed Abdelnaser",
+      href: "https://3bnaser.tech/",
+    },
     accent: "#A855F7",
   },
   {
-    slug: "lumen-brand",
-    title: "Lumen Identity System",
-    category: "Branding",
-    year: 2025,
-    cover:
-      "https://images.unsplash.com/photo-1620287341056-49a2f1ab2fdc?auto=format&fit=crop&w=1600&q=80",
+    slug: "church-management-system",
+    title: "Church Management System",
+    category: "Web App",
+    year: 2026,
     summary:
-      "Full brand identity for a creative studio — wordmark, motion guidelines, and a 60-page brand book.",
-    stack: ["Illustrator", "After Effects", "Figma"],
+      "A bilingual Arabic/English platform for Sunday Schools with attendance, pastoral follow-up, exports, and full audit logging.",
+    description:
+      "A comprehensive management system built for Saint George Church (Sunday Schools / مدارس الأحد) with full Arabic RTL support. It handles multi-role authentication (Admin / Service Leader / Teacher / Servant), class & children management, attendance tracking for both children and servants, pastoral follow-up workflows, gift delivery for streaks, advanced analytics dashboards, role-based PDF/Excel exports, and a complete audit trail with full device fingerprinting on every login.",
+    features: [
+      "Multi-role auth with JWT + RBAC (Admin / Leader / Teacher / Servant)",
+      "Attendance tracking with consecutive-week streaks & gift eligibility",
+      "Pastoral care follow-up with call tracking & auto removal on attendance",
+      "PDF & Excel exports with Arabic RTL formatting",
+      "Audit trail with full device fingerprint on every login (IP, OS, browser, geo)",
+      "Dark mode, error boundary, and bilingual Arabic/English content",
+    ],
+    stack: [
+      "Next.js 14",
+      "TypeScript",
+      "Tailwind",
+      "MongoDB",
+      "JWT",
+      "Chart.js",
+      "Helmet",
+      "Winston",
+    ],
+    repoUrl: "https://github.com/YasaJaber/Church-Management-System",
+    liveUrl: "https://church-management-system-1-i51l.onrender.com",
     accent: "#06B6D4",
   },
   {
-    slug: "kairos-blog",
-    title: "Kairos — Editorial Platform",
-    category: "WordPress",
-    year: 2025,
-    cover:
-      "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=1600&q=80",
+    slug: "my-real-portfolio",
+    title: "Yasa Jaber — Portfolio (v2)",
+    category: "Web App",
+    year: 2026,
     summary:
-      "Custom WordPress theme & block editor experience for a long-form journalism magazine.",
-    stack: ["WordPress", "ACF", "PHP", "GSAP"],
+      "This very site — a high-performance SPA portfolio bridging front-end engineering and graphic design with cinematic transitions.",
+    description:
+      "My current production portfolio: a high-performance Single Page Application built around an animated Aurora Mesh Gradient, interactive per-letter typography, and cinematic page transitions. Includes an MDX-powered blog with categories, dynamic Open Graph metadata, and reading-time. Designed with accessibility in mind — honors prefers-reduced-motion, fully keyboard-reachable.",
+    features: [
+      "Interactive Hero — every letter is its own DOM node (magnetize on hover, explode on click)",
+      "Aurora Mesh Background — pure 2D Canvas with cursor-following blobs & click ripples",
+      "Cinematic page transitions via Framer Motion AnimatePresence",
+      "Glassmorphism navbar & cards over the live mesh",
+      "MDX blog with categories, reading-time, and dynamic OG images per post",
+      "Accessible: respects prefers-reduced-motion, fully keyboard navigable",
+    ],
+    stack: [
+      "Next.js 16",
+      "React 19",
+      "TypeScript",
+      "Tailwind",
+      "GSAP",
+      "Framer Motion",
+      "Lenis",
+      "MDX",
+    ],
+    repoUrl: "https://github.com/YasaJaber/my-real-portfolio",
     accent: "#F43F5E",
   },
   {
-    slug: "orbit-motion",
-    title: "Orbit — Motion Reel",
-    category: "Motion",
-    year: 2026,
-    cover:
-      "https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1600&q=80",
-    summary:
-      "A 90-second motion reel exploring particles, type, and color transitions.",
-    stack: ["After Effects", "Cinema 4D", "Three.js"],
-    accent: "#1E3A8A",
-  },
-  {
-    slug: "mesh-saas",
-    title: "Mesh — Analytics SaaS",
+    slug: "login-register-system",
+    title: "Login / Register System",
     category: "Web App",
     year: 2025,
-    cover:
-      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1600&q=80",
+    cover: "/projects/login_register system.png",
     summary:
-      "A real-time analytics dashboard with motion-driven data viz and a tactile dark UI.",
-    stack: ["Next.js", "tRPC", "D3", "Postgres"],
-    accent: "#8B5CF6",
+      "A secure user authentication platform with email/password and Google + GitHub OAuth 2.0.",
+    description:
+      "A production-ready authentication system supporting traditional email/password and social login via Google and GitHub OAuth 2.0. Built security-first — JWT sessions, bcrypt-hashed passwords, IP-based rate limiting, CORS protection, full input validation, email verification, and a secure password recovery flow.",
+    features: [
+      "Email/password + Google & GitHub OAuth 2.0",
+      "JWT-based sessions with configurable expiration",
+      "Email verification & secure password recovery",
+      "IP-based rate limiting + CORS + XSS / CSRF protection",
+      "RESTful API with MongoDB & Mongoose",
+      "Mobile-first responsive UI",
+    ],
+    stack: ["Node.js", "Express", "MongoDB", "Passport.js", "JWT", "OAuth 2.0"],
+    repoUrl: "https://github.com/YasaJaber/login-register--system",
+    liveUrl: "https://login-register-system-sxto.onrender.com/",
+    accent: "#22D3EE",
   },
   {
-    slug: "noir-portfolio",
-    title: "Noir — Photographer Site",
-    category: "WordPress",
-    year: 2024,
-    cover:
-      "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&w=1600&q=80",
+    slug: "yasa-portfolio-v1",
+    title: "Yasa — Portfolio (v1)",
+    category: "Web App",
+    year: 2025,
     summary:
-      "Photo portfolio with smooth-scroll galleries, lazy media, and headless CMS.",
-    stack: ["WordPress", "Headless", "Next.js"],
-    accent: "#22D3EE",
+      "My first personal portfolio, hand-built from scratch in pure HTML, CSS & vanilla JavaScript — zero frameworks.",
+    description:
+      "The first iteration of my personal portfolio, built as a deliberate challenge to push my fundamentals: every animation, transition, and interaction was written from scratch in vanilla HTML, CSS, and JavaScript — no frameworks, no libraries. Fully responsive across all devices and showcases my work as a graphic designer & front-end developer.",
+    features: [
+      "Fully responsive across all devices",
+      "Custom CSS animations & scroll-driven effects",
+      "About / Work / Contact sections",
+      "Zero dependencies — pure HTML / CSS / JS",
+    ],
+    stack: ["HTML5", "CSS3", "Vanilla JS"],
+    repoUrl: "https://github.com/YasaJaber/yasa-portfolio",
+    liveUrl: "https://yasajaber.github.io/yasa-portfolio/",
+    accent: "#8B5CF6",
   },
 ];

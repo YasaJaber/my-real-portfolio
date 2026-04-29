@@ -1,9 +1,25 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  type KeyboardEvent as ReactKeyboardEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowUpRight, ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
+import {
+  ArrowUpRight,
+  ChevronLeft,
+  ChevronRight,
+  ExternalLink,
+  Github,
+  Pause,
+  Play,
+  X,
+} from "lucide-react";
 import { projects, type Project } from "@/data/projects";
 import { Reveal } from "@/components/visuals/Reveal";
 import { cn } from "@/lib/utils";
@@ -13,16 +29,22 @@ const easeOut = [0.22, 1, 0.36, 1] as const;
 const SLIDE_MS = 5000;
 // How many cards are mounted at once (active + cards visible behind it).
 const VISIBLE = 3;
+// Ignore rapid repeated navigation clicks until the stack settles.
+const NAV_LOCK_MS = 650;
 
 export function Work() {
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
   const [hoverPaused, setHoverPaused] = useState(false);
   const [manualPaused, setManualPaused] = useState(false);
+  const [openProject, setOpenProject] = useState<Project | null>(null);
   const progressFillRef = useRef<HTMLDivElement>(null);
   const elapsedRef = useRef(0);
+  const navLockedRef = useRef(false);
+  const navUnlockTimerRef = useRef<number | null>(null);
   const total = projects.length;
-  const paused = hoverPaused || manualPaused;
+  // Pause the carousel whenever a project detail modal is open as well.
+  const paused = hoverPaused || manualPaused || openProject !== null;
 
   const setProgressWidth = useCallback((elapsedMs: number) => {
     const progress = Math.min(100, (elapsedMs / SLIDE_MS) * 100);
@@ -36,26 +58,51 @@ export function Work() {
     setProgressWidth(0);
   }, [setProgressWidth]);
 
+  const lockNavigation = useCallback(() => {
+    navLockedRef.current = true;
+    if (navUnlockTimerRef.current) {
+      window.clearTimeout(navUnlockTimerRef.current);
+    }
+    navUnlockTimerRef.current = window.setTimeout(() => {
+      navLockedRef.current = false;
+      navUnlockTimerRef.current = null;
+    }, NAV_LOCK_MS);
+  }, []);
+
   const next = useCallback(() => {
+    if (navLockedRef.current || total <= 1) return;
+    lockNavigation();
     setDirection(1);
     resetProgress();
     setActive((p) => (p + 1) % total);
-  }, [resetProgress, total]);
+  }, [lockNavigation, resetProgress, total]);
 
   const prev = useCallback(() => {
+    if (navLockedRef.current || total <= 1) return;
+    lockNavigation();
     setDirection(-1);
     resetProgress();
     setActive((p) => (p - 1 + total) % total);
-  }, [resetProgress, total]);
+  }, [lockNavigation, resetProgress, total]);
 
   const jumpTo = useCallback(
     (idx: number) => {
-      if (idx === active) return;
+      if (idx === active || navLockedRef.current || total <= 1) return;
+      lockNavigation();
       setDirection(idx > active ? 1 : -1);
       resetProgress();
       setActive(idx);
     },
-    [active, resetProgress]
+    [active, lockNavigation, resetProgress, total]
+  );
+
+  useEffect(
+    () => () => {
+      if (navUnlockTimerRef.current) {
+        window.clearTimeout(navUnlockTimerRef.current);
+      }
+    },
+    []
   );
 
   useEffect(() => {
@@ -85,6 +132,16 @@ export function Work() {
     return () => cancelAnimationFrame(frameId);
   }, [next, paused, setProgressWidth, total]);
 
+  // Close modal on Escape.
+  useEffect(() => {
+    if (!openProject) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpenProject(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [openProject]);
+
   return (
     <section id="projects" className="section-wrapper">
       <div className="mb-12 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
@@ -100,14 +157,14 @@ export function Work() {
             </h2>
           </Reveal>
         </div>
-        
+
       </div>
 
       <Reveal direction="up" delay={0.2}>
-        <div className="relative mx-auto w-full max-w-3xl">
+        <div className="relative mx-auto w-full max-w-4xl">
           {/* Card stack viewport */}
           <div
-            className="relative min-h-[560px] sm:min-h-[600px] md:min-h-[620px]"
+            className="relative min-h-[600px] sm:min-h-[650px] md:min-h-[700px]"
             onMouseEnter={() => setHoverPaused(true)}
             onMouseLeave={() => setHoverPaused(false)}
             style={{ perspective: 1400 }}
@@ -122,6 +179,7 @@ export function Work() {
                     project={project}
                     offset={offset}
                     direction={direction}
+                    onOpen={() => setOpenProject(project)}
                   />
                 );
               })}
@@ -203,6 +261,11 @@ export function Work() {
           </div>
         </div>
       </Reveal>
+
+      <ProjectModal
+        project={openProject}
+        onClose={() => setOpenProject(null)}
+      />
     </section>
   );
 }
@@ -211,10 +274,12 @@ function StackCard({
   project,
   offset,
   direction,
+  onOpen,
 }: {
   project: Project;
   offset: number;
   direction: 1 | -1;
+  onOpen: () => void;
 }) {
   const isTop = offset === 0;
 
@@ -251,7 +316,7 @@ function StackCard({
       transition={{ duration: 0.65, ease: easeOut }}
       style={{ zIndex: 10 - offset, pointerEvents: isTop ? "auto" : "none" }}
     >
-      <Card project={project} interactive={isTop} />
+      <Card project={project} interactive={isTop} onOpen={onOpen} />
     </motion.div>
   );
 }
@@ -259,9 +324,11 @@ function StackCard({
 function Card({
   project,
   interactive,
+  onOpen,
 }: {
   project: Project;
   interactive: boolean;
+  onOpen: () => void;
 }) {
   // Cards behind the active one are inert: they should not steal focus,
   // appear in the a11y tree, or fire pointer events.
@@ -269,13 +336,23 @@ function Card({
     ? { tabIndex: 0 }
     : { tabIndex: -1, "aria-hidden": true };
 
+  const openFromKeyboard = (e: ReactKeyboardEvent<HTMLDivElement>) => {
+    if (!interactive) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onOpen();
+    }
+  };
+
   return (
-    <a
-      href={project.href ?? "#"}
+    <div
+      role="button"
+      onKeyDown={openFromKeyboard}
+      onClick={interactive ? onOpen : undefined}
       data-cursor-grow={interactive ? "" : undefined}
       {...inertProps}
       className={cn(
-        "group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0a0a0a] shadow-[0_30px_80px_-40px_rgba(0,0,0,0.95)]",
+        "group relative flex h-full w-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0a0a0a] text-left shadow-[0_30px_80px_-40px_rgba(0,0,0,0.95)]",
         !interactive && "select-none"
       )}>
       {/* Subtle white wash on top of the solid base for a touch of glass */}
@@ -292,34 +369,41 @@ function Card({
         }}
       />
 
-      <div className="relative aspect-[16/10] w-full overflow-hidden">
-        <Image
-          src={project.cover}
-          alt={project.title}
-          fill
-          sizes="(max-width: 768px) 100vw, 768px"
-          className="object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.05]"
-          priority={interactive}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+      {project.cover ? (
+        <div className="relative aspect-[16/9] w-full shrink-0 overflow-hidden border-b border-white/10 bg-[#4030d4]">
+          <Image
+            src={project.cover}
+            alt={`${project.title} screenshot`}
+            fill
+            sizes="(max-width: 768px) 100vw, 768px"
+            className="object-cover object-center transition-transform duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]"
+            priority={interactive}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/70 via-transparent to-transparent" />
+        </div>
+      ) : (
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2"
+          className="relative h-2 w-full overflow-hidden"
           style={{
-            background: `linear-gradient(to top, ${project.accent}33, transparent)`,
+            background: `linear-gradient(90deg, ${project.accent}, ${project.accent}55)`,
           }}
         />
+      )}
 
-        <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-6">
-          <div>
-            <div className="mb-2 flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-white/60">
+      <div className="relative flex flex-1 flex-col gap-6 p-6 text-white md:p-8">
+        {/* Header row */}
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0 flex-1">
+            <div className="mb-3 flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-white/80">
               <span>{project.category}</span>
-              <span>·</span>
+              <span aria-hidden>·</span>
               <span>{project.year}</span>
             </div>
             <h3 className="font-display text-2xl font-semibold leading-tight text-white md:text-3xl">
               {project.title}
             </h3>
+            <RoleLine project={project} className="mt-2 text-xs" />
           </div>
           <span
             aria-hidden
@@ -328,23 +412,267 @@ function Card({
             <ArrowUpRight size={16} />
           </span>
         </div>
-      </div>
 
-      <div className="relative flex flex-1 flex-col justify-between gap-4 p-6">
-        <p className="text-sm leading-relaxed text-white/65 md:text-base">
+        {/* Summary */}
+        <p
+          className="text-sm leading-relaxed !text-white md:text-base"
+          style={{ color: "rgba(255,255,255,0.92)" }}
+        >
           {project.summary}
         </p>
-        <div className="flex flex-wrap gap-1.5">
-          {project.stack.map((s) => (
+
+        {/* Spacer pushes the stack to the bottom of the card */}
+        <div className="mt-auto">
+          <div className="flex flex-wrap gap-1.5">
+            {project.stack.map((s) => (
+              <span
+                key={s}
+                className="rounded-full border border-white/15 bg-white/[0.04] px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-white/85 transition-colors duration-300 group-hover:border-white/30 group-hover:text-white"
+              >
+                {s}
+              </span>
+            ))}
+          </div>
+
+          <div className="mt-5 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-white/70">
             <span
-              key={s}
-              className="rounded-full border border-white/10 bg-white/[0.02] px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-white/55 transition-colors duration-300 group-hover:border-white/20 group-hover:text-white/75"
-            >
-              {s}
-            </span>
-          ))}
+              aria-hidden
+              className="inline-block h-1.5 w-1.5 rounded-full"
+              style={{ backgroundColor: project.accent }}
+            />
+            Click to view details
+          </div>
         </div>
       </div>
-    </a>
+    </div>
+  );
+}
+
+function RoleLine({
+  project,
+  className,
+}: {
+  project: Project;
+  className?: string;
+}) {
+  if (!project.role) return null;
+
+  return (
+    <p
+      className={cn(className, "!text-white/80")}
+      style={{ color: "rgba(255,255,255,0.8)" }}
+    >
+      <span>{project.role}</span>
+      {project.roleLink && (
+        <>
+          {" "}
+          <a
+            href={project.roleLink.href}
+            target="_blank"
+            rel="noreferrer noopener"
+            onClick={(e) => e.stopPropagation()}
+            className="font-medium underline decoration-white/30 underline-offset-4 transition hover:text-white hover:decoration-white"
+            style={{ color: "rgba(255,255,255,0.95)" }}
+          >
+            {project.roleLink.label}
+          </a>
+        </>
+      )}
+    </p>
+  );
+}
+
+function ProjectModal({
+  project,
+  onClose,
+}: {
+  project: Project | null;
+  onClose: () => void;
+}) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Lock body scroll while the modal is open so the page underneath
+  // doesn't bounce when users wheel inside the dialog.
+  useEffect(() => {
+    if (!project) return;
+    const original = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = original;
+    };
+  }, [project]);
+
+  // Render via a portal so the modal escapes ancestors that create a
+  // containing block (e.g. the Work card stack uses CSS `perspective`,
+  // which traps `position: fixed` and would hide the dialog).
+  if (!mounted) return null;
+
+  return createPortal(
+    <AnimatePresence>
+      {project && (
+        <motion.div
+          className="fixed inset-0 z-[80] flex items-center justify-center p-4 sm:p-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3, ease: easeOut }}
+          role="dialog"
+          aria-modal="true"
+          aria-label={project.title}
+        >
+          {/* Backdrop */}
+          <button
+            type="button"
+            aria-label="Close project details"
+            onClick={onClose}
+            className="absolute inset-0 bg-black/80 backdrop-blur-md"
+          />
+
+          {/* Panel */}
+          <motion.div
+            initial={{ y: 30, opacity: 0, scale: 0.98 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: 20, opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.45, ease: easeOut }}
+            className="relative z-10 flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0a0a0a] text-white shadow-[0_40px_120px_-30px_rgba(0,0,0,0.95)]"
+          >
+            {/* Accent halo */}
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-0 opacity-50"
+              style={{
+                background: `radial-gradient(60% 40% at 50% 0%, ${project.accent}33, transparent 70%)`,
+              }}
+            />
+
+            {/* Close button */}
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close"
+              className="absolute right-4 top-4 z-20 grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-black/50 text-white/70 backdrop-blur transition hover:border-white/30 hover:bg-black/70 hover:text-white"
+            >
+              <X size={16} />
+            </button>
+
+            {project.cover ? (
+              <div className="relative aspect-[16/9] w-full shrink-0 overflow-hidden border-b border-white/10 bg-[#4030d4]">
+                <Image
+                  src={project.cover}
+                  alt={`${project.title} screenshot`}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 768px"
+                  className="object-contain object-center"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/35 via-transparent to-transparent" />
+              </div>
+            ) : (
+              <div
+                aria-hidden
+                className="h-2 w-full shrink-0"
+                style={{
+                  background: `linear-gradient(90deg, ${project.accent}, ${project.accent}55)`,
+                }}
+              />
+            )}
+            <div className="relative shrink-0 px-6 pb-6 pt-8 md:px-8 md:pb-7 md:pt-10">
+              <div className="mb-3 flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-white/80">
+                <span>{project.category}</span>
+                <span aria-hidden>·</span>
+                <span>{project.year}</span>
+              </div>
+              <h3 className="font-display text-2xl font-semibold leading-tight text-white md:text-4xl">
+                {project.title}
+              </h3>
+              <RoleLine project={project} className="mt-3 text-sm" />
+            </div>
+
+            {/* Scrollable body */}
+            <div className="relative flex-1 overflow-y-auto p-6 md:p-8">
+              <p
+                className="text-base leading-relaxed !text-white"
+                style={{ color: "rgba(255,255,255,0.92)" }}
+              >
+                {project.description}
+              </p>
+
+              {project.features.length > 0 && (
+                <div className="mt-7">
+                  <h4 className="font-mono text-xs uppercase tracking-[0.3em] text-white/70">
+                    Highlights
+                  </h4>
+                  <ul className="mt-4 space-y-2.5">
+                    {project.features.map((f) => (
+                      <li
+                        key={f}
+                        className="flex gap-3 text-sm leading-relaxed text-white/85 md:text-base"
+                      >
+                        <span
+                          aria-hidden
+                          className="mt-2 inline-block h-1.5 w-1.5 shrink-0 rounded-full"
+                          style={{ backgroundColor: project.accent }}
+                        />
+                        <span
+                          className="!text-white"
+                          style={{ color: "rgba(255,255,255,0.9)" }}
+                        >
+                          {f}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              <div className="mt-7">
+                <h4 className="font-mono text-xs uppercase tracking-[0.3em] text-white/70">
+                  Stack
+                </h4>
+                <div className="mt-4 flex flex-wrap gap-1.5">
+                  {project.stack.map((s) => (
+                    <span
+                      key={s}
+                      className="rounded-full border border-white/15 bg-white/[0.04] px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-white/85"
+                    >
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Footer with CTAs */}
+            <div className="relative flex flex-col gap-3 border-t border-white/10 bg-black/40 p-5 sm:flex-row sm:items-center sm:justify-end md:p-6">
+              <a
+                href={project.repoUrl}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-5 py-2.5 font-mono text-xs uppercase tracking-[0.2em] text-white/80 transition hover:border-white/35 hover:bg-white/[0.08] hover:text-white"
+              >
+                <Github size={14} />
+                View Repo
+              </a>
+              {project.liveUrl && (
+                <a
+                  href={project.liveUrl}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-2.5 font-mono text-xs uppercase tracking-[0.2em] text-black transition hover:bg-white/90"
+                >
+                  <ExternalLink size={14} />
+                  Live Preview
+                </a>
+              )}
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>,
+    document.body
   );
 }
