@@ -151,37 +151,25 @@ export function Contact() {
                 initial={{ opacity: 1 }}
                 animate={{ opacity: 1 }}
                 exit={{
-                  scaleX: [1, 0.92, 0.72, 0.3, 0.22],
-                  scaleY: [1, 0.84, 0.45, 0.2, 0.14],
-                  rotateX: [0, 10, 35, 70, 85],
-                  rotateY: [0, -6, -12, -18, -22],
-                  rotate: [0, 2, 6, 12, 18],
-                  x: [0, 8, 35, 220, 560],
-                  y: [0, -8, -26, -120, -420],
-                  opacity: [1, 1, 0.95, 0.7, 0],
-                  filter: [
-                    "blur(0px)",
-                    "blur(0px)",
-                    "blur(0.3px)",
-                    "blur(1.2px)",
-                    "blur(2.6px)",
-                  ],
-                  borderRadius: [
-                    "0.75rem",
-                    "1rem",
-                    "1.5rem",
-                    "9999px",
-                    "9999px",
-                  ],
+                  scaleX: [1, 1.03, 0.08],
+                  scaleY: [1, 0.5, 0.04],
+                  rotateX: [0, 50, 82],
+                  rotateY: [0, -8, -18],
+                  rotate: [0, 2, 14],
+                  x: [0, 30, 580],
+                  y: [0, -30, -480],
+                  opacity: [1, 0.9, 0],
+                  borderRadius: ["0.75rem", "0px", "0px"],
                 }}
                 transition={{
-                  duration: 1.6,
-                  times: [0, 0.24, 0.48, 0.75, 1],
-                  ease: easeOut,
+                  duration: 1.4,
+                  times: [0, 0.35, 1],
+                  ease: [0.25, 0.1, 0.25, 1],
                 }}
                 style={{
-                  transformOrigin: "center center",
+                  transformOrigin: "center bottom",
                   transformStyle: "preserve-3d",
+                  willChange: "transform, opacity",
                 }}
                 className="grid w-full gap-4 rounded-xl border border-white/10 bg-white/[0.02] p-4 md:p-6"
               >
@@ -285,8 +273,8 @@ export function Contact() {
                   transition={{ duration: 0.6, delay: 1.3, ease: easeOut }}
                   className="mt-3 max-w-xl text-pretty text-base leading-relaxed text-white/65"
                 >
-                  Your message is on its way. I&apos;ll get back to you within
-                  24 hours at the email you provided.
+                  We&apos;ll be in touch with you soon! Your message has been
+                  sent and I&apos;ll get back to you within 24 hours.
                 </motion.p>
 
                 <motion.p
