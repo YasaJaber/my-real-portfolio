@@ -27,6 +27,7 @@ export const projects: Project[] = [
     title: "Masar — E-Learning Platform",
     category: "Web App",
     year: 2026,
+    cover: "/projects/masar learning.png",
     summary:
       "A full-stack Arabic-first e-learning platform with three roles, DRM-ready video delivery, certificates, and a 4-layer device-protection system.",
     description:
@@ -53,6 +54,7 @@ export const projects: Project[] = [
       "JWT",
     ],
     repoUrl: "https://github.com/Mo7amed-3bnaser/e-learning-platform",
+    liveUrl: "https://masar-zsel.onrender.com/",
     role: "Full-Stack Developer · Co-built with",
     roleLink: {
       label: "Mohamed Abdelnaser",
@@ -65,6 +67,7 @@ export const projects: Project[] = [
     title: "Church Management System",
     category: "Web App",
     year: 2026,
+    cover: "/projects/church management system.png",
     summary:
       "A bilingual Arabic/English platform for Sunday Schools with attendance, pastoral follow-up, exports, and full audit logging.",
     description:
@@ -93,9 +96,10 @@ export const projects: Project[] = [
   },
   {
     slug: "my-real-portfolio",
-    title: "Yasa Jaber — Portfolio (v2)",
+    title: "Yasa Jaber — Real Portfolio",
     category: "Web App",
     year: 2026,
+    cover: "/projects/real portfolio.png",
     summary:
       "This very site — a high-performance SPA portfolio bridging front-end engineering and graphic design with cinematic transitions.",
     description:
@@ -119,6 +123,7 @@ export const projects: Project[] = [
       "MDX",
     ],
     repoUrl: "https://github.com/YasaJaber/my-real-portfolio",
+    liveUrl: "https://yasajaber.me",
     accent: "#F43F5E",
   },
   {
@@ -149,6 +154,7 @@ export const projects: Project[] = [
     title: "Yasa — Portfolio (v1)",
     category: "Web App",
     year: 2025,
+    cover: "/projects/demo portfolio.png",
     summary:
       "My first personal portfolio, hand-built from scratch in pure HTML, CSS & vanilla JavaScript — zero frameworks.",
     description:
