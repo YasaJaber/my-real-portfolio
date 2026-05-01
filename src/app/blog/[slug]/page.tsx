@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { compileMDX } from "next-mdx-remote/rsc";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { getAllPostSlugs, getPostBySlug } from "@/lib/posts";
 import { useMDXComponents } from "../../../../mdx-components";
 import { formatDate } from "@/lib/utils";
@@ -38,6 +38,7 @@ export async function generateMetadata({
       authors: [siteConfig.author.name],
       tags: meta.tags,
       images: [{ url: meta.cover, width: 1200, height: 630, alt: meta.title }],
+      locale: meta.lang === "ar" ? "ar_AR" : "en_US",
     },
     twitter: {
       card: "summary_large_image",
@@ -61,64 +62,128 @@ export default async function BlogPostPage({ params }: { params: Params }) {
   });
 
   const { meta } = post;
+  const isRTL = meta.lang === "ar";
+  const BackArrow = isRTL ? ArrowRight : ArrowLeft;
+
+  /* JSON-LD structured data for SEO */
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: meta.title,
+    description: meta.summary,
+    image: meta.cover.startsWith("/")
+      ? `${siteConfig.url}${meta.cover}`
+      : meta.cover,
+    datePublished: meta.date,
+    dateModified: meta.date,
+    author: {
+      "@type": "Person",
+      name: siteConfig.author.name,
+      url: siteConfig.url,
+    },
+    publisher: {
+      "@type": "Person",
+      name: siteConfig.author.name,
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `${siteConfig.url}/blog/${meta.slug}`,
+    },
+    inLanguage: meta.lang === "ar" ? "ar" : "en",
+    keywords: meta.tags.join(", "),
+  };
+
   return (
-    <article className="relative">
-      {/* Cover */}
-      <div className="relative h-[60vh] w-full overflow-hidden">
-        <Image
-          src={meta.cover}
-          alt={meta.title}
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-base via-base/70 to-transparent" />
-      </div>
+    <>
+      {/* JSON-LD for rich search results */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
-      {/* Header */}
-      <div className="section-wrapper -mt-40 pt-0">
-        <div className="mx-auto max-w-3xl">
-          <Link
-            href="/blog"
-            className="mb-6 inline-flex items-center gap-2 text-sm text-white/60 hover:text-white"
-            data-cursor-grow
-          >
-            <ArrowLeft size={14} /> All articles
-          </Link>
-
-          <div className="mb-5 flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-white/50">
-            <span className="rounded-full border border-white/15 bg-white/5 px-2 py-1 text-white/70">
-              {meta.category}
-            </span>
-            <span>{formatDate(meta.date)}</span>
-            <span>·</span>
-            <span>{meta.readingTime}</span>
+      <article className="relative" dir={isRTL ? "rtl" : "ltr"} lang={meta.lang}>
+        {/* Cover */}
+        <div className="relative w-full overflow-hidden pt-24 pb-0">
+          {/* Blurred background fill */}
+          <div className="absolute inset-0">
+            <Image
+              src={meta.cover}
+              alt=""
+              fill
+              sizes="100vw"
+              className="object-cover scale-125 blur-3xl opacity-35"
+              aria-hidden="true"
+            />
+            <div className="absolute inset-0 bg-base/40" />
           </div>
 
-          <h1 className="font-display text-4xl font-bold leading-[1.05] text-white md:text-6xl">
-            {meta.title}
-          </h1>
-          <p className="mt-6 text-xl text-white/75">{meta.summary}</p>
-
-          <div className="my-10 hairline" />
-
-          <div className="prose prose-invert max-w-none">{content}</div>
-
-          {meta.tags?.length > 0 && (
-            <div className="mt-12 flex flex-wrap gap-2">
-              {meta.tags.map((t) => (
-                <span
-                  key={t}
-                  className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs text-white/60"
-                >
-                  #{t}
-                </span>
-              ))}
+          {/* Centered contained image */}
+          <div className="relative mx-auto max-w-3xl px-6 pt-10 pb-0">
+            <div className="relative aspect-[3/4] w-full overflow-hidden rounded-3xl border border-white/10 shadow-[0_25px_100px_-20px_rgba(168,85,247,0.35)] ring-1 ring-white/5">
+              <Image
+                src={meta.cover}
+                alt={meta.title}
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 768px"
+                className="object-cover"
+              />
+              {/* Subtle vignette overlay */}
+              <div className="absolute inset-0 rounded-3xl shadow-[inset_0_0_80px_rgba(0,0,0,0.3)]" />
             </div>
-          )}
+          </div>
+
+          {/* Bottom fade into content */}
+          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-base to-transparent" />
         </div>
-      </div>
-    </article>
+
+        {/* Header */}
+        <div className="section-wrapper -mt-16 pt-0">
+          <div className="mx-auto max-w-3xl">
+            <Link
+              href="/blog"
+              className="mb-6 inline-flex items-center gap-2 text-sm text-white/60 hover:text-white"
+              data-cursor-grow
+            >
+              <BackArrow size={14} />
+              {isRTL ? "جميع المقالات" : "All articles"}
+            </Link>
+
+            <div className="mb-5 flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-white/50">
+              <span className="rounded-full border border-white/15 bg-white/5 px-2 py-1 text-white/70">
+                {meta.category}
+              </span>
+              <span>{formatDate(meta.date)}</span>
+              <span>·</span>
+              <span>{meta.readingTime}</span>
+            </div>
+
+            <h1 className="font-display text-4xl font-bold leading-[1.05] text-white md:text-6xl">
+              {meta.title}
+            </h1>
+            <p className="mt-6 text-xl text-white/75">{meta.summary}</p>
+
+            <div className="my-10 hairline" />
+
+            <div className={`prose prose-invert max-w-none ${isRTL ? "prose-rtl text-right leading-[2]" : ""}`}>
+              {content}
+            </div>
+
+            {meta.tags?.length > 0 && (
+              <div className="mt-12 flex flex-wrap gap-2">
+                {meta.tags.map((t) => (
+                  <span
+                    key={t}
+                    className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs text-white/60"
+                  >
+                    #{t}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </article>
+    </>
   );
 }

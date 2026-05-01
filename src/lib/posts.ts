@@ -14,6 +14,7 @@ export type PostMeta = {
   cover: string;
   tags: string[];
   readingTime: string;
+  lang: "en" | "ar";
 };
 
 const POSTS_DIR = path.join(process.cwd(), "content", "blog");
@@ -50,6 +51,7 @@ export function getPostBySlug(slug: string): {
     cover: String(data.cover ?? "/og.png"),
     tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
     readingTime: stats.text,
+    lang: (data.lang as "en" | "ar") ?? "en",
   };
 
   return { meta, content };
