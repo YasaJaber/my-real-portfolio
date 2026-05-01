@@ -23,8 +23,8 @@ export function Navbar() {
   // Scroll spy — highlight active section in navbar
   useEffect(() => {
     const sectionIds = siteConfig.nav
-      .filter((item) => item.href.startsWith("#"))
-      .map((item) => item.href.slice(1));
+      .filter((item) => item.href.startsWith("/#"))
+      .map((item) => item.href.slice(2));
 
     const sections = sectionIds
       .map((id) => document.getElementById(id))
@@ -80,7 +80,7 @@ export function Navbar() {
 
         <ul className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 md:flex">
           {siteConfig.nav.map((item) => {
-            const id = item.href.startsWith("#") ? item.href.slice(1) : null;
+            const id = item.href.startsWith("/#") ? item.href.slice(2) : null;
             const isActive = id ? id === activeId : false;
             return (
               <li key={item.href} className="relative">
@@ -116,11 +116,11 @@ export function Navbar() {
         <div className="hidden flex-1 justify-end md:flex">
           <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }}>
             <Link
-              href="#contact"
+              href="/blog"
               className="btn-primary !px-5 !py-2 text-xs"
               data-cursor-grow
             >
-              Hire me
+              Blog
             </Link>
           </motion.div>
         </div>
@@ -189,11 +189,11 @@ export function Navbar() {
                 className="pt-2"
               >
                 <Link
-                  href="#contact"
+                  href="/blog"
                   onClick={() => setOpen(false)}
                   className="btn-primary w-full text-center"
                 >
-                  Hire me
+                  Blog
                 </Link>
               </motion.li>
             </motion.ul>
