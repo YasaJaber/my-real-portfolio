@@ -1,23 +1,103 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Send, Check, Copy } from "lucide-react";
+import { type ChangeEvent, type FormEvent, useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Send, MailCheck } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { Reveal, Stagger, RevealItem } from "@/components/visuals/Reveal";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
+const CONTACT_SENT_STORAGE_KEY = "portfolio_contact_form_sent_v1";
+
+const WEB3FORMS_ACCESS_KEY = "11c8af9a-fbb6-4f19-a177-9c32d90defe0";
 
 export function Contact() {
-  const [copied, setCopied] = useState(false);
+  const [formState, setFormState] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+  const [submitState, setSubmitState] = useState<{
+    status: "idle" | "loading" | "error";
+    message: string;
+  }>({
+    status: "idle",
+    message: "",
+  });
+  const [hasSent, setHasSent] = useState(false);
+  const [senderName, setSenderName] = useState("");
 
-  const copyEmail = async () => {
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const sentFlag = window.localStorage.getItem(CONTACT_SENT_STORAGE_KEY);
+    const savedName = window.localStorage.getItem(
+      `${CONTACT_SENT_STORAGE_KEY}_name`,
+    );
+
+    if (sentFlag === "true") {
+      setHasSent(true);
+      if (savedName) {
+        setSenderName(savedName);
+      }
+    }
+  }, []);
+
+  const handleChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = event.target;
+    setFormState((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSubmitState({ status: "loading", message: "" });
+
     try {
-      await navigator.clipboard.writeText(siteConfig.author.email);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_ACCESS_KEY,
+          subject: "New Portfolio Contact Message",
+          from_name: formState.name,
+          name: formState.name,
+          email: formState.email,
+          message: formState.message,
+        }),
+      });
+
+      const result = (await response.json()) as { success?: boolean };
+
+      if (result.success) {
+        if (typeof window !== "undefined") {
+          window.localStorage.setItem(CONTACT_SENT_STORAGE_KEY, "true");
+          window.localStorage.setItem(
+            `${CONTACT_SENT_STORAGE_KEY}_name`,
+            formState.name,
+          );
+        }
+        setSenderName(formState.name);
+        setFormState({ name: "", email: "", message: "" });
+        setSubmitState({ status: "idle", message: "" });
+        setHasSent(true);
+        return;
+      }
+
+      setSubmitState({
+        status: "error",
+        message: "Something went wrong. Please try again in a minute.",
+      });
     } catch {
-      /* no-op */
+      setSubmitState({
+        status: "error",
+        message:
+          "Could not send your message right now. Please try again later.",
+      });
     }
   };
 
@@ -59,46 +139,168 @@ export function Contact() {
           </p>
         </Reveal>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.7, delay: 0.24, ease: easeOut }}
-          className="mt-10 flex flex-wrap items-center gap-3"
+        <div
+          className="relative mt-8"
+          style={{ perspective: "1200px" }}
         >
-          <motion.a
-            href={`mailto:${siteConfig.author.email}?subject=Project%20Inquiry`}
-            className="btn-primary"
-            data-cursor-grow
-            whileHover={{ y: -2 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            <Send size={16} />
-            <span>Send an email</span>
-          </motion.a>
+          <AnimatePresence mode="wait">
+            {!hasSent ? (
+              <motion.form
+                key="contact-form"
+                onSubmit={handleSubmit}
+                initial={{ opacity: 1 }}
+                animate={{ opacity: 1 }}
+                exit={{
+                  scaleX: [1, 0.92, 0.72, 0.3, 0.22],
+                  scaleY: [1, 0.84, 0.45, 0.2, 0.14],
+                  rotateX: [0, 10, 35, 70, 85],
+                  rotateY: [0, -6, -12, -18, -22],
+                  rotate: [0, 2, 6, 12, 18],
+                  x: [0, 8, 35, 220, 560],
+                  y: [0, -8, -26, -120, -420],
+                  opacity: [1, 1, 0.95, 0.7, 0],
+                  filter: [
+                    "blur(0px)",
+                    "blur(0px)",
+                    "blur(0.3px)",
+                    "blur(1.2px)",
+                    "blur(2.6px)",
+                  ],
+                  borderRadius: [
+                    "0.75rem",
+                    "1rem",
+                    "1.5rem",
+                    "9999px",
+                    "9999px",
+                  ],
+                }}
+                transition={{
+                  duration: 1.6,
+                  times: [0, 0.24, 0.48, 0.75, 1],
+                  ease: easeOut,
+                }}
+                style={{
+                  transformOrigin: "center center",
+                  transformStyle: "preserve-3d",
+                }}
+                className="grid w-full gap-4 rounded-xl border border-white/10 bg-white/[0.02] p-4 md:p-6"
+              >
+                <input
+                  type="text"
+                  name="name"
+                  value={formState.name}
+                  onChange={handleChange}
+                  placeholder="Your name"
+                  required
+                  className="rounded-lg border border-white/10 bg-black/20 px-4 py-3 text-sm text-white placeholder:text-white/40 outline-none transition focus:border-white/25"
+                />
+                <input
+                  type="email"
+                  name="email"
+                  value={formState.email}
+                  onChange={handleChange}
+                  placeholder="Your email"
+                  required
+                  className="rounded-lg border border-white/10 bg-black/20 px-4 py-3 text-sm text-white placeholder:text-white/40 outline-none transition focus:border-white/25"
+                />
+                <textarea
+                  name="message"
+                  value={formState.message}
+                  onChange={handleChange}
+                  placeholder="Tell me about your project"
+                  required
+                  rows={5}
+                  className="resize-none rounded-lg border border-white/10 bg-black/20 px-4 py-3 text-sm text-white placeholder:text-white/40 outline-none transition focus:border-white/25"
+                />
 
-          <motion.button
-            onClick={copyEmail}
-            className="btn-ghost"
-            data-cursor-grow
-            aria-label="Copy email"
-            whileHover={{ y: -2 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            <motion.span
-              key={copied ? "check" : "copy"}
-              initial={{ scale: 0.6, opacity: 0, rotate: -90 }}
-              animate={{ scale: 1, opacity: 1, rotate: 0 }}
-              transition={{ duration: 0.35, ease: easeOut }}
-              className="inline-flex"
-            >
-              {copied ? <Check size={16} /> : <Copy size={16} />}
-            </motion.span>
-            <span className="font-mono text-xs">
-              {copied ? "Copied" : siteConfig.author.email}
-            </span>
-          </motion.button>
-        </motion.div>
+                <div className="flex flex-wrap items-center gap-3">
+                  <button
+                    type="submit"
+                    className="btn-primary disabled:cursor-not-allowed disabled:opacity-60"
+                    disabled={submitState.status === "loading"}
+                  >
+                    <Send size={16} />
+                    <span>
+                      {submitState.status === "loading"
+                        ? "Sending..."
+                        : "Send message"}
+                    </span>
+                  </button>
+
+                  {submitState.status === "error" ? (
+                    <p className="text-sm text-red-300" role="status">
+                      {submitState.message}
+                    </p>
+                  ) : null}
+                </div>
+              </motion.form>
+            ) : (
+              <motion.div
+                key="thanks-card"
+                initial={{ opacity: 0, y: 24, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{
+                  duration: 0.7,
+                  delay: 0.9,
+                  ease: easeOut,
+                }}
+                className="relative w-full overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] p-8 md:p-10"
+              >
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute -left-24 -top-24 h-64 w-64 rounded-full opacity-40 blur-3xl"
+                  style={{
+                    background:
+                      "radial-gradient(circle, rgba(16,185,129,0.18), transparent 70%)",
+                  }}
+                />
+
+                <motion.div
+                  initial={{ scale: 0, rotate: -30 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{
+                    duration: 0.7,
+                    delay: 1.05,
+                    ease: easeOut,
+                  }}
+                  className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-emerald-400/30 bg-emerald-400/10 text-emerald-300"
+                >
+                  <MailCheck size={22} />
+                </motion.div>
+
+                <motion.h3
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 1.2, ease: easeOut }}
+                  className="mt-5 font-display text-2xl font-semibold text-white md:text-3xl"
+                >
+                  {senderName
+                    ? `Thanks, ${senderName.split(" ")[0]}!`
+                    : "Thanks for reaching out!"}
+                </motion.h3>
+
+                <motion.p
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 1.3, ease: easeOut }}
+                  className="mt-3 max-w-xl text-pretty text-base leading-relaxed text-white/65"
+                >
+                  Your message is on its way. I&apos;ll get back to you within
+                  24 hours at the email you provided.
+                </motion.p>
+
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.6, delay: 1.45, ease: easeOut }}
+                  className="mt-4 font-mono text-xs uppercase tracking-[0.2em] text-white/40"
+                >
+                  Need anything urgent? — {siteConfig.author.email}
+                </motion.p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
         <Stagger
           className="mt-12 grid gap-6 border-t border-white/10 pt-8 text-sm md:grid-cols-3"
