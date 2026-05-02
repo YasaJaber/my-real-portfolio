@@ -5,7 +5,7 @@ export const siteConfig = {
   description:
     "Front-End engineer & graphic designer crafting cinematic, performant web experiences. Next.js, GSAP, and motion design from Egypt.",
   url: "https://yasajaber.com",
-  ogImage: "/og.png",
+  ogImage: "/og.jpg",
   locale: "en_US",
   author: {
     name: "Yasa Jaber",
