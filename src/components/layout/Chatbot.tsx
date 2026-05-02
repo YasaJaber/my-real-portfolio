@@ -58,18 +58,6 @@ export function Chatbot() {
     return () => window.clearInterval(intervalId);
   }, [isOpen, triggerHints.length]);
 
-  // Lock body scroll on mobile when chat is open
-  useEffect(() => {
-    if (!isOpen) return;
-    const saved = document.body.style.overflow;
-    // Only lock on small screens
-    if (window.innerWidth < 768) {
-      document.body.style.overflow = "hidden";
-    }
-    return () => {
-      document.body.style.overflow = saved;
-    };
-  }, [isOpen]);
 
   const sendMessage = async (text: string) => {
     if (!text.trim() || isLoading) return;

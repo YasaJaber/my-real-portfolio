@@ -333,8 +333,8 @@ html.lenis body {
 
   @media (max-width: 440px) {
     .chatbot-window {
-      @apply bottom-0 right-0 w-full rounded-none border-0;
-      height: 100dvh;
+      @apply bottom-4 right-4 left-4 w-auto rounded-2xl;
+      height: min(500px, calc(100dvh - 2rem));
     }
   }
 
@@ -727,8 +727,8 @@ html.is-rtl .chatbot-window {
 
 @media (max-width: 440px) {
   html.is-rtl .chatbot-window {
-    left: 0;
-    right: 0;
+    left: 1rem;
+    right: 1rem;
   }
 }
 
