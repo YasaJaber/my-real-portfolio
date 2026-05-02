@@ -244,7 +244,9 @@ export function Hero() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.15, ease: easeOut }}
-          className="mb-6 font-mono text-xs uppercase tracking-[0.3em] text-white/50"
+          className={`font-mono text-xs uppercase tracking-[0.3em] text-white/50 ${
+            locale === "ar" ? "mb-8 md:mb-9" : "mb-6"
+          }`}
           style={{
             transform:
               "translate3d(calc(var(--hero-x, 0px) * 0.2), calc(var(--hero-y, 0px) * 0.2), 0)",
@@ -256,10 +258,10 @@ export function Hero() {
 
         {/* Name (centered) */}
         <div
-          className="mx-auto flex justify-center"
+          className={`mx-auto flex justify-center ${locale === "ar" ? "mt-[22px] md:mt-[26px]" : ""}`}
           style={{
             transform:
-              "translate3d(calc(var(--hero-x, 0px) * 0.6), calc(var(--hero-y, 0px) * 0.6), 0)",
+              `translate3d(calc(var(--hero-x, 0px) * 0.6 + ${locale === "ar" ? "8px" : "0px"}), calc(var(--hero-y, 0px) * 0.6), 0)`,
             transition: "transform 400ms cubic-bezier(0.22,1,0.36,1)",
           }}
         >
@@ -271,7 +273,9 @@ export function Hero() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.55, ease: easeOut }}
-          className="mt-8 max-w-xl text-pretty text-base leading-relaxed text-white/60 md:text-lg"
+          className={`max-w-xl text-pretty text-base leading-relaxed text-white/60 md:text-lg ${
+            locale === "ar" ? "mt-10 md:mt-11" : "mt-8"
+          }`}
           style={{
             transform:
               "translate3d(calc(var(--hero-x, 0px) * 0.3), calc(var(--hero-y, 0px) * 0.3), 0)",
