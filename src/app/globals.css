@@ -687,7 +687,7 @@ html.is-rtl .text-center {
 /* ── Chatbot RTL — flip to left side ── */
 html.is-rtl .chatbot-trigger-wrap {
   right: auto;
-  left: 1.5rem;
+  left: 3rem; /* Balanced position - not too far right */
   align-items: flex-start;
   /* Prevent transition on language switch */
   transition: none !important;
