@@ -14,6 +14,7 @@ import {
 
 interface InteractiveNameProps {
   text: string;
+  isRTL?: boolean;
 }
 
 interface LetterMeta {
@@ -87,7 +88,7 @@ function getLayoutPagePosition(el: HTMLElement) {
  *  - Scrolling back into the hero smoothly regroups them into the heading.
  * --------------------------------------------------------------------------
  */
-export function InteractiveName({ text }: InteractiveNameProps) {
+export function InteractiveName({ text, isRTL = false }: InteractiveNameProps) {
   const wrapRef = useRef<HTMLHeadingElement | null>(null);
   const placeholderRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const [mounted, setMounted] = useState(false);
@@ -98,7 +99,24 @@ export function InteractiveName({ text }: InteractiveNameProps) {
   const [inHero, setInHero] = useState(true);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
-  const chars = useMemo(() => Array.from(text), [text]);
+  // For RTL (Arabic), split by words to keep letters connected
+  // For LTR (English), split by characters for individual letter animation
+  const chars = useMemo(() => {
+    if (isRTL) {
+      // Split Arabic text into words, keeping spaces
+      const parts: string[] = [];
+      const words = text.split(/(\s+)/);
+      words.forEach(word => {
+        if (word.trim()) {
+          parts.push(word);
+        } else if (word) {
+          parts.push(word);
+        }
+      });
+      return parts;
+    }
+    return Array.from(text);
+  }, [text, isRTL]);
 
   // Per-letter random profile — stable across renders thanks to deterministic seed
   const metas = useMemo<LetterMeta[]>(() => {
@@ -261,12 +279,16 @@ export function InteractiveName({ text }: InteractiveNameProps) {
         ref={wrapRef}
         className="relative block w-full select-none text-center font-display text-[clamp(2.8rem,9vw,8.5rem)] font-semibold leading-[1] tracking-tight text-white"
         aria-label={text}
+        style={{ 
+          direction: isRTL ? "rtl" : "ltr",
+        }}
       >
         {chars.map((ch, i) => {
           const dist = hoveredIndex !== null ? Math.abs(hoveredIndex - i) : null;
           const isActive = hoveredIndex === i;
           const isNeighbor = dist === 1;
           const is2ndNeighbor = dist === 2;
+          const isSpace = ch.trim() === "";
           return (
             <span
               key={`${ch}-${i}`}
@@ -278,20 +300,19 @@ export function InteractiveName({ text }: InteractiveNameProps) {
               } ${!ready && isNeighbor ? "scale-110 -translate-y-1" : ""} ${
                 !ready && is2ndNeighbor ? "scale-[1.04] -translate-y-0.5" : ""
               }`}
-              style={
-                !ready && isActive
-                  ? {
-                      color: "rgba(196, 181, 253, 1)",
-                      transform: "scale(1.4) translateY(-8px)",
-                      filter:
-                        "drop-shadow(0 0 14px rgba(168,85,247,0.65)) drop-shadow(0 0 36px rgba(168,85,247,0.2))",
-                    }
-                  : undefined
-              }
+              style={{
+                whiteSpace: isRTL && !isSpace ? "nowrap" : "normal",
+                ...((!ready && isActive) ? {
+                  color: "rgba(196, 181, 253, 1)",
+                  transform: "scale(1.4) translateY(-8px)",
+                  filter:
+                    "drop-shadow(0 0 14px rgba(168,85,247,0.65)) drop-shadow(0 0 36px rgba(168,85,247,0.2))",
+                } : {})
+              }}
               onMouseEnter={() => setHoveredIndex(i)}
               onMouseLeave={() => setHoveredIndex(null)}
             >
-              {ch === " " ? "\u00A0" : ch}
+              {isSpace ? "\u00A0" : ch}
             </span>
           );
         })}
@@ -302,12 +323,16 @@ export function InteractiveName({ text }: InteractiveNameProps) {
           <div
             aria-hidden
             className="pointer-events-none fixed inset-0 z-[2] overflow-visible"
+            style={{ 
+              direction: isRTL ? "rtl" : "ltr",
+            }}
           >
             {chars.map((ch, i) => {
-              if (ch === " ") return null;
+              const isSpace = ch.trim() === "";
+              if (isSpace) return null;
               const rect = letterRects[i];
               const meta = metas[i];
-              if (!rect || !meta) return null;
+              if (!rect || !meta || rect.w === 0 || rect.h === 0) return null;
               return (
                 <FloatingLetter
                   key={i}
@@ -324,6 +349,7 @@ export function InteractiveName({ text }: InteractiveNameProps) {
                   secondNeighborHover={hoveredIndex !== null && Math.abs(hoveredIndex - i) === 2}
                   onHoverStart={() => setHoveredIndex(i)}
                   onHoverEnd={() => setHoveredIndex(null)}
+                  isRTL={isRTL}
                 />
               );
             })}
@@ -348,6 +374,7 @@ interface FloatingLetterProps {
   secondNeighborHover: boolean;
   onHoverStart: () => void;
   onHoverEnd: () => void;
+  isRTL?: boolean;
 }
 
 function FloatingLetter({
@@ -364,6 +391,7 @@ function FloatingLetter({
   secondNeighborHover,
   onHoverStart,
   onHoverEnd,
+  isRTL = false,
 }: FloatingLetterProps) {
   const homeX = meta.homeXFactor * viewport.w;
   const homeY = meta.homeYFactor * viewport.h;
@@ -494,6 +522,8 @@ function FloatingLetter({
         willChange: "transform, top, opacity, filter, color",
         transformOrigin: "center center",
         cursor: "default",
+        display: "inline-block",
+        whiteSpace: "nowrap",
       }}
       className="pointer-events-auto font-display font-semibold tracking-tight"
     >

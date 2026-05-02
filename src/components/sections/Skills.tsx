@@ -33,8 +33,9 @@ import {
 } from "react-icons/tb";
 import { HiOutlineCube, HiOutlineViewGrid, HiOutlineLightningBolt } from "react-icons/hi";
 import { BiNetworkChart } from "react-icons/bi";
-import { MdBrandingWatermark, MdOutlineHub } from "react-icons/md";
+import { MdOutlineHub } from "react-icons/md";
 import type { IconType } from "react-icons";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
 
@@ -80,6 +81,7 @@ interface SkillItem {
 }
 
 interface SkillGroup {
+  key: string;
   label: string;
   description: string;
   items: SkillItem[];
@@ -87,6 +89,7 @@ interface SkillGroup {
 
 const skillGroups: SkillGroup[] = [
   {
+    key: "Front-End",
     label: "Front-End",
     description: "Building responsive, pixel-perfect interfaces",
     items: [
@@ -105,6 +108,7 @@ const skillGroups: SkillGroup[] = [
     ],
   },
   {
+    key: "State & APIs",
     label: "State & APIs",
     description: "Managing data flow and integrations",
     items: [
@@ -115,6 +119,7 @@ const skillGroups: SkillGroup[] = [
     ],
   },
   {
+    key: "Design",
     label: "Design",
     description: "Crafting visual identities and experiences",
     items: [
@@ -127,6 +132,7 @@ const skillGroups: SkillGroup[] = [
     ],
   },
   {
+    key: "Tools & CMS",
     label: "Tools & CMS",
     description: "Streamlining development workflows",
     items: [
@@ -139,6 +145,7 @@ const skillGroups: SkillGroup[] = [
     ],
   },
   {
+    key: "CS Fundamentals",
     label: "CS Fundamentals",
     description: "Core computer science knowledge",
     items: [
@@ -266,56 +273,63 @@ function GroupHeader({ label, description, index }: { label: string; description
 
 /* ──── Main Skills section ──── */
 export function Skills() {
+  const { locale, t } = useLanguage();
+
   return (
     <section id="skills" className="section-wrapper">
       {/* Header */}
       <div className="mb-16">
         <Reveal direction="up" distance={14}>
           <span className="font-mono text-xs uppercase tracking-[0.3em] text-white/45">
-            02 — Skills
+            {t.skills.label[locale]}
           </span>
         </Reveal>
         <Reveal direction="up" delay={0.08}>
           <h2 className="mt-5 font-display text-4xl font-semibold leading-tight text-white md:text-5xl">
-            Tools I work with
+            {t.skills.heading[locale]}
           </h2>
         </Reveal>
         <Reveal direction="up" delay={0.14}>
           <p className="mt-4 max-w-xl text-pretty text-base leading-relaxed text-white/55 md:text-lg">
-            A curated set of technologies and tools I use to build, design, and
-            ship great digital products.
+            {t.skills.description[locale]}
           </p>
         </Reveal>
       </div>
 
       {/* Skill groups */}
       <Stagger className="space-y-14" stagger={0.15} delay={0.1}>
-        {skillGroups.map((group, groupIdx) => (
-          <RevealItem key={group.label}>
-            <GroupHeader
-              label={group.label}
-              description={group.description}
-              index={groupIdx}
-            />
+        {skillGroups.map((group, groupIdx) => {
+          const groupTranslation = t.skills.groups[group.key as keyof typeof t.skills.groups];
+          const localizedLabel = groupTranslation ? groupTranslation[locale].label : group.label;
+          const localizedDesc = groupTranslation ? groupTranslation[locale].description : group.description;
 
-            <motion.div
-              className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8"
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-40px" }}
-              variants={{
-                hidden: {},
-                visible: {
-                  transition: { staggerChildren: 0.04, delayChildren: 0.1 },
-                },
-              }}
-            >
-              {group.items.map((skill, i) => (
-                <SkillCard key={skill.name} skill={skill} index={i} />
-              ))}
-            </motion.div>
-          </RevealItem>
-        ))}
+          return (
+            <RevealItem key={group.key}>
+              <GroupHeader
+                label={localizedLabel}
+                description={localizedDesc}
+                index={groupIdx}
+              />
+
+              <motion.div
+                className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-40px" }}
+                variants={{
+                  hidden: {},
+                  visible: {
+                    transition: { staggerChildren: 0.04, delayChildren: 0.1 },
+                  },
+                }}
+              >
+                {group.items.map((skill, i) => (
+                  <SkillCard key={skill.name} skill={skill} index={i} />
+                ))}
+              </motion.div>
+            </RevealItem>
+          );
+        })}
       </Stagger>
 
       {/* Bottom decorative line */}
@@ -323,7 +337,7 @@ export function Skills() {
         <div className="mt-20 flex items-center justify-center gap-3">
           <div className="h-px w-12 bg-gradient-to-r from-transparent to-white/15" />
           <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-white/25">
-            Always learning
+            {t.skills.alwaysLearning[locale]}
           </span>
           <div className="h-px w-12 bg-gradient-to-l from-transparent to-white/15" />
         </div>

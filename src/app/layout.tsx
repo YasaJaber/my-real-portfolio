@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import { Inter, Space_Grotesk, JetBrains_Mono, Noto_Sans_Arabic } from "next/font/google";
 import { siteConfig } from "@/config/site";
 import { AuroraBackground } from "@/components/visuals/AuroraBackground";
 import { CursorGlow } from "@/components/visuals/CursorGlow";
@@ -9,6 +9,7 @@ import { Chatbot } from "@/components/layout/Chatbot";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import { ScrollProgress } from "@/components/layout/ScrollProgress";
+import { LanguageProvider } from "@/i18n/LanguageContext";
 import "./globals.css";
 
 const inter = Inter({
@@ -27,6 +28,13 @@ const mono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
   display: "swap",
+});
+
+const notoArabic = Noto_Sans_Arabic({
+  subsets: ["arabic"],
+  variable: "--font-arabic",
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -89,26 +97,28 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${grotesk.variable} ${mono.variable} dark`}
+      className={`${inter.variable} ${grotesk.variable} ${mono.variable} ${notoArabic.variable} dark`}
       suppressHydrationWarning
     >
       <body
         className="relative min-h-dvh overflow-x-hidden bg-base text-white antialiased"
         suppressHydrationWarning
       >
-        <SmoothScroll />
-        <ScrollProgress />
-        <AuroraBackground />
-        <CursorGlow />
+        <LanguageProvider>
+          <SmoothScroll />
+          <ScrollProgress />
+          <AuroraBackground />
+          <CursorGlow />
 
-        <Navbar />
+          <Navbar />
 
-        <PageTransition>
-          <main className="relative z-10">{children}</main>
-        </PageTransition>
+          <PageTransition>
+            <main className="relative z-10">{children}</main>
+          </PageTransition>
 
-        <Footer />
-        <Chatbot />
+          <Footer />
+          <Chatbot />
+        </LanguageProvider>
       </body>
     </html>
   );

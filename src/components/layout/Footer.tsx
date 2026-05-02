@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Linkedin, Instagram, Facebook, Youtube, Mail } from "lucide-react";
 import { FaBehance } from "react-icons/fa";
 import { siteConfig } from "@/config/site";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
 
@@ -24,6 +25,8 @@ function XIcon({ size = 15 }: { size?: number }) {
 }
 
 export function Footer() {
+  const { locale, t } = useLanguage();
+
   return (
     <footer className="relative z-10 mt-20 border-t border-white/10 bg-black/40 backdrop-blur-xl">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-6 py-14 md:flex-row md:items-end md:justify-between md:px-10">
@@ -95,7 +98,7 @@ export function Footer() {
       <div className="border-t border-white/10">
         <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-3 px-6 py-5 font-mono text-[11px] uppercase tracking-[0.2em] text-white/40 md:flex-row md:px-10">
           <p>© {new Date().getFullYear()} {siteConfig.name}</p>
-          <p>Built with Next.js</p>
+          <p>{t.footer.builtWith[locale]}</p>
         </div>
       </div>
     </footer>

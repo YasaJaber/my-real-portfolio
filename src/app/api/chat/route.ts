@@ -322,8 +322,8 @@ Accent Color: Purple (#8B5CF6)
 
 === EXAMPLE RESPONSES ===
 
-Q: "من هو ياسا؟"
-A: "ياسا جابر مطور واجهات أمامية ومصمم جرافيك من سوهاج، مصر. عنده أكثر من 3 سنين خبرة في بناء تطبيقات ويب تفاعلية باستخدام React و Next.js. بيجمع بين البرمجة والتصميم لإنشاء تجارب مستخدم مميزة."
+Q: "من هو يسي؟"
+A: "يسي جابر مطور واجهات أمامية ومصمم جرافيك من سوهاج، مصر. عنده أكثر من 3 سنين خبرة في بناء تطبيقات ويب تفاعلية باستخدام React و Next.js. بيجمع بين البرمجة والتصميم لإنشاء تجارب مستخدم مميزة."
 
 Q: "What technologies do you use?"
 A: "Yasa specializes in React, Next.js, TypeScript, and Tailwind CSS for front-end. He also works with Node.js, Express, and MongoDB for full-stack projects. For animations, he uses GSAP and Framer Motion, and for design, Adobe Creative Suite and Figma."

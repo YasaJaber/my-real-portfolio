@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Reveal } from "@/components/visuals/Reveal";
 import { CameraShutter } from "@/components/visuals/CameraShutter";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
 const cvFileUrl = "/Yasa%20jaber%27s%20CV.pdf";
@@ -16,6 +17,7 @@ export function About() {
   const [shutterTrigger, setShutterTrigger] = useState(0);
   const [isCvOpen, setIsCvOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const { locale, t } = useLanguage();
 
   useEffect(() => {
     setIsMounted(true);
@@ -50,41 +52,72 @@ export function About() {
         <div className="flex flex-col">
           <Reveal direction="up" distance={14}>
             <span className="font-mono text-xs uppercase tracking-[0.3em] text-white/45">
-              01 — About
+              {t.about.label[locale]}
             </span>
           </Reveal>
 
           <Reveal direction="up" delay={0.08}>
             <h2 className="mt-5 font-display text-4xl font-semibold leading-tight text-white md:text-5xl lg:text-6xl">
-              About me
+              {t.about.heading[locale]}
             </h2>
           </Reveal>
 
           <Reveal direction="up" delay={0.16}>
             <p className="mt-7 text-pretty text-base leading-relaxed text-white/65 md:text-lg">
-              I&apos;m <span className="text-white font-medium">Yasa</span>, a
-              skilled front-end developer and graphic designer from Sohag,
-              studying at the Egyptian E-Learning University. I specialize in
-              creating responsive and interactive user interfaces with a strong
-              foundation in modern web technologies.
+              {locale === "en" ? (
+                <>
+                  I&apos;m <span className="text-white font-medium">Yasa</span>, a
+                  skilled front-end developer and graphic designer from Sohag,
+                  studying at the Egyptian E-Learning University. I specialize in
+                  creating responsive and interactive user interfaces with a strong
+                  foundation in modern web technologies.
+                </>
+              ) : (
+                <>
+                  أنا <span className="text-white font-medium">يسي</span>، مطوّر
+                  واجهات أمامية ومصمّم جرافيك من سوهاج، بدرس في الجامعة المصرية
+                  للتعلّم الإلكتروني. متخصص في بناء واجهات تفاعلية ومتجاوبة بأساس
+                  قوي في تقنيات الويب الحديثة.
+                </>
+              )}
             </p>
           </Reveal>
 
           <Reveal direction="up" delay={0.22}>
             <p className="mt-4 text-pretty text-base leading-relaxed text-white/65 md:text-lg">
-              I have hands-on experience with React, Next.js, TypeScript,
-              Tailwind CSS, and a variety of CSS preprocessors and state
-              management solutions. My focus is on delivering visually
-              appealing, high-performance, and user-friendly web solutions.
+              {locale === "en" ? (
+                <>
+                  I have hands-on experience with React, Next.js, TypeScript,
+                  Tailwind CSS, and a variety of CSS preprocessors and state
+                  management solutions. My focus is on delivering visually
+                  appealing, high-performance, and user-friendly web solutions.
+                </>
+              ) : (
+                <>
+                  عندي خبرة عملية مع React و Next.js و TypeScript و Tailwind CSS
+                  وأدوات CSS preprocessors ومكتبات إدارة الحالة. تركيزي على تقديم
+                  حلول ويب جذابة بصريًا وعالية الأداء وسهلة الاستخدام.
+                </>
+              )}
             </p>
           </Reveal>
 
           <Reveal direction="up" delay={0.28}>
             <p className="mt-4 text-pretty text-base leading-relaxed text-white/65 md:text-lg">
-              Beyond development, I bring over three years of graphic design
-              experience — branding, logos, social media content, and marketing
-              materials — ensuring every project achieves aesthetic and
-              functional harmony.
+              {locale === "en" ? (
+                <>
+                  Beyond development, I bring over three years of graphic design
+                  experience — branding, logos, social media content, and marketing
+                  materials — ensuring every project achieves aesthetic and
+                  functional harmony.
+                </>
+              ) : (
+                <>
+                  بجانب التطوير، عندي أكتر من تلات سنين خبرة في تصميم الجرافيك —
+                  هويات بصرية، شعارات، محتوى سوشيال ميديا، ومواد تسويقية — عشان
+                  كل مشروع يطلع متناسق بصريًا ووظيفيًا.
+                </>
+              )}
             </p>
           </Reveal>
 
@@ -98,7 +131,7 @@ export function About() {
                   whileTap={{ scale: 0.97 }}
                   onClick={() => setIsCvOpen(true)}
                 >
-                  <span>Show / Download CV</span>
+                  <span>{t.about.showCv[locale]}</span>
                 </motion.button>
               </div>
             </Reveal>
@@ -112,10 +145,10 @@ export function About() {
                 <span aria-hidden className="h-12 w-px bg-white/15" />
                 <div className="flex flex-col gap-2">
                   <p className="font-mono text-[10px] uppercase tracking-[0.32em] text-white/50">
-                    Years of experience
+                    {t.about.yearsExp[locale]}
                   </p>
                   <p className="text-base font-medium text-white md:text-lg">
-                    Front-End Development
+                    {t.about.frontEndDev[locale]}
                   </p>
                 </div>
               </div>
@@ -219,14 +252,14 @@ export function About() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.4, ease: easeOut }}
-                className="absolute -bottom-4 -left-4 flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.05] px-4 py-2.5 backdrop-blur-md"
+                className="absolute -bottom-4 -left-4 flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.05] px-4 py-2.5 backdrop-blur-md rtl:-left-auto rtl:-right-4"
               >
                 <span className="relative flex h-2.5 w-2.5">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                   <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400" />
                 </span>
                 <span className="text-xs font-medium text-white/80">
-                  Available for work
+                  {t.about.availableForWork[locale]}
                 </span>
               </motion.div>
             </motion.div>
@@ -257,7 +290,7 @@ export function About() {
                       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-4 md:px-6">
                         <div>
                           <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-white/45">
-                            Resume
+                            {t.about.resume[locale]}
                           </p>
                           <h3 className="mt-1 text-lg font-medium text-white">
                             Yasa Jaber CV
@@ -274,7 +307,7 @@ export function About() {
                             whileTap={{ scale: 0.97 }}
                           >
                             <Download size={16} />
-                            <span>Download CV</span>
+                            <span>{t.about.downloadCv[locale]}</span>
                           </motion.a>
 
                           <motion.button
@@ -287,7 +320,7 @@ export function About() {
                             whileTap={{ scale: 0.97 }}
                           >
                             <X size={16} />
-                            <span>Close</span>
+                            <span>{t.about.close[locale]}</span>
                           </motion.button>
                         </div>
                       </div>

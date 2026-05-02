@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { Reveal } from "@/components/visuals/Reveal";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
 
@@ -21,18 +22,20 @@ interface Props {
 }
 
 export function BlogTeaserList({ posts }: Props) {
+  const { locale, t } = useLanguage();
+
   return (
     <section className="section-wrapper">
       <div className="mb-12 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
         <div>
           <Reveal direction="up" distance={14}>
             <span className="font-mono text-xs uppercase tracking-[0.3em] text-white/45">
-              04 — Blog
+              {t.blog.label[locale]}
             </span>
           </Reveal>
           <Reveal direction="up" delay={0.08}>
             <h2 className="mt-5 max-w-2xl font-display text-3xl font-semibold leading-tight text-white md:text-4xl">
-              Latest articles
+              {t.blog.heading[locale]}
             </h2>
           </Reveal>
         </div>
@@ -43,7 +46,7 @@ export function BlogTeaserList({ posts }: Props) {
             data-cursor-grow
           >
             <span className="border-b border-white/0 transition-colors group-hover:border-white/60">
-              View all
+              {t.blog.viewAll[locale]}
             </span>
             <ArrowUpRight
               size={14}
@@ -82,17 +85,17 @@ export function BlogTeaserList({ posts }: Props) {
             >
               <span
                 aria-hidden
-                className="absolute left-0 top-1/2 h-px w-0 -translate-y-1/2 bg-white/40 transition-all duration-500 ease-out group-hover:w-6"
+                className="absolute left-0 top-1/2 h-px w-0 -translate-y-1/2 bg-white/40 transition-all duration-500 ease-out group-hover:w-6 rtl:left-auto rtl:right-0"
               />
 
-              <div className="font-mono text-xs uppercase tracking-[0.2em] text-white/45 transition-colors duration-300 md:pl-8 md:group-hover:pl-12 md:group-hover:text-white/70">
+              <div className="font-mono text-xs uppercase tracking-[0.2em] text-white/45 transition-colors duration-300 md:pl-8 md:group-hover:pl-12 md:group-hover:text-white/70 rtl:md:pl-0 rtl:md:pr-8 rtl:md:group-hover:pl-0 rtl:md:group-hover:pr-12">
                 {formatDate(post.date)}
               </div>
               <div>
                 <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.2em] text-white/45">
                   {post.category} · {post.readingTime}
                 </div>
-                <h3 className="font-display text-lg font-semibold text-white transition-transform duration-500 ease-out group-hover:translate-x-1 md:text-xl">
+                <h3 className="font-display text-lg font-semibold text-white transition-transform duration-500 ease-out group-hover:translate-x-1 rtl:group-hover:-translate-x-1 rtl:group-hover:translate-x-0 md:text-xl">
                   {post.title}
                 </h3>
               </div>

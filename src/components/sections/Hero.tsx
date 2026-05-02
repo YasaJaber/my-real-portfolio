@@ -15,6 +15,7 @@ import {
 import { FaBehance } from "react-icons/fa";
 import { InteractiveName } from "@/components/visuals/InteractiveName";
 import { siteConfig } from "@/config/site";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 // X (Twitter) icon — lucide doesn't ship the new wordmark.
 function XIcon({ size = 15 }: { size?: number }) {
@@ -46,23 +47,24 @@ const SOCIAL_LINKS = [
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
 
-const ROLES = [
-  "Front-End Developer",
-  "Graphic Designer",
-  "WordPress Developer",
-  "UI/UX Designer",
-  "React Developer",
-  "Brand Identity Designer",
-];
-
 function TypewriterRole() {
+  const { locale, t } = useLanguage();
+  const roles = t.hero.roles[locale];
   const [displayed, setDisplayed] = useState("");
   const [roleIndex, setRoleIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
 
+  // Reset on locale change
   useEffect(() => {
-    const currentRole = ROLES[roleIndex];
+    setDisplayed("");
+    setRoleIndex(0);
+    setIsDeleting(false);
+    setIsPaused(false);
+  }, [locale]);
+
+  useEffect(() => {
+    const currentRole = roles[roleIndex];
 
     // Hold pause after fully typed
     if (isPaused) {
@@ -77,7 +79,7 @@ function TypewriterRole() {
     if (isDeleting) {
       if (displayed.length === 0) {
         setIsDeleting(false);
-        setRoleIndex((prev) => (prev + 1) % ROLES.length);
+        setRoleIndex((prev) => (prev + 1) % roles.length);
         return;
       }
       const timer = setTimeout(() => {
@@ -96,7 +98,7 @@ function TypewriterRole() {
       85
     );
     return () => clearTimeout(timer);
-  }, [displayed, roleIndex, isDeleting, isPaused]);
+  }, [displayed, roleIndex, isDeleting, isPaused, roles]);
 
   return (
     <span className="inline-flex items-center gap-0.5">
@@ -115,6 +117,7 @@ function TypewriterRole() {
  * Adds layered parallax + depth-of-field fade as user scrolls down.
  */
 export function Hero() {
+  const { locale, t } = useLanguage();
   const sectionRef = useRef<HTMLElement | null>(null);
 
   const { scrollYProgress } = useScroll({
@@ -260,7 +263,7 @@ export function Hero() {
             transition: "transform 400ms cubic-bezier(0.22,1,0.36,1)",
           }}
         >
-          <InteractiveName text="Yasa Jaber" />
+          <InteractiveName text={t.hero.heroName[locale]} isRTL={locale === "ar"} />
         </div>
 
         {/* Tagline */}
@@ -275,8 +278,7 @@ export function Hero() {
             transition: "transform 500ms cubic-bezier(0.22,1,0.36,1)",
           }}
         >
-          I build clean, fast websites and design the visuals that go with them.
-          Based in sohag, available worldwide.
+          {t.hero.tagline[locale]}
         </motion.p>
 
         {/* CTAs */}
@@ -288,12 +290,12 @@ export function Hero() {
         >
           <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }}>
             <Link href="#projects" className="btn-primary" data-cursor-grow>
-              <span>View projects</span>
+              <span>{t.hero.viewProjects[locale]}</span>
             </Link>
           </motion.div>
           <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }}>
             <Link href="#contact" className="btn-ghost" data-cursor-grow>
-              <span>Get in touch</span>
+              <span>{t.hero.getInTouch[locale]}</span>
               <ArrowDownRight
                 size={16}
                 className="transition-transform duration-500 group-hover:rotate-12"
@@ -363,7 +365,7 @@ export function Hero() {
         style={{ opacity: cueOpacity }}
         className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3 text-[10px] uppercase tracking-[0.4em] text-white/30"
       >
-        <span>Scroll</span>
+        <span>{t.hero.scroll[locale]}</span>
         <span className="block h-8 w-px overflow-hidden bg-white/15">
           <span className="block h-1/2 w-full animate-[float_2.4s_ease-in-out_infinite] bg-white/40" />
         </span>

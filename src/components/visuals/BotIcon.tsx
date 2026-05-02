@@ -40,25 +40,75 @@ export function BotIcon({ size = 64, className = "", animated = false }: BotIcon
         <defs>
           {/* Gradients for 3D effect - Dark theme */}
           <linearGradient id="botBodyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#1e293b" stopOpacity="1" />
-            <stop offset="50%" stopColor="#0f172a" stopOpacity="1" />
-            <stop offset="100%" stopColor="#020617" stopOpacity="1" />
+            <stop offset="0%" stopColor="#1e293b" stopOpacity="1">
+              <animate attributeName="stop-color" 
+                values="#1e293b;#312e81;#1e293b;#0f766e;#1e293b" 
+                dur="8s" 
+                repeatCount="indefinite" />
+            </stop>
+            <stop offset="50%" stopColor="#0f172a" stopOpacity="1">
+              <animate attributeName="stop-color" 
+                values="#0f172a;#1e1b4b;#0f172a;#134e4a;#0f172a" 
+                dur="8s" 
+                repeatCount="indefinite" />
+            </stop>
+            <stop offset="100%" stopColor="#020617" stopOpacity="1">
+              <animate attributeName="stop-color" 
+                values="#020617;#0c0a09;#020617;#022c22;#020617" 
+                dur="8s" 
+                repeatCount="indefinite" />
+            </stop>
           </linearGradient>
           
           <linearGradient id="botHeadGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#334155" stopOpacity="1" />
-            <stop offset="50%" stopColor="#1e293b" stopOpacity="1" />
-            <stop offset="100%" stopColor="#0f172a" stopOpacity="1" />
+            <stop offset="0%" stopColor="#334155" stopOpacity="1">
+              <animate attributeName="stop-color" 
+                values="#334155;#4c1d95;#334155;#115e59;#334155" 
+                dur="8s" 
+                repeatCount="indefinite" />
+            </stop>
+            <stop offset="50%" stopColor="#1e293b" stopOpacity="1">
+              <animate attributeName="stop-color" 
+                values="#1e293b;#312e81;#1e293b;#0f766e;#1e293b" 
+                dur="8s" 
+                repeatCount="indefinite" />
+            </stop>
+            <stop offset="100%" stopColor="#0f172a" stopOpacity="1">
+              <animate attributeName="stop-color" 
+                values="#0f172a;#1e1b4b;#0f172a;#134e4a;#0f172a" 
+                dur="8s" 
+                repeatCount="indefinite" />
+            </stop>
           </linearGradient>
           
           <linearGradient id="botScreenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.3" />
-            <stop offset="100%" stopColor="#6366f1" stopOpacity="0.2" />
+            <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.3">
+              <animate attributeName="stop-color" 
+                values="#8b5cf6;#ec4899;#06b6d4;#10b981;#8b5cf6" 
+                dur="6s" 
+                repeatCount="indefinite" />
+            </stop>
+            <stop offset="100%" stopColor="#6366f1" stopOpacity="0.2">
+              <animate attributeName="stop-color" 
+                values="#6366f1;#f43f5e;#0891b2;#059669;#6366f1" 
+                dur="6s" 
+                repeatCount="indefinite" />
+            </stop>
           </linearGradient>
 
           <linearGradient id="botEyeGlow" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#34d399" stopOpacity="1" />
-            <stop offset="100%" stopColor="#10b981" stopOpacity="1" />
+            <stop offset="0%" stopColor="#34d399" stopOpacity="1">
+              <animate attributeName="stop-color" 
+                values="#34d399;#a78bfa;#22d3ee;#34d399" 
+                dur="5s" 
+                repeatCount="indefinite" />
+            </stop>
+            <stop offset="100%" stopColor="#10b981" stopOpacity="1">
+              <animate attributeName="stop-color" 
+                values="#10b981;#8b5cf6;#06b6d4;#10b981" 
+                dur="5s" 
+                repeatCount="indefinite" />
+            </stop>
           </linearGradient>
 
           {/* Shadow filter */}
@@ -82,9 +132,24 @@ export function BotIcon({ size = 64, className = "", animated = false }: BotIcon
           
           {/* Edge highlight */}
           <linearGradient id="edgeHighlight" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.4" />
-            <stop offset="50%" stopColor="#06b6d4" stopOpacity="0.3" />
-            <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0.4" />
+            <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.4">
+              <animate attributeName="stop-color" 
+                values="#8b5cf6;#ec4899;#06b6d4;#10b981;#8b5cf6" 
+                dur="6s" 
+                repeatCount="indefinite" />
+            </stop>
+            <stop offset="50%" stopColor="#06b6d4" stopOpacity="0.3">
+              <animate attributeName="stop-color" 
+                values="#06b6d4;#8b5cf6;#ec4899;#06b6d4" 
+                dur="6s" 
+                repeatCount="indefinite" />
+            </stop>
+            <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0.4">
+              <animate attributeName="stop-color" 
+                values="#8b5cf6;#10b981;#ec4899;#8b5cf6" 
+                dur="6s" 
+                repeatCount="indefinite" />
+            </stop>
           </linearGradient>
         </defs>
 
@@ -218,7 +283,14 @@ export function BotIcon({ size = 64, className = "", animated = false }: BotIcon
             animate: { pathLength: 1 },
             transition: { duration: 0.4, delay: 0.7 }
           })}
-        />
+        >
+          <animate
+            attributeName="stroke"
+            values="#34d399;#a78bfa;#22d3ee;#34d399"
+            dur="5s"
+            repeatCount="indefinite"
+          />
+        </motion.path>
 
         {/* Body - 3D trapezoid */}
         <g filter="url(#botShadow)">
@@ -255,6 +327,12 @@ export function BotIcon({ size = 64, className = "", animated = false }: BotIcon
           {/* Status lights */}
           <circle cx="29" cy="49" r="1" fill="#34d399">
             <animate
+              attributeName="fill"
+              values="#34d399;#a78bfa;#22d3ee;#34d399"
+              dur="4s"
+              repeatCount="indefinite"
+            />
+            <animate
               attributeName="opacity"
               values="1;0.3;1"
               dur="1.5s"
@@ -262,6 +340,13 @@ export function BotIcon({ size = 64, className = "", animated = false }: BotIcon
             />
           </circle>
           <circle cx="32" cy="49" r="1" fill="#34d399">
+            <animate
+              attributeName="fill"
+              values="#34d399;#a78bfa;#22d3ee;#34d399"
+              dur="4s"
+              begin="0.3s"
+              repeatCount="indefinite"
+            />
             <animate
               attributeName="opacity"
               values="1;0.3;1"
@@ -271,6 +356,13 @@ export function BotIcon({ size = 64, className = "", animated = false }: BotIcon
             />
           </circle>
           <circle cx="35" cy="49" r="1" fill="#34d399">
+            <animate
+              attributeName="fill"
+              values="#34d399;#a78bfa;#22d3ee;#34d399"
+              dur="4s"
+              begin="0.6s"
+              repeatCount="indefinite"
+            />
             <animate
               attributeName="opacity"
               values="1;0.3;1"

@@ -7,11 +7,21 @@ import { Menu, X } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 import { LogoCodeMark } from "@/components/visuals/LogoCodeMark";
+import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
+import { useLanguage } from "@/i18n/LanguageContext";
+
+const NAV_KEYS = ["home", "about", "projects", "contact"] as const;
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [activeId, setActiveId] = useState<string>("home");
+  const { locale, t } = useLanguage();
+
+  const navItems = siteConfig.nav.map((item, i) => ({
+    ...item,
+    label: t.nav[NAV_KEYS[i]][locale],
+  }));
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -79,7 +89,7 @@ export function Navbar() {
         </Link>
 
         <ul className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 md:flex">
-          {siteConfig.nav.map((item) => {
+          {navItems.map((item) => {
             const id = item.href.startsWith("/#") ? item.href.slice(2) : null;
             const isActive = id ? id === activeId : false;
             return (
@@ -113,14 +123,15 @@ export function Navbar() {
           })}
         </ul>
 
-        <div className="hidden flex-1 justify-end md:flex">
+        <div className="hidden flex-1 items-center justify-end gap-2 md:flex">
+          <LanguageSwitcher />
           <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }}>
             <Link
               href="/blog"
               className="btn-primary !px-5 !py-2 text-xs"
               data-cursor-grow
             >
-              Blog
+              {t.nav.blog[locale]}
             </Link>
           </motion.div>
         </div>
@@ -164,11 +175,11 @@ export function Navbar() {
               }}
               className="flex flex-col gap-1 px-5 pb-5"
             >
-              {siteConfig.nav.map((item) => (
+              {navItems.map((item) => (
                 <motion.li
                   key={item.href}
                   variants={{
-                    hidden: { opacity: 0, x: -16 },
+                    hidden: { opacity: 0, x: locale === "ar" ? 16 : -16 },
                     visible: { opacity: 1, x: 0 },
                   }}
                 >
@@ -181,6 +192,18 @@ export function Navbar() {
                   </Link>
                 </motion.li>
               ))}
+
+              {/* Language switcher in mobile menu */}
+              <motion.li
+                variants={{
+                  hidden: { opacity: 0, y: 12 },
+                  visible: { opacity: 1, y: 0 },
+                }}
+                className="flex items-center justify-center pt-2"
+              >
+                <LanguageSwitcher />
+              </motion.li>
+
               <motion.li
                 variants={{
                   hidden: { opacity: 0, y: 12 },
@@ -193,7 +216,7 @@ export function Navbar() {
                   onClick={() => setOpen(false)}
                   className="btn-primary w-full text-center"
                 >
-                  Blog
+                  {t.nav.blog[locale]}
                 </Link>
               </motion.li>
             </motion.ul>

@@ -10,14 +10,9 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Send, User, Sparkles, Plus } from "lucide-react";
 import { BotIcon } from "@/components/visuals/BotIcon";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
-const TRIGGER_HINTS = [
-  "Ask me anything",
-  "Explore Yasa's work",
-  "See projects & skills",
-  "Let's talk",
-] as const;
 
 interface ChatMessage {
   id: string;
@@ -26,18 +21,11 @@ interface ChatMessage {
   timestamp: Date;
 }
 
-const SUGGESTED_QUESTIONS = [
-  "Who is Yasa?",
-  "What are your skills?",
-  "Show me your projects",
-  "How can I contact you?",
-  "What's your experience?",
-  "Tell me about Masar project",
-  "What technologies do you use?",
-  "Are you available for work?",
-];
-
 export function Chatbot() {
+  const { locale, t } = useLanguage();
+  const triggerHints = t.chatbot.triggerHints[locale];
+  const suggestedQuestions = t.chatbot.suggestedQuestions[locale];
+
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -64,11 +52,11 @@ export function Chatbot() {
     if (isOpen) return;
 
     const intervalId = window.setInterval(() => {
-      setActiveHint((current) => (current + 1) % TRIGGER_HINTS.length);
+      setActiveHint((current) => (current + 1) % triggerHints.length);
     }, 2600);
 
     return () => window.clearInterval(intervalId);
-  }, [isOpen]);
+  }, [isOpen, triggerHints.length]);
 
   // Lock body scroll on mobile when chat is open
   useEffect(() => {
@@ -194,15 +182,15 @@ export function Chatbot() {
           >
             <AnimatePresence mode="wait">
               <motion.div
-                key={TRIGGER_HINTS[activeHint]}
-                initial={{ opacity: 0, y: 10, x: 8 }}
-                animate={{ opacity: 1, y: 0, x: 0 }}
-                exit={{ opacity: 0, y: 8, x: 8 }}
+                key={triggerHints[activeHint]}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 8 }}
                 transition={{ duration: 0.28, ease: easeOut }}
                 className="chatbot-trigger-hint"
               >
                 <span className="chatbot-trigger-hint-dot" aria-hidden />
-                <span>{TRIGGER_HINTS[activeHint]}</span>
+                <span>{triggerHints[activeHint]}</span>
               </motion.div>
             </AnimatePresence>
 
@@ -228,7 +216,7 @@ export function Chatbot() {
                   animate={{ scale: 1 }}
                   className="chatbot-trigger-badge"
                 >
-                  New
+                  {t.chatbot.newBadge[locale]}
                 </motion.span>
               )}
             </motion.button>
@@ -256,7 +244,7 @@ export function Chatbot() {
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold text-white">
-                    Yasa&apos;s Assistant
+                    {t.chatbot.assistantName[locale]}
                   </h3>
                   <div className="flex items-center gap-1.5">
                     <span className="relative flex h-1.5 w-1.5">
@@ -264,7 +252,7 @@ export function Chatbot() {
                       <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
                     </span>
                     <span className="text-[10px] text-white/45">
-                      Online now
+                      {t.chatbot.onlineNow[locale]}
                     </span>
                   </div>
                 </div>
@@ -314,16 +302,15 @@ export function Chatbot() {
                     <BotIcon size={32} className="text-purple-300" />
                   </div>
                   <h4 className="mt-4 text-sm font-semibold text-white">
-                    Hey there! 👋
+                    {t.chatbot.welcomeTitle[locale]}
                   </h4>
                   <p className="mt-2 text-xs leading-relaxed text-white/50">
-                    I&apos;m Yasa&apos;s personal portfolio assistant. Ask me
-                    about his work, skills, projects, or how to get in touch.
+                    {t.chatbot.welcomeBody[locale]}
                   </p>
 
                   {/* Suggested questions */}
                   <div className="mt-5 flex flex-wrap justify-center gap-2">
-                    {SUGGESTED_QUESTIONS.map((q) => (
+                    {suggestedQuestions.map((q) => (
                       <motion.button
                         key={q}
                         whileHover={{ scale: 1.04, y: -1 }}
@@ -413,7 +400,7 @@ export function Chatbot() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="Ask me anything about Yasa..."
+                  placeholder={t.chatbot.inputPlaceholder[locale]}
                   rows={1}
                   className="chatbot-input"
                   disabled={isLoading}

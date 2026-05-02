@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useLanguage } from "@/i18n/LanguageContext";
 import {
   type KeyboardEvent as ReactKeyboardEvent,
   useCallback,
@@ -33,6 +34,7 @@ const VISIBLE = 3;
 const NAV_LOCK_MS = 650;
 
 export function Work() {
+  const { locale, t } = useLanguage();
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
   const [hoverPaused, setHoverPaused] = useState(false);
@@ -148,12 +150,12 @@ export function Work() {
         <div>
           <Reveal direction="up" distance={14}>
             <span className="font-mono text-xs uppercase tracking-[0.3em] text-white/45">
-              03 — Projects
+              {t.work.label[locale]}
             </span>
           </Reveal>
           <Reveal direction="up" delay={0.08}>
             <h2 className="mt-5 max-w-2xl font-display text-3xl font-semibold leading-tight text-white md:text-4xl">
-              Selected projects
+              {t.work.heading[locale]}
             </h2>
           </Reveal>
         </div>
@@ -330,6 +332,7 @@ function Card({
   interactive: boolean;
   onOpen: () => void;
 }) {
+  const { locale } = useLanguage();
   // Cards behind the active one are inert: they should not steal focus,
   // appear in the a11y tree, or fire pointer events.
   const inertProps: { tabIndex: number; "aria-hidden"?: boolean } = interactive
@@ -343,6 +346,10 @@ function Card({
       onOpen();
     }
   };
+
+  const title = locale === "ar" ? project.titleAr : project.title;
+  const category = locale === "ar" ? project.categoryAr : project.category;
+  const summary = locale === "ar" ? project.summaryAr : project.summary;
 
   return (
     <div
@@ -373,7 +380,7 @@ function Card({
         <div className="relative aspect-[16/9] w-full shrink-0 overflow-hidden border-b border-white/10 bg-[#4030d4]">
           <Image
             src={project.cover}
-            alt={`${project.title} screenshot`}
+            alt={`${title} screenshot`}
             fill
             sizes="(max-width: 768px) 100vw, 768px"
             className="object-cover object-center transition-transform duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]"
@@ -396,12 +403,12 @@ function Card({
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0 flex-1">
             <div className="mb-3 flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-white/80">
-              <span>{project.category}</span>
+              <span>{category}</span>
               <span aria-hidden>·</span>
               <span>{project.year}</span>
             </div>
             <h3 className="font-display text-2xl font-semibold leading-tight text-white md:text-3xl">
-              {project.title}
+              {title}
             </h3>
             <RoleLine project={project} className="mt-2 text-xs" />
           </div>
@@ -418,7 +425,7 @@ function Card({
           className="text-sm leading-relaxed !text-white md:text-base"
           style={{ color: "rgba(255,255,255,0.92)" }}
         >
-          {project.summary}
+          {summary}
         </p>
 
         {/* Spacer pushes the stack to the bottom of the card */}
@@ -434,14 +441,7 @@ function Card({
             ))}
           </div>
 
-          <div className="mt-5 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-white/70">
-            <span
-              aria-hidden
-              className="inline-block h-1.5 w-1.5 rounded-full"
-              style={{ backgroundColor: project.accent }}
-            />
-            Click to view details
-          </div>
+          <ClickToViewHint accent={project.accent} />
         </div>
       </div>
     </div>
@@ -455,14 +455,17 @@ function RoleLine({
   project: Project;
   className?: string;
 }) {
-  if (!project.role) return null;
+  const { locale } = useLanguage();
+  const role = locale === "ar" ? project.roleAr : project.role;
+  
+  if (!role) return null;
 
   return (
     <p
       className={cn(className, "!text-white/80")}
       style={{ color: "rgba(255,255,255,0.8)" }}
     >
-      <span>{project.role}</span>
+      <span>{role}</span>
       {project.roleLink && (
         <>
           {" "}
@@ -489,6 +492,7 @@ function ProjectModal({
   project: Project | null;
   onClose: () => void;
 }) {
+  const { locale } = useLanguage();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -511,6 +515,11 @@ function ProjectModal({
   // which traps `position: fixed` and would hide the dialog).
   if (!mounted) return null;
 
+  const title = project && locale === "ar" ? project.titleAr : project?.title;
+  const category = project && locale === "ar" ? project.categoryAr : project?.category;
+  const description = project && locale === "ar" ? project.descriptionAr : project?.description;
+  const features = project && locale === "ar" ? project.featuresAr : project?.features;
+
   return createPortal(
     <AnimatePresence>
       {project && (
@@ -522,7 +531,7 @@ function ProjectModal({
           transition={{ duration: 0.3, ease: easeOut }}
           role="dialog"
           aria-modal="true"
-          aria-label={project.title}
+          aria-label={title}
         >
           {/* Backdrop */}
           <button
@@ -563,7 +572,7 @@ function ProjectModal({
               <div className="relative aspect-[16/9] w-full shrink-0 overflow-hidden border-b border-white/10 bg-[#4030d4]">
                 <Image
                   src={project.cover}
-                  alt={`${project.title} screenshot`}
+                  alt={`${title} screenshot`}
                   fill
                   sizes="(max-width: 768px) 100vw, 768px"
                   className="object-contain object-center"
@@ -582,12 +591,12 @@ function ProjectModal({
             )}
             <div className="relative shrink-0 px-6 pb-6 pt-8 md:px-8 md:pb-7 md:pt-10">
               <div className="mb-3 flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-white/80">
-                <span>{project.category}</span>
+                <span>{category}</span>
                 <span aria-hidden>·</span>
                 <span>{project.year}</span>
               </div>
               <h3 className="font-display text-2xl font-semibold leading-tight text-white md:text-4xl">
-                {project.title}
+                {title}
               </h3>
               <RoleLine project={project} className="mt-3 text-sm" />
             </div>
@@ -598,16 +607,14 @@ function ProjectModal({
                 className="text-base leading-relaxed !text-white"
                 style={{ color: "rgba(255,255,255,0.92)" }}
               >
-                {project.description}
+                {description}
               </p>
 
-              {project.features.length > 0 && (
+              {features && features.length > 0 && (
                 <div className="mt-7">
-                  <h4 className="font-mono text-xs uppercase tracking-[0.3em] text-white/70">
-                    Highlights
-                  </h4>
+                  <ModalHighlightsLabel />
                   <ul className="mt-4 space-y-2.5">
-                    {project.features.map((f) => (
+                    {features.map((f) => (
                       <li
                         key={f}
                         className="flex gap-3 text-sm leading-relaxed text-white/85 md:text-base"
@@ -630,9 +637,7 @@ function ProjectModal({
               )}
 
               <div className="mt-7">
-                <h4 className="font-mono text-xs uppercase tracking-[0.3em] text-white/70">
-                  Stack
-                </h4>
+                <ModalStackLabel />
                 <div className="mt-4 flex flex-wrap gap-1.5">
                   {project.stack.map((s) => (
                     <span
@@ -655,7 +660,7 @@ function ProjectModal({
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-5 py-2.5 font-mono text-xs uppercase tracking-[0.2em] text-white/80 transition hover:border-white/35 hover:bg-white/[0.08] hover:text-white"
               >
                 <Github size={14} />
-                View Repo
+                <ModalViewRepoLabel />
               </a>
               {project.liveUrl && (
                 <a
@@ -665,7 +670,7 @@ function ProjectModal({
                   className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-2.5 font-mono text-xs uppercase tracking-[0.2em] text-black transition hover:bg-white/90"
                 >
                   <ExternalLink size={14} />
-                  Live Preview
+                  <ModalLivePreviewLabel />
                 </a>
               )}
             </div>
@@ -675,4 +680,47 @@ function ProjectModal({
     </AnimatePresence>,
     document.body
   );
+}
+
+/* ──── Small helper components to read context inside Work children ──── */
+function ClickToViewHint({ accent }: { accent: string }) {
+  const { locale, t } = useLanguage();
+  return (
+    <div className="mt-5 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-white/70">
+      <span
+        aria-hidden
+        className="inline-block h-1.5 w-1.5 rounded-full"
+        style={{ backgroundColor: accent }}
+      />
+      {t.work.clickToView[locale]}
+    </div>
+  );
+}
+
+function ModalHighlightsLabel() {
+  const { locale, t } = useLanguage();
+  return (
+    <h4 className="font-mono text-xs uppercase tracking-[0.3em] text-white/70">
+      {t.work.highlights[locale]}
+    </h4>
+  );
+}
+
+function ModalStackLabel() {
+  const { locale, t } = useLanguage();
+  return (
+    <h4 className="font-mono text-xs uppercase tracking-[0.3em] text-white/70">
+      {t.work.stack[locale]}
+    </h4>
+  );
+}
+
+function ModalViewRepoLabel() {
+  const { locale, t } = useLanguage();
+  return <>{t.work.viewRepo[locale]}</>;
+}
+
+function ModalLivePreviewLabel() {
+  const { locale, t } = useLanguage();
+  return <>{t.work.livePreview[locale]}</>;
 }

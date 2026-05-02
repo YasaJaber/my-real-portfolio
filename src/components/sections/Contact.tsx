@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Send, MailCheck } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { Reveal, Stagger, RevealItem } from "@/components/visuals/Reveal";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
 const CONTACT_SENT_STORAGE_KEY = "portfolio_contact_form_sent_v1";
@@ -12,6 +13,7 @@ const CONTACT_SENT_STORAGE_KEY = "portfolio_contact_form_sent_v1";
 const WEB3FORMS_ACCESS_KEY = "11c8af9a-fbb6-4f19-a177-9c32d90defe0";
 
 export function Contact() {
+  const { locale, t } = useLanguage();
   const [formState, setFormState] = useState({
     name: "",
     email: "",
@@ -90,13 +92,12 @@ export function Contact() {
 
       setSubmitState({
         status: "error",
-        message: "Something went wrong. Please try again in a minute.",
+        message: t.contact.errorGeneral[locale],
       });
     } catch {
       setSubmitState({
         status: "error",
-        message:
-          "Could not send your message right now. Please try again later.",
+        message: t.contact.errorNetwork[locale],
       });
     }
   };
@@ -122,20 +123,19 @@ export function Contact() {
 
         <Reveal direction="up" distance={14}>
           <span className="font-mono text-xs uppercase tracking-[0.3em] text-white/45">
-            05 — Contact
+            {t.contact.label[locale]}
           </span>
         </Reveal>
 
         <Reveal direction="up" delay={0.08}>
           <h2 className="mt-5 max-w-3xl font-display text-3xl font-semibold leading-tight text-white md:text-5xl">
-            Got a project in mind?
+            {t.contact.heading[locale]}
           </h2>
         </Reveal>
 
         <Reveal direction="up" delay={0.16}>
           <p className="mt-5 max-w-xl text-pretty text-base leading-relaxed text-white/65">
-            The fastest way to reach me is by email. I usually reply within
-            24 hours.
+            {t.contact.description[locale]}
           </p>
         </Reveal>
 
@@ -178,7 +178,7 @@ export function Contact() {
                   name="name"
                   value={formState.name}
                   onChange={handleChange}
-                  placeholder="Your name"
+                  placeholder={t.contact.namePlaceholder[locale]}
                   required
                   className="rounded-lg border border-white/10 bg-black/20 px-4 py-3 text-sm text-white placeholder:text-white/40 outline-none transition focus:border-white/25"
                 />
@@ -187,7 +187,7 @@ export function Contact() {
                   name="email"
                   value={formState.email}
                   onChange={handleChange}
-                  placeholder="Your email"
+                  placeholder={t.contact.emailPlaceholder[locale]}
                   required
                   className="rounded-lg border border-white/10 bg-black/20 px-4 py-3 text-sm text-white placeholder:text-white/40 outline-none transition focus:border-white/25"
                 />
@@ -195,7 +195,7 @@ export function Contact() {
                   name="message"
                   value={formState.message}
                   onChange={handleChange}
-                  placeholder="Tell me about your project"
+                  placeholder={t.contact.messagePlaceholder[locale]}
                   required
                   rows={5}
                   className="resize-none rounded-lg border border-white/10 bg-black/20 px-4 py-3 text-sm text-white placeholder:text-white/40 outline-none transition focus:border-white/25"
@@ -210,8 +210,8 @@ export function Contact() {
                     <Send size={16} />
                     <span>
                       {submitState.status === "loading"
-                        ? "Sending..."
-                        : "Send message"}
+                        ? t.contact.sending[locale]
+                        : t.contact.sendMessage[locale]}
                     </span>
                   </button>
 
@@ -263,8 +263,8 @@ export function Contact() {
                   className="mt-5 font-display text-2xl font-semibold text-white md:text-3xl"
                 >
                   {senderName
-                    ? `Thanks, ${senderName.split(" ")[0]}!`
-                    : "Thanks for reaching out!"}
+                    ? t.contact.thanksWithName[locale](senderName.split(" ")[0])
+                    : t.contact.thanksGeneric[locale]}
                 </motion.h3>
 
                 <motion.p
@@ -273,8 +273,7 @@ export function Contact() {
                   transition={{ duration: 0.6, delay: 1.3, ease: easeOut }}
                   className="mt-3 max-w-xl text-pretty text-base leading-relaxed text-white/65"
                 >
-                  We&apos;ll be in touch with you soon! Your message has been
-                  sent and I&apos;ll get back to you within 24 hours.
+                  {t.contact.thanksBody[locale]}
                 </motion.p>
 
                 <motion.p
@@ -283,7 +282,7 @@ export function Contact() {
                   transition={{ duration: 0.6, delay: 1.45, ease: easeOut }}
                   className="mt-4 font-mono text-xs uppercase tracking-[0.2em] text-white/40"
                 >
-                  Need anything urgent? — {siteConfig.author.email}
+                  {t.contact.urgentNote[locale](siteConfig.author.email)}
                 </motion.p>
               </motion.div>
             )}
@@ -297,21 +296,21 @@ export function Contact() {
         >
           <RevealItem>
             <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.2em] text-white/45">
-              Location
+              {t.contact.location[locale]}
             </div>
             <p className="text-white/85">{siteConfig.author.location}</p>
           </RevealItem>
           <RevealItem>
             <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.2em] text-white/45">
-              Availability
+              {t.contact.availability[locale]}
             </div>
-            <p className="text-white/85">Open to freelance & contract</p>
+            <p className="text-white/85">{t.contact.availabilityValue[locale]}</p>
           </RevealItem>
           <RevealItem>
             <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.2em] text-white/45">
-              Response time
+              {t.contact.responseTime[locale]}
             </div>
-            <p className="text-white/85">Within 24 hours</p>
+            <p className="text-white/85">{t.contact.responseTimeValue[locale]}</p>
           </RevealItem>
         </Stagger>
       </motion.div>
