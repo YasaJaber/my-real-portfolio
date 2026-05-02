@@ -25,21 +25,62 @@ type RateLimitOutcome = {
   usingUpstash: boolean;
 };
 
-function getUpstashRatelimit(): Ratelimit | null {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url?.trim() || !token?.trim()) return null;
+/** Result of applying rate limits — production refuses in-memory fallback unless explicitly opted in. */
+export type LimitChatRequestsResult =
+  | { ok: true; outcome: RateLimitOutcome }
+  | { ok: false; reason: "redis_required" };
 
-  const redis = new Redis({ url: url.trim(), token: token.trim() });
-  return new Ratelimit({
+function trimPair(
+  url: string | undefined,
+  token: string | undefined
+): { url: string; token: string } | null {
+  const u = url?.trim();
+  const t = token?.trim();
+  if (!u || !t) return null;
+  return { url: u, token: t };
+}
+
+/**
+ * Upstash REST-compatible credentials (same wire format as Vercel KV / linked Redis).
+ */
+function resolveRedisRestCredentials(): { url: string; token: string } | null {
+  return (
+    trimPair(
+      process.env.UPSTASH_REDIS_REST_URL,
+      process.env.UPSTASH_REDIS_REST_TOKEN
+    ) ??
+    trimPair(process.env.KV_REST_API_URL, process.env.KV_REST_API_TOKEN) ??
+    trimPair(process.env.REDIS_REST_URL, process.env.REDIS_REST_TOKEN)
+  );
+}
+
+let distributedRatelimiter: Ratelimit | null | undefined;
+
+function getDistributedRatelimiter(): Ratelimit | null {
+  if (distributedRatelimiter !== undefined) return distributedRatelimiter;
+
+  const cfg = resolveRedisRestCredentials();
+  if (!cfg) {
+    distributedRatelimiter = null;
+    return null;
+  }
+
+  const redis = new Redis(cfg);
+  distributedRatelimiter = new Ratelimit({
     redis,
     limiter: Ratelimit.slidingWindow(CHAT_REQUESTS_PER_MINUTE, "60 s"),
     analytics: false,
     prefix: "portfolio:chat",
   });
+  return distributedRatelimiter;
 }
 
-const ratelimit = getUpstashRatelimit();
+/** Opt into unsafe per-instance memory limiting on serverless (not recommended). */
+function allowInMemoryRateLimitInProduction(): boolean {
+  const v =
+    process.env.CHAT_ALLOW_IN_MEMORY_RATE_LIMIT?.trim().toLowerCase() ?? "";
+  return v === "1" || v === "true" || v === "yes";
+}
 
 const memoryBuckets = new Map<string, number[]>();
 
@@ -90,27 +131,47 @@ export function getChatClientIp(req: NextRequest): string {
   return "";
 }
 
-export async function limitChatRequests(ip: string): Promise<RateLimitOutcome> {
+export async function limitChatRequests(
+  ip: string
+): Promise<LimitChatRequestsResult> {
   const key = ip || "anonymous";
 
-  if (ratelimit) {
-    const res = await ratelimit.limit(key);
+  const distributed = getDistributedRatelimiter();
+
+  if (distributed) {
+    const res = await distributed.limit(key);
     return {
-      success: res.success,
-      limit: res.limit,
-      remaining: res.remaining,
-      reset: res.reset,
-      usingUpstash: true,
+      ok: true,
+      outcome: {
+        success: res.success,
+        limit: res.limit,
+        remaining: res.remaining,
+        reset: res.reset,
+        usingUpstash: true,
+      },
     };
   }
 
-  if (process.env.NODE_ENV === "production") {
+  if (
+    process.env.NODE_ENV === "production" &&
+    !allowInMemoryRateLimitInProduction()
+  ) {
+    console.error(
+      "[chat-rate-limit] Missing Redis REST credentials for distributed rate limiting. Set UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN (Upstash), or KV_REST_API_URL + KV_REST_API_TOKEN (Vercel KV). For local-only hacks, CHAT_ALLOW_IN_MEMORY_RATE_LIMIT=true enables unsafe in-memory limiting on serverless."
+    );
+    return { ok: false, reason: "redis_required" };
+  }
+
+  if (
+    process.env.NODE_ENV === "production" &&
+    allowInMemoryRateLimitInProduction()
+  ) {
     console.warn(
-      "[chat-rate-limit] UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN not set; using in-memory limiter (not reliable on serverless)."
+      "[chat-rate-limit] CHAT_ALLOW_IN_MEMORY_RATE_LIMIT is set: using per-instance memory limiter in production — not reliable when scaled."
     );
   }
 
-  return memorySlidingApprox(key);
+  return { ok: true, outcome: memorySlidingApprox(key) };
 }
 
 export function rateLimitHeaders(outcome: RateLimitOutcome): HeadersInit {

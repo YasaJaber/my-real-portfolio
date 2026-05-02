@@ -359,7 +359,19 @@ export async function POST(req: NextRequest) {
     }
 
     const ip = getChatClientIp(req) || "anonymous";
-    const rate = await limitChatRequests(ip);
+    const limited = await limitChatRequests(ip);
+
+    if (!limited.ok) {
+      return NextResponse.json(
+        {
+          error:
+            "The assistant is not configured on this deployment. Try again later or use the contact links on the site.",
+        },
+        { status: 503 }
+      );
+    }
+
+    const rate = limited.outcome;
     const rateHdr = rateLimitHeaders(rate);
 
     if (!rate.success) {
