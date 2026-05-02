@@ -4,6 +4,15 @@ import createMDX from "@next/mdx";
 const nextConfig = {
   pageExtensions: ["ts", "tsx", "mdx"],
   reactStrictMode: true,
+  async redirects() {
+    return [
+      {
+        source: "/favicon.ico",
+        destination: "/yasa-jaber-logo.ico",
+        permanent: true,
+      },
+    ];
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [

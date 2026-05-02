@@ -15,7 +15,7 @@ export default function manifest(): MetadataRoute.Manifest {
     categories: ["portfolio", "developer", "technology", "blog"],
     icons: [
       {
-        src: "/favicon.ico",
+        src: "/yasa-jaber-logo.ico",
         sizes: "16x16 32x32 48x48",
         type: "image/x-icon",
       },

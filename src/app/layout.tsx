@@ -67,10 +67,10 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "any" },
+      { url: "/yasa-jaber-logo.ico", sizes: "any" },
       { url: siteConfig.logo, type: "image/svg+xml" },
     ],
-    shortcut: ["/favicon.ico"],
+    shortcut: ["/yasa-jaber-logo.ico"],
     apple: [{ url: siteConfig.logo }],
   },
   alternates: {

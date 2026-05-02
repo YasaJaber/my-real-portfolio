@@ -1,4 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import {
+  getChatClientIp,
+  limitChatRequests,
+  rateLimitHeaders,
+  retryAfterSeconds,
+  validateChatPayload,
+} from "@/lib/chat-rate-limit";
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_MODEL = "gemini-2.5-flash-lite";
@@ -351,17 +358,48 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const body = await req.json();
-    const { messages } = body as {
-      messages: { role: "user" | "assistant"; content: string }[];
-    };
+    const ip = getChatClientIp(req) || "anonymous";
+    const rate = await limitChatRequests(ip);
+    const rateHdr = rateLimitHeaders(rate);
 
-    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+    if (!rate.success) {
       return NextResponse.json(
-        { error: "Messages array is required" },
-        { status: 400 }
+        {
+          error:
+            "Too many messages in a short time. Please wait a few seconds and try again.",
+        },
+        {
+          status: 429,
+          headers: {
+            ...rateHdr,
+            "Retry-After": String(retryAfterSeconds(rate)),
+          },
+        }
       );
     }
+
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid JSON body" },
+        { status: 400, headers: rateHdr }
+      );
+    }
+
+    const payload = validateChatPayload(
+      (body as { messages?: unknown }).messages
+    );
+
+    if (!payload.ok) {
+      return NextResponse.json(
+        { error: payload.error },
+        { status: 400, headers: rateHdr }
+      );
+    }
+
+    const { messages } = payload;
 
     // Convert to Gemini format
     const geminiMessages: GeminiMessage[] = messages.map((msg) => ({
@@ -402,13 +440,13 @@ export async function POST(req: NextRequest) {
             error:
               "The AI assistant is temporarily busy. Please try again in a moment.",
           },
-          { status: 429 }
+          { status: 429, headers: rateHdr }
         );
       }
 
       return NextResponse.json(
         { error: "Failed to get AI response" },
-        { status: 500 }
+        { status: 500, headers: rateHdr }
       );
     }
 
@@ -423,7 +461,7 @@ export async function POST(req: NextRequest) {
       data?.candidates?.[0]?.content?.parts?.[0]?.text ??
       "Sorry, I couldn't generate a response right now.";
 
-    return NextResponse.json({ reply });
+    return NextResponse.json({ reply }, { headers: rateHdr });
   } catch (error) {
     console.error("Chat API error:", error);
     return NextResponse.json(
