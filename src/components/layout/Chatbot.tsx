@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Send, User, Sparkles, Plus } from "lucide-react";
 import { BotIcon } from "@/components/visuals/BotIcon";
 import { useLanguage } from "@/i18n/LanguageContext";
+import DOMPurify from "dompurify";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
 
@@ -157,7 +158,8 @@ export function Chatbot() {
     );
     // Convert line breaks
     formatted = formatted.replace(/\n/g, "<br/>");
-    return formatted;
+    // Sanitize the HTML to prevent XSS
+    return DOMPurify.sanitize(formatted);
   };
 
   return (

@@ -10,6 +10,12 @@ import { PageTransition } from "@/components/layout/PageTransition";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import { ScrollProgress } from "@/components/layout/ScrollProgress";
 import { LanguageProvider } from "@/i18n/LanguageContext";
+import {
+  buildOrganizationJsonLd,
+  buildPersonJsonLd,
+  buildWebsiteJsonLd,
+  siteKeywords,
+} from "@/lib/seo";
 import "./globals.css";
 
 const inter = Inter({
@@ -37,50 +43,81 @@ const notoArabic = Noto_Sans_Arabic({
   weight: ["400", "500", "600", "700"],
 });
 
+const defaultTitle = `${siteConfig.name} | ${siteConfig.nameAr} — Front-End Developer & Graphic Designer`;
+const defaultDescription = `${siteConfig.description} ${siteConfig.descriptionAr}`;
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: siteConfig.title,
-    template: `%s — ${siteConfig.name}`,
+    default: defaultTitle,
+    template: `%s | ${siteConfig.name}`,
   },
-  description: siteConfig.description,
-  keywords: [
-    "Yasa Jaber",
-    "Front-End Developer",
-    "Graphic Designer",
-    "Next.js",
-    "GSAP",
-    "Three.js",
-    "Portfolio",
-    "Web Design",
-    "Egypt Developer",
-  ],
+  applicationName: `${siteConfig.name} Portfolio`,
+  description: defaultDescription,
+  keywords: siteKeywords,
   authors: [{ name: siteConfig.author.name, url: siteConfig.url }],
   creator: siteConfig.author.name,
+  publisher: siteConfig.author.name,
+  manifest: "/manifest.webmanifest",
+  referrer: "origin-when-cross-origin",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: siteConfig.logo, type: "image/svg+xml" },
+    ],
+    shortcut: ["/favicon.ico"],
+    apple: [{ url: siteConfig.logo }],
+  },
+  alternates: {
+    canonical: siteConfig.url,
+    languages: {
+      "en-US": siteConfig.url,
+      "ar-EG": siteConfig.url,
+    },
+  },
   openGraph: {
     type: "website",
     locale: siteConfig.locale,
+    alternateLocale: [siteConfig.localeAr],
     url: siteConfig.url,
-    title: siteConfig.title,
-    description: siteConfig.description,
-    siteName: siteConfig.name,
+    title: defaultTitle,
+    description: defaultDescription,
+    siteName: `${siteConfig.name} | ${siteConfig.nameAr}`,
     images: [
       {
         url: siteConfig.ogImage,
         width: 1200,
         height: 630,
-        alt: siteConfig.title,
+        alt: defaultTitle,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: siteConfig.title,
-    description: siteConfig.description,
+    title: defaultTitle,
+    description: defaultDescription,
     images: [siteConfig.ogImage],
-    creator: "@yasajaber",
+    creator: siteConfig.seo.socialHandle,
+    site: siteConfig.seo.socialHandle,
   },
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  category: "technology",
+  classification: "Portfolio",
 };
 
 export const viewport: Viewport = {
@@ -88,6 +125,10 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
 };
+
+const personJsonLd = buildPersonJsonLd();
+const organizationJsonLd = buildOrganizationJsonLd();
+const websiteJsonLd = buildWebsiteJsonLd();
 
 export default function RootLayout({
   children,
@@ -100,6 +141,20 @@ export default function RootLayout({
       className={`${inter.variable} ${grotesk.variable} ${mono.variable} ${notoArabic.variable} dark`}
       suppressHydrationWarning
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
+      </head>
       <body
         className="relative min-h-dvh max-w-[100vw] overflow-x-hidden bg-base text-white antialiased"
         suppressHydrationWarning

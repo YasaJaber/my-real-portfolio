@@ -20,7 +20,7 @@ Here is everything you know about Yasa:
 - Experience: 3+ years in Front-End Development & Graphic Design
 - Availability: Open to freelance & contract work. Available worldwide for remote opportunities.
 - Response Time: Within 24 hours
-- Portfolio URL: https://yasajaber.com
+- Portfolio URL: https://yasajaber.me
 - Languages: Arabic (Native), English (Fluent)
 
 === SOCIAL LINKS ===

@@ -8,6 +8,12 @@ import { getAllPostSlugs, getPostBySlug } from "@/lib/posts";
 import { useMDXComponents } from "../../../../mdx-components";
 import { formatDate } from "@/lib/utils";
 import { siteConfig } from "@/config/site";
+import {
+  absoluteUrl,
+  buildBlogPostingJsonLd,
+  buildBreadcrumbList,
+  siteKeywords,
+} from "@/lib/seo";
 
 type Params = Promise<{ slug: string }>;
 
@@ -28,24 +34,47 @@ export async function generateMetadata({
   return {
     title: meta.title,
     description: meta.summary,
-    alternates: { canonical: url },
+    keywords: [
+      ...siteKeywords,
+      ...meta.tags,
+      siteConfig.author.name,
+      siteConfig.author.nameAr,
+    ],
+    alternates: {
+      canonical: url,
+      languages: {
+        "en-US": url,
+        "ar-EG": url,
+      },
+    },
     openGraph: {
       title: meta.title,
       description: meta.summary,
       url,
       type: "article",
       publishedTime: meta.date,
+      modifiedTime: meta.date,
       authors: [siteConfig.author.name],
       tags: meta.tags,
-      images: [{ url: meta.cover, width: 1200, height: 630, alt: meta.title }],
+      images: [
+        {
+          url: absoluteUrl(meta.cover),
+          width: 1200,
+          height: 630,
+          alt: meta.title,
+        },
+      ],
       locale: meta.lang === "ar" ? "ar_AR" : "en_US",
+      alternateLocale: meta.lang === "ar" ? ["en_US"] : ["ar_AR"],
     },
     twitter: {
       card: "summary_large_image",
       title: meta.title,
       description: meta.summary,
-      images: [meta.cover],
+      images: [absoluteUrl(meta.cover)],
+      creator: siteConfig.seo.socialHandle,
     },
+    category: meta.category,
   };
 }
 
@@ -64,34 +93,13 @@ export default async function BlogPostPage({ params }: { params: Params }) {
   const { meta } = post;
   const isRTL = meta.lang === "ar";
   const BackArrow = isRTL ? ArrowRight : ArrowLeft;
-
-  /* JSON-LD structured data for SEO */
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: meta.title,
-    description: meta.summary,
-    image: meta.cover.startsWith("/")
-      ? `${siteConfig.url}${meta.cover}`
-      : meta.cover,
-    datePublished: meta.date,
-    dateModified: meta.date,
-    author: {
-      "@type": "Person",
-      name: siteConfig.author.name,
-      url: siteConfig.url,
-    },
-    publisher: {
-      "@type": "Person",
-      name: siteConfig.author.name,
-    },
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": `${siteConfig.url}/blog/${meta.slug}`,
-    },
-    inLanguage: meta.lang === "ar" ? "ar" : "en",
-    keywords: meta.tags.join(", "),
-  };
+  const articleBody = post.content.replace(/\n{2,}/g, "\n").trim();
+  const jsonLd = buildBlogPostingJsonLd(meta, articleBody);
+  const breadcrumbJsonLd = buildBreadcrumbList([
+    { name: "Home", url: siteConfig.url },
+    { name: "Blog", url: `${siteConfig.url}/blog` },
+    { name: meta.title, url: `${siteConfig.url}/blog/${meta.slug}` },
+  ]);
 
   return (
     <>
@@ -99,6 +107,10 @@ export default async function BlogPostPage({ params }: { params: Params }) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
       <article className="relative" dir={isRTL ? "rtl" : "ltr"} lang={meta.lang}>

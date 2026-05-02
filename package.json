@@ -15,6 +15,7 @@
     "@mdx-js/react": "^3.1.0",
     "@next/mdx": "^16.2.4",
     "clsx": "^2.1.1",
+    "dompurify": "^3.4.2",
     "framer-motion": "^11.18.2",
     "gray-matter": "^4.0.3",
     "gsap": "^3.12.5",
@@ -32,6 +33,7 @@
     "tailwind-merge": "^2.6.0"
   },
   "devDependencies": {
+    "@types/dompurify": "^3.0.5",
     "@types/mdx": "^2.0.13",
     "@types/node": "^22.10.7",
     "@types/react": "^19.0.7",

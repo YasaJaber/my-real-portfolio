@@ -4,18 +4,55 @@ import { ArrowUpRight } from "lucide-react";
 import { getAllPosts, type PostCategory } from "@/lib/posts";
 import { formatDate } from "@/lib/utils";
 import { siteConfig } from "@/config/site";
+import {
+  buildBlogJsonLd,
+  buildBreadcrumbList,
+  buildCollectionPageJsonLd,
+  siteKeywords,
+} from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Blog",
+  title: "Blog Articles",
   description:
-    "Essays on front-end engineering, motion design, and modern WordPress — by Yasa Jaber.",
-  alternates: { canonical: "/blog" },
+    "Blog by Yasa Jaber with SEO-friendly articles about front-end engineering, React, Next.js, WordPress, and web design. مقالات يسي جابر عن تطوير الويب والفرونت اند.",
+  keywords: [
+    ...siteKeywords,
+    "Yasa Jaber blog",
+    "يسي جابر مدونة",
+    "ياسا جابر مدونة",
+    "front-end engineering",
+    "web development articles",
+    "مقالات برمجة",
+    "Next.js tutorials",
+    "React articles",
+    "SEO articles",
+  ],
+  alternates: {
+    canonical: `${siteConfig.url}/blog`,
+    languages: { "en-US": `${siteConfig.url}/blog`, "ar-EG": `${siteConfig.url}/blog` },
+  },
   openGraph: {
     title: `Blog — ${siteConfig.name}`,
     description:
-      "Essays on front-end engineering, motion design, and modern WordPress.",
+      "Articles by Yasa Jaber about front-end development, SEO, design, and WordPress.",
     url: `${siteConfig.url}/blog`,
     type: "website",
+    locale: "en_US",
+    alternateLocale: ["ar_EG"],
+    images: [
+      {
+        url: siteConfig.ogImage,
+        width: 1200,
+        height: 630,
+        alt: `Blog by ${siteConfig.name}`,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `Blog — ${siteConfig.name}`,
+    description: "Articles and tutorials by Yasa Jaber.",
+    images: [siteConfig.ogImage],
   },
 };
 
@@ -28,9 +65,28 @@ const categories: ("All" | PostCategory)[] = [
 
 export default function BlogIndexPage() {
   const posts = getAllPosts();
+  const blogJsonLd = buildBlogJsonLd(posts);
+  const collectionJsonLd = buildCollectionPageJsonLd(posts);
+  const breadcrumbJsonLd = buildBreadcrumbList([
+    { name: "Home", url: siteConfig.url },
+    { name: "Blog", url: `${siteConfig.url}/blog` },
+  ]);
 
   return (
-    <div className="section-wrapper pt-32 sm:pt-36 md:pt-40">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <div className="section-wrapper pt-32 sm:pt-36 md:pt-40">
       {/* Header */}
       <div className="mb-14 max-w-3xl">
         <span className="font-mono text-xs uppercase tracking-[0.3em] text-white/45">
@@ -96,5 +152,6 @@ export default function BlogIndexPage() {
         </div>
       )}
     </div>
+    </>
   );
 }

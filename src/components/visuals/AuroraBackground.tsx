@@ -25,29 +25,37 @@ export function AuroraBackground() {
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
+    const mobileQuery = window.matchMedia("(max-width: 767px)");
 
     let dpr = Math.min(window.devicePixelRatio || 1, 2);
     let width = 0;
     let height = 0;
-    let isMobileViewport = false;
+    let isMobile = mobileQuery.matches;
+    let mobileScale = isMobile ? 0.5 : 1;
+    let baseFill = isMobile ? "#030305" : "#050507";
+    let vignetteAlpha = isMobile ? 0.96 : 0.85;
 
     const resize = () => {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
       width = canvas.clientWidth;
       height = canvas.clientHeight;
-      isMobileViewport = width <= 767;
+      isMobile = mobileQuery.matches;
+      mobileScale = isMobile ? 0.5 : 1;
+      baseFill = isMobile ? "#030305" : "#050507";
+      vignetteAlpha = isMobile ? 0.96 : 0.85;
       canvas.width = Math.floor(width * dpr);
       canvas.height = Math.floor(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
     resize();
+    window.addEventListener("resize", resize);
 
     type Blob = {
       x: number;
       y: number;
       vx: number;
       vy: number;
-      r: number;
+      baseR: number;
       hue: number;
       sat: number;
       light: number;
@@ -63,47 +71,17 @@ export function AuroraBackground() {
       { hue: 210, sat: 30, light: 14, alpha: 0.5 },  // near-black blue
     ];
 
-    const createBlob = (
-      p: (typeof palette)[number],
-      i: number,
-      random: () => number,
-      scale = 1,
-      alphaScale = 1
-    ): Blob => ({
-      x: random() * width,
-      y: random() * height,
-      vx: (random() - 0.5) * 0.12,
-      vy: (random() - 0.5) * 0.12,
-      r: (380 + i * 80 + random() * 100) * scale,
+    const blobs: Blob[] = palette.map((p, i) => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      vx: (Math.random() - 0.5) * 0.12,
+      vy: (Math.random() - 0.5) * 0.12,
+      baseR: 380 + i * 80 + Math.random() * 100,
       hue: p.hue,
       sat: p.sat,
       light: p.light,
-      alpha: p.alpha * scale * alphaScale,
-    });
-
-    const createBlobs = () => {
-      if (isMobileViewport) {
-        // Keep mobile visually as dark as desktop.
-        const mobileBlobScale = 0.56;
-        const mobileAlphaScale = 0.62;
-        return palette.map((p, i) =>
-          createBlob(p, i, Math.random, mobileBlobScale, mobileAlphaScale)
-        );
-      }
-      return palette.map((p, i) => createBlob(p, i, Math.random));
-    };
-
-    let blobs: Blob[] = createBlobs();
-
-    let previousIsMobileViewport = isMobileViewport;
-    const handleResize = () => {
-      resize();
-      if (isMobileViewport || previousIsMobileViewport !== isMobileViewport) {
-        blobs = createBlobs();
-      }
-      previousIsMobileViewport = isMobileViewport;
-    };
-    window.addEventListener("resize", handleResize);
+      alpha: p.alpha,
+    }));
 
     const mouse = { x: width / 2, y: height / 2, active: false };
 
@@ -129,20 +107,21 @@ export function AuroraBackground() {
     let raf = 0;
     const draw = () => {
       // Clear with deep base
-      ctx.fillStyle = isMobileViewport ? "#030305" : "#050507";
+      ctx.fillStyle = baseFill;
       ctx.fillRect(0, 0, width, height);
 
-      ctx.globalCompositeOperation = "lighter";
+      ctx.globalCompositeOperation = isMobile ? "source-over" : "lighter";
 
       for (let i = 0; i < blobs.length; i++) {
         const b = blobs[i];
+        const r = b.baseR * mobileScale;
 
         if (!reduceMotion) {
           b.x += b.vx;
           b.y += b.vy;
 
-          if (b.x < -b.r * 0.5 || b.x > width + b.r * 0.5) b.vx *= -1;
-          if (b.y < -b.r * 0.5 || b.y > height + b.r * 0.5) b.vy *= -1;
+          if (b.x < -r * 0.5 || b.x > width + r * 0.5) b.vx *= -1;
+          if (b.y < -r * 0.5 || b.y > height + r * 0.5) b.vy *= -1;
 
           // Very gentle cursor influence on the first blob only
           if (i === 0 && mouse.active) {
@@ -161,7 +140,7 @@ export function AuroraBackground() {
           }
         }
 
-        const grad = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r);
+        const grad = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, r);
         grad.addColorStop(
           0,
           `hsla(${b.hue}, ${b.sat}%, ${b.light + 8}%, ${b.alpha})`
@@ -173,7 +152,7 @@ export function AuroraBackground() {
         grad.addColorStop(1, `hsla(${b.hue}, ${b.sat}%, ${b.light}%, 0)`);
         ctx.fillStyle = grad;
         ctx.beginPath();
-        ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+        ctx.arc(b.x, b.y, r, 0, Math.PI * 2);
         ctx.fill();
       }
 
@@ -207,10 +186,7 @@ export function AuroraBackground() {
         Math.max(width, height) * 0.85
       );
       vignette.addColorStop(0, "rgba(0,0,0,0)");
-      vignette.addColorStop(
-        1,
-        isMobileViewport ? "rgba(0,0,0,0.96)" : "rgba(0,0,0,0.85)"
-      );
+      vignette.addColorStop(1, `rgba(0,0,0,${vignetteAlpha})`);
       ctx.fillStyle = vignette;
       ctx.fillRect(0, 0, width, height);
 
@@ -220,7 +196,7 @@ export function AuroraBackground() {
 
     return () => {
       cancelAnimationFrame(raf);
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("resize", resize);
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("click", onClick);
     };
