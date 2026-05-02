@@ -157,6 +157,11 @@ export function Chatbot() {
       /\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g,
       '<a href="$2" target="_blank" rel="noreferrer" class="chatbot-link">$1</a>'
     );
+    // Convert bare URLs to anchor tags (skip if already inside an anchor tag)
+    formatted = formatted.replace(
+      /(?<!href=["'])(?<!=["'])(https?:\/\/[^\s<>"')\]]+)/g,
+      '<a href="$1" target="_blank" rel="noreferrer" class="chatbot-link">$1</a>'
+    );
     // Convert markdown bold **text** to strong
     formatted = formatted.replace(
       /\*\*([^*]+)\*\*/g,
