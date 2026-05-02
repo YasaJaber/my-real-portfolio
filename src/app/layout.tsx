@@ -5,6 +5,7 @@ import { AuroraBackground } from "@/components/visuals/AuroraBackground";
 import { CursorGlow } from "@/components/visuals/CursorGlow";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { Chatbot } from "@/components/layout/Chatbot";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import { ScrollProgress } from "@/components/layout/ScrollProgress";
@@ -107,6 +108,7 @@ export default function RootLayout({
         </PageTransition>
 
         <Footer />
+        <Chatbot />
       </body>
     </html>
   );
