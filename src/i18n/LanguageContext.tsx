@@ -24,22 +24,14 @@ const LanguageContext = createContext<LanguageContextValue | null>(null);
 const STORAGE_KEY = "portfolio_locale";
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>("en");
-  const [mounted, setMounted] = useState(false);
-
-  // Load saved locale from localStorage
-  useEffect(() => {
+  const [locale, setLocaleState] = useState<Locale>(() => {
+    if (typeof window === "undefined") return "en";
     const saved = localStorage.getItem(STORAGE_KEY) as Locale | null;
-    if (saved === "ar" || saved === "en") {
-      setLocaleState(saved);
-    }
-    setMounted(true);
-  }, []);
+    return saved === "ar" || saved === "en" ? saved : "en";
+  });
 
   // Apply locale to <html> element: lang, dir, and font-family adjustments
   useEffect(() => {
-    if (!mounted) return;
-
     const html = document.documentElement;
     html.lang = locale;
     html.dir = locale === "ar" ? "rtl" : "ltr";
@@ -50,7 +42,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     } else {
       html.classList.remove("is-rtl");
     }
-  }, [locale, mounted]);
+  }, [locale]);
 
   const setLocale = useCallback((newLocale: Locale) => {
     setLocaleState(newLocale);

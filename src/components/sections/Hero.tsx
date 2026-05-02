@@ -55,14 +55,6 @@ function TypewriterRole() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Reset on locale change
-  useEffect(() => {
-    setDisplayed("");
-    setRoleIndex(0);
-    setIsDeleting(false);
-    setIsPaused(false);
-  }, [locale]);
-
   useEffect(() => {
     const currentRole = roles[roleIndex];
 
@@ -77,24 +69,28 @@ function TypewriterRole() {
 
     // Erasing
     if (isDeleting) {
-      if (displayed.length === 0) {
-        setIsDeleting(false);
-        setRoleIndex((prev) => (prev + 1) % roles.length);
-        return;
-      }
       const timer = setTimeout(() => {
-        setDisplayed((prev) => prev.slice(0, -1));
+        setDisplayed((prev) => {
+          if (prev.length === 0) {
+            setIsDeleting(false);
+            setRoleIndex((idx) => (idx + 1) % roles.length);
+            return prev;
+          }
+          return prev.slice(0, -1);
+        });
       }, 40);
       return () => clearTimeout(timer);
     }
 
     // Typing
-    if (displayed.length === currentRole.length) {
-      setIsPaused(true);
-      return;
-    }
     const timer = setTimeout(
-      () => setDisplayed(currentRole.slice(0, displayed.length + 1)),
+      () => {
+        if (displayed.length === currentRole.length) {
+          setIsPaused(true);
+          return;
+        }
+        setDisplayed(currentRole.slice(0, displayed.length + 1));
+      },
       85
     );
     return () => clearTimeout(timer);
@@ -253,7 +249,7 @@ export function Hero() {
             transition: "transform 500ms cubic-bezier(0.22,1,0.36,1)",
           }}
         >
-          <TypewriterRole />
+          <TypewriterRole key={locale} />
         </motion.p>
 
         {/* Name (centered) */}

@@ -211,11 +211,13 @@ function measureTextRange(
 export function InteractiveName({ text, isRTL = false }: InteractiveNameProps) {
   const wrapRef = useRef<HTMLHeadingElement | null>(null);
   const textRef = useRef<HTMLSpanElement | null>(null);
-  const [mounted, setMounted] = useState(false);
   const [letterRects, setLetterRects] = useState<LetterRect[]>([]);
   const [fontSize, setFontSize] = useState(0);
   const [viewport, setViewport] = useState({ w: 0, h: 0 });
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return false;
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  });
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const chars = useMemo(() => buildSegments(text, isRTL), [text, isRTL]);
@@ -225,9 +227,6 @@ export function InteractiveName({ text, isRTL = false }: InteractiveNameProps) {
     const nonSpaceCount = chars.filter((char) => !char.isSpace).length;
     const leftSlots = Math.ceil(nonSpaceCount / 2);
     const rightSlots = Math.floor(nonSpaceCount / 2);
-    let visibleIndex = 0;
-    let leftSeen = 0;
-    let rightSeen = 0;
 
     return chars.map((ch, i) => {
       const r = (k: number) => rand(i * 7 + k * 31 + 13);
@@ -235,8 +234,10 @@ export function InteractiveName({ text, isRTL = false }: InteractiveNameProps) {
       let homeYFactor = 0.12 + r(2) * 0.72;
 
       if (!ch.isSpace) {
-        const prefersLeft = visibleIndex % 2 === 0;
-        const sideIndex = prefersLeft ? leftSeen : rightSeen;
+        const nonSpaceIndex =
+          chars.slice(0, i + 1).filter((segment) => !segment.isSpace).length - 1;
+        const prefersLeft = nonSpaceIndex % 2 === 0;
+        const sideIndex = Math.floor(nonSpaceIndex / 2);
         const sideTotal = Math.max(prefersLeft ? leftSlots : rightSlots, 1);
         const normalizedY = (sideIndex + 0.5) / sideTotal;
         const fallbackY = clamp(0.28 + normalizedY * 0.42 + (r(19) - 0.5) * 0.05, 0.26, 0.74);
@@ -270,12 +271,6 @@ export function InteractiveName({ text, isRTL = false }: InteractiveNameProps) {
         homeXFactor = bestX;
         homeYFactor = bestY;
         occupiedHomes.push({ x: homeXFactor, y: homeYFactor });
-        visibleIndex += 1;
-        if (prefersLeft) {
-          leftSeen += 1;
-        } else {
-          rightSeen += 1;
-        }
       }
 
       return {
@@ -301,10 +296,8 @@ export function InteractiveName({ text, isRTL = false }: InteractiveNameProps) {
   }, [chars]);
 
   useEffect(() => {
-    setMounted(true);
     if (typeof window !== "undefined" && window.matchMedia) {
       const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-      setReducedMotion(mq.matches);
       const onChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
       mq.addEventListener?.("change", onChange);
       return () => mq.removeEventListener?.("change", onChange);
@@ -312,7 +305,7 @@ export function InteractiveName({ text, isRTL = false }: InteractiveNameProps) {
   }, []);
 
   useLayoutEffect(() => {
-    if (!mounted) return;
+    if (typeof window === "undefined") return;
     let cancelled = false;
 
     const compute = () => {
@@ -376,7 +369,7 @@ export function InteractiveName({ text, isRTL = false }: InteractiveNameProps) {
       cancelled = true;
       window.removeEventListener("resize", onResize);
     };
-  }, [chars, mounted]);
+  }, [chars]);
 
   const { scrollY } = useScroll();
 
@@ -397,7 +390,8 @@ export function InteractiveName({ text, isRTL = false }: InteractiveNameProps) {
     mass: 1,
   });
 
-  const ready = mounted && letterRects.length === chars.length;
+  const canUseDOM = typeof document !== "undefined";
+  const ready = canUseDOM && letterRects.length === chars.length;
 
   return (
     <>

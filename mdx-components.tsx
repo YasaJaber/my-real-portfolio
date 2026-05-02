@@ -3,6 +3,10 @@ import Link from "next/link";
 import Image, { type ImageProps } from "next/image";
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
+  return getMDXComponents(components);
+}
+
+export function getMDXComponents(components: MDXComponents): MDXComponents {
   return {
     h1: ({ children }) => (
       <h1 className="mt-10 mb-6 font-display text-4xl font-bold tracking-tight text-white">

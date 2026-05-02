@@ -8,7 +8,7 @@ import {
   type KeyboardEvent,
 } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Send, User, Sparkles, Plus } from "lucide-react";
+import { X, Send, User, Plus } from "lucide-react";
 import { BotIcon } from "@/components/visuals/BotIcon";
 import { useLanguage } from "@/i18n/LanguageContext";
 import DOMPurify from "dompurify";

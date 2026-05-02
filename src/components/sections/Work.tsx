@@ -499,11 +499,7 @@ function ProjectModal({
   onClose: () => void;
 }) {
   const { locale } = useLanguage();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const canUseDOM = typeof document !== "undefined";
 
   // Lock body scroll while the modal is open so the page underneath
   // doesn't bounce when users wheel inside the dialog.
@@ -519,7 +515,7 @@ function ProjectModal({
   // Render via a portal so the modal escapes ancestors that create a
   // containing block (e.g. the Work card stack uses CSS `perspective`,
   // which traps `position: fixed` and would hide the dialog).
-  if (!mounted) return null;
+  if (!canUseDOM) return null;
 
   const title = project && locale === "ar" ? project.titleAr : project?.title;
   const category = project && locale === "ar" ? project.categoryAr : project?.category;

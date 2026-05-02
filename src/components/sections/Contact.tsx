@@ -1,6 +1,6 @@
 "use client";
 
-import { type ChangeEvent, type FormEvent, useEffect, useState } from "react";
+import { type ChangeEvent, type FormEvent, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Send, MailCheck } from "lucide-react";
 import { siteConfig } from "@/config/site";
@@ -26,24 +26,14 @@ export function Contact() {
     status: "idle",
     message: "",
   });
-  const [hasSent, setHasSent] = useState(false);
-  const [senderName, setSenderName] = useState("");
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const sentFlag = window.localStorage.getItem(CONTACT_SENT_STORAGE_KEY);
-    const savedName = window.localStorage.getItem(
-      `${CONTACT_SENT_STORAGE_KEY}_name`,
-    );
-
-    if (sentFlag === "true") {
-      setHasSent(true);
-      if (savedName) {
-        setSenderName(savedName);
-      }
-    }
-  }, []);
+  const [hasSent, setHasSent] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.localStorage.getItem(CONTACT_SENT_STORAGE_KEY) === "true";
+  });
+  const [senderName, setSenderName] = useState(() => {
+    if (typeof window === "undefined") return "";
+    return window.localStorage.getItem(`${CONTACT_SENT_STORAGE_KEY}_name`) ?? "";
+  });
 
   const handleChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,

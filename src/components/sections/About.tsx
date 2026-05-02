@@ -16,12 +16,9 @@ export function About() {
   const [isImageHovered, setIsImageHovered] = useState(false);
   const [shutterTrigger, setShutterTrigger] = useState(0);
   const [isCvOpen, setIsCvOpen] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
   const { locale, t } = useLanguage();
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const canUseDOM = typeof document !== "undefined";
 
   useEffect(() => {
     if (!isCvOpen) {
@@ -272,7 +269,7 @@ export function About() {
         </div>
       </section>
 
-      {isMounted
+      {canUseDOM
         ? createPortal(
             <AnimatePresence>
               {isCvOpen ? (

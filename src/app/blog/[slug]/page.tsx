@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { compileMDX } from "next-mdx-remote/rsc";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { getAllPostSlugs, getPostBySlug } from "@/lib/posts";
-import { useMDXComponents } from "../../../../mdx-components";
+import { getMDXComponents } from "../../../../mdx-components";
 import { formatDate } from "@/lib/utils";
 import { siteConfig } from "@/config/site";
 import {
@@ -83,7 +83,7 @@ export default async function BlogPostPage({ params }: { params: Params }) {
   const post = getPostBySlug(slug);
   if (!post) notFound();
 
-  const components = useMDXComponents({});
+  const components = getMDXComponents({});
   const { content } = await compileMDX({
     source: post.content,
     components,
