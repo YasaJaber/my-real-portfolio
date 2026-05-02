@@ -101,7 +101,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body
-        className="relative min-h-dvh overflow-x-hidden bg-base text-white antialiased"
+        className="relative min-h-dvh max-w-[100vw] overflow-x-hidden bg-base text-white antialiased"
         suppressHydrationWarning
       >
         <LanguageProvider>
@@ -113,7 +113,7 @@ export default function RootLayout({
           <Navbar />
 
           <PageTransition>
-            <main className="relative z-10">{children}</main>
+            <main className="relative z-10 max-w-[100vw] overflow-x-hidden">{children}</main>
           </PageTransition>
 
           <Footer />

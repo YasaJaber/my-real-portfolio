@@ -188,7 +188,7 @@ function SkillCard({ skill, index }: { skill: SkillItem; index: number }) {
         style={{ backgroundColor: `${skill.color}20` }}
       />
 
-      <div className="relative flex flex-col items-center gap-3 rounded-2xl border border-white/[0.06] bg-white/[0.02] px-4 py-5 backdrop-blur-sm transition-all duration-500 group-hover:border-white/[0.12] group-hover:bg-white/[0.05]">
+      <div className="relative flex flex-col items-center gap-3 rounded-2xl border border-white/[0.06] bg-white/[0.02] px-3 py-4 backdrop-blur-sm transition-all duration-500 group-hover:border-white/[0.12] group-hover:bg-white/[0.05] sm:px-4 sm:py-5">
         {/* Icon container with subtle ring */}
         <div className="relative">
           {/* Animated ring on hover */}
@@ -205,14 +205,14 @@ function SkillCard({ skill, index }: { skill: SkillItem; index: number }) {
           />
 
           <div
-            className="relative flex h-11 w-11 items-center justify-center rounded-xl transition-all duration-500"
+            className="relative flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-500 sm:h-11 sm:w-11"
             style={{
               background: `linear-gradient(135deg, ${skill.color}12, ${skill.color}06)`,
               boxShadow: `0 0 0 1px ${skill.color}15`,
             }}
           >
             <Icon
-              size={22}
+              size={20}
               className="transition-all duration-500 group-hover:scale-110"
               style={{
                 color: `${skill.color}CC`,
@@ -276,16 +276,16 @@ export function Skills() {
   const { locale, t } = useLanguage();
 
   return (
-    <section id="skills" className="section-wrapper">
+     <section id="skills" className="section-wrapper overflow-hidden">
       {/* Header */}
-      <div className="mb-16">
+      <div className="mb-14 sm:mb-16">
         <Reveal direction="up" distance={14}>
           <span className="font-mono text-xs uppercase tracking-[0.3em] text-white/45">
             {t.skills.label[locale]}
           </span>
         </Reveal>
         <Reveal direction="up" delay={0.08}>
-          <h2 className="mt-5 font-display text-4xl font-semibold leading-tight text-white md:text-5xl">
+          <h2 className="mt-5 font-display text-3xl font-semibold leading-tight text-white sm:text-4xl md:text-5xl">
             {t.skills.heading[locale]}
           </h2>
         </Reveal>
@@ -297,7 +297,7 @@ export function Skills() {
       </div>
 
       {/* Skill groups */}
-      <Stagger className="space-y-14" stagger={0.15} delay={0.1}>
+      <Stagger className="space-y-12 sm:space-y-14" stagger={0.15} delay={0.1}>
         {skillGroups.map((group, groupIdx) => {
           const groupTranslation = t.skills.groups[group.key as keyof typeof t.skills.groups];
           const localizedLabel = groupTranslation ? groupTranslation[locale].label : group.label;
@@ -312,7 +312,7 @@ export function Skills() {
               />
 
               <motion.div
-                className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8"
+                className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8"
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, margin: "-40px" }}
@@ -334,12 +334,12 @@ export function Skills() {
 
       {/* Bottom decorative line */}
       <Reveal direction="up" delay={0.3}>
-        <div className="mt-20 flex items-center justify-center gap-3">
-          <div className="h-px w-12 bg-gradient-to-r from-transparent to-white/15" />
-          <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-white/25">
+        <div className="mt-16 flex items-center justify-center gap-3 sm:mt-20">
+          <div className="h-px w-8 bg-gradient-to-r from-transparent to-white/15 sm:w-12" />
+          <span className="text-center font-mono text-[10px] uppercase tracking-[0.3em] text-white/25 sm:tracking-[0.4em]">
             {t.skills.alwaysLearning[locale]}
           </span>
-          <div className="h-px w-12 bg-gradient-to-l from-transparent to-white/15" />
+          <div className="h-px w-8 bg-gradient-to-l from-transparent to-white/15 sm:w-12" />
         </div>
       </Reveal>
     </section>

@@ -159,7 +159,7 @@ export const translations = {
 
   // ── Footer ──
   footer: {
-    builtWith: { en: "Built with Next.js", ar: "مبني بـ Next.js" },
+    builtWith: { en: "", ar: "" },
   },
 
   // ── Chatbot ──

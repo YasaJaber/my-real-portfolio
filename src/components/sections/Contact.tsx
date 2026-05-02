@@ -103,13 +103,13 @@ export function Contact() {
   };
 
   return (
-    <section id="contact" className="section-wrapper">
+     <section id="contact" className="section-wrapper overflow-hidden">
       <motion.div
         initial={{ opacity: 0, y: 40, scale: 0.98 }}
         whileInView={{ opacity: 1, y: 0, scale: 1 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.9, ease: easeOut }}
-        className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-10 md:p-16"
+        className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-5 sm:p-8 md:p-12 lg:p-16"
       >
         {/* Subtle ambient glow inside card */}
         <span
@@ -128,7 +128,7 @@ export function Contact() {
         </Reveal>
 
         <Reveal direction="up" delay={0.08}>
-          <h2 className="mt-5 max-w-3xl font-display text-3xl font-semibold leading-tight text-white md:text-5xl">
+          <h2 className="mt-5 max-w-3xl font-display text-3xl font-semibold leading-tight text-white sm:text-4xl md:text-5xl">
             {t.contact.heading[locale]}
           </h2>
         </Reveal>
@@ -171,7 +171,7 @@ export function Contact() {
                   transformStyle: "preserve-3d",
                   willChange: "transform, opacity",
                 }}
-                className="grid w-full gap-4 rounded-xl border border-white/10 bg-white/[0.02] p-4 md:p-6"
+                className="grid w-full gap-4 rounded-xl border border-white/10 bg-white/[0.02] p-4 sm:p-5 md:p-6"
               >
                 <input
                   type="text"
@@ -201,10 +201,10 @@ export function Contact() {
                   className="resize-none rounded-lg border border-white/10 bg-black/20 px-4 py-3 text-sm text-white placeholder:text-white/40 outline-none transition focus:border-white/25"
                 />
 
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
                   <button
                     type="submit"
-                    className="btn-primary disabled:cursor-not-allowed disabled:opacity-60"
+                    className="btn-primary w-full disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
                     disabled={submitState.status === "loading"}
                   >
                     <Send size={16} />
@@ -232,7 +232,7 @@ export function Contact() {
                   delay: 0.9,
                   ease: easeOut,
                 }}
-                className="relative w-full overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] p-8 md:p-10"
+                className="relative w-full overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] p-6 sm:p-8 md:p-10"
               >
                 <span
                   aria-hidden
@@ -290,7 +290,7 @@ export function Contact() {
         </div>
 
         <Stagger
-          className="mt-12 grid gap-6 border-t border-white/10 pt-8 text-sm md:grid-cols-3"
+          className="mt-10 grid gap-6 border-t border-white/10 pt-8 text-sm md:mt-12 md:grid-cols-3"
           stagger={0.12}
           delay={0.05}
         >

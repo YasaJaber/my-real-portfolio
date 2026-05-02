@@ -11,17 +11,23 @@ import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { useLanguage } from "@/i18n/LanguageContext";
 
 const NAV_KEYS = ["home", "about", "projects", "contact"] as const;
+let hasAnimatedNavbar = false;
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [activeId, setActiveId] = useState<string>("home");
   const { locale, t } = useLanguage();
+  const shouldAnimateIn = !hasAnimatedNavbar;
 
   const navItems = siteConfig.nav.map((item, i) => ({
     ...item,
     label: t.nav[NAV_KEYS[i]][locale],
   }));
+
+  useEffect(() => {
+    hasAnimatedNavbar = true;
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -63,17 +69,22 @@ export function Navbar() {
 
   return (
     <motion.header
-      initial={{ x: "-50%", y: -30, opacity: 0 }}
+      initial={shouldAnimateIn ? { x: "-50%", y: -30, opacity: 0 } : false}
       animate={{ x: "-50%", y: 0, opacity: 1 }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       className={cn(
-        "fixed left-1/2 top-4 z-50 w-[calc(100%-2rem)] max-w-5xl rounded-full border transition-all duration-500",
+        "fixed left-1/2 top-3 z-50 w-[calc(100%-1rem)] max-w-5xl transform-gpu rounded-full border transition-all duration-500 sm:top-4 sm:w-[calc(100%-2rem)]",
         scrolled
           ? "border-white/10 bg-black/55 shadow-[0_8px_30px_-10px_rgba(0,0,0,0.6)] backdrop-blur-xl"
           : "border-white/[0.06] bg-white/[0.015] backdrop-blur-md"
       )}
+      style={{
+        willChange: "transform, opacity",
+        backfaceVisibility: "hidden",
+        WebkitBackfaceVisibility: "hidden",
+      }}
     >
-      <nav className="relative flex items-center justify-between px-5 py-3 md:px-7">
+      <nav className="relative flex items-center justify-between gap-3 px-4 py-2.5 sm:px-5 sm:py-3 md:px-7">
         <Link
           href="/"
           className="group flex flex-1 items-center"
@@ -82,7 +93,7 @@ export function Navbar() {
           <motion.div
             whileHover={{ scale: 1.08 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="w-20 md:w-24"
+            className="w-16 sm:w-20 md:w-24"
           >
             <LogoCodeMark />
           </motion.div>
@@ -128,7 +139,7 @@ export function Navbar() {
           <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }}>
             <Link
               href="/blog"
-              className="btn-primary !px-5 !py-2 text-xs"
+              className="btn-primary min-h-[2.5rem] shrink-0 !px-4 !py-2 text-[11px] font-semibold uppercase tracking-[0.16em] lg:!px-5"
               data-cursor-grow
             >
               {t.nav.blog[locale]}
@@ -136,24 +147,36 @@ export function Navbar() {
           </motion.div>
         </div>
 
-        <button
-          onClick={() => setOpen((v) => !v)}
-          className="grid h-9 w-9 place-items-center rounded-full border border-white/15 bg-white/[0.04] text-white transition-colors hover:bg-white/[0.08] md:hidden"
-          aria-label="Toggle menu"
-        >
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.span
-              key={open ? "close" : "open"}
-              initial={{ opacity: 0, rotate: -45, scale: 0.7 }}
-              animate={{ opacity: 1, rotate: 0, scale: 1 }}
-              exit={{ opacity: 0, rotate: 45, scale: 0.7 }}
-              transition={{ duration: 0.25 }}
-              className="grid place-items-center"
+        <div className="flex items-center gap-2 md:hidden">
+          <motion.div whileTap={{ scale: 0.97 }}>
+            <Link
+              href="/blog"
+              className="btn-primary min-h-[2.5rem] !px-3.5 !py-2 text-[10px] font-semibold uppercase tracking-[0.18em] shadow-none"
+              data-cursor-grow
             >
-              {open ? <X size={16} /> : <Menu size={16} />}
-            </motion.span>
-          </AnimatePresence>
-        </button>
+              {t.nav.blog[locale]}
+            </Link>
+          </motion.div>
+
+          <button
+            onClick={() => setOpen((v) => !v)}
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/15 bg-white/[0.04] text-white transition-colors hover:bg-white/[0.08]"
+            aria-label="Toggle menu"
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.span
+                key={open ? "close" : "open"}
+                initial={{ opacity: 0, rotate: -45, scale: 0.7 }}
+                animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                exit={{ opacity: 0, rotate: 45, scale: 0.7 }}
+                transition={{ duration: 0.25 }}
+                className="grid place-items-center"
+              >
+                {open ? <X size={16} /> : <Menu size={16} />}
+              </motion.span>
+            </AnimatePresence>
+          </button>
+        </div>
       </nav>
 
       <AnimatePresence>
@@ -173,7 +196,7 @@ export function Navbar() {
                 hidden: {},
                 visible: { transition: { staggerChildren: 0.05 } },
               }}
-              className="flex flex-col gap-1 px-5 pb-5"
+              className="flex flex-col gap-1 px-4 pb-4 sm:px-5 sm:pb-5"
             >
               {navItems.map((item) => (
                 <motion.li
@@ -202,22 +225,6 @@ export function Navbar() {
                 className="flex items-center justify-center pt-2"
               >
                 <LanguageSwitcher />
-              </motion.li>
-
-              <motion.li
-                variants={{
-                  hidden: { opacity: 0, y: 12 },
-                  visible: { opacity: 1, y: 0 },
-                }}
-                className="pt-2"
-              >
-                <Link
-                  href="/blog"
-                  onClick={() => setOpen(false)}
-                  className="btn-primary w-full text-center"
-                >
-                  {t.nav.blog[locale]}
-                </Link>
               </motion.li>
             </motion.ul>
           </motion.div>

@@ -421,7 +421,7 @@ export function InteractiveName({ text, isRTL = false }: InteractiveNameProps) {
         createPortal(
           <div
             aria-hidden
-            className="pointer-events-none fixed inset-0 z-[2] overflow-visible"
+            className="pointer-events-none fixed inset-0 z-[2] overflow-hidden"
             style={{ direction: isRTL ? "rtl" : "ltr" }}
           >
             {chars.map((ch, i) => {

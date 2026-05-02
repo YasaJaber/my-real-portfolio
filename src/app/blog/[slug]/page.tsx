@@ -103,7 +103,7 @@ export default async function BlogPostPage({ params }: { params: Params }) {
 
       <article className="relative" dir={isRTL ? "rtl" : "ltr"} lang={meta.lang}>
         {/* Cover */}
-        <div className="relative w-full overflow-hidden pt-24 pb-0">
+        <div className="relative w-full overflow-hidden pb-0 pt-20 sm:pt-24">
           {/* Blurred background fill */}
           <div className="absolute inset-0">
             <Image
@@ -118,7 +118,7 @@ export default async function BlogPostPage({ params }: { params: Params }) {
           </div>
 
           {/* Centered contained image */}
-          <div className="relative mx-auto max-w-3xl px-6 pt-10 pb-0">
+          <div className="relative mx-auto max-w-3xl px-4 pb-0 pt-8 sm:px-6 sm:pt-10">
             <div className="relative aspect-[3/4] w-full overflow-hidden rounded-3xl border border-white/10 shadow-[0_25px_100px_-20px_rgba(168,85,247,0.35)] ring-1 ring-white/5">
               <Image
                 src={meta.cover}
@@ -158,10 +158,10 @@ export default async function BlogPostPage({ params }: { params: Params }) {
               <span>{meta.readingTime}</span>
             </div>
 
-            <h1 className="font-display text-4xl font-bold leading-[1.05] text-white md:text-6xl">
+            <h1 className="font-display text-3xl font-bold leading-[1.05] text-white sm:text-4xl md:text-6xl">
               {meta.title}
             </h1>
-            <p className="mt-6 text-xl text-white/75">{meta.summary}</p>
+            <p className="mt-5 text-base text-white/75 sm:text-lg md:text-xl">{meta.summary}</p>
 
             <div className="my-10 hairline" />
 

@@ -16,7 +16,14 @@ export function SmoothScroll() {
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
-    if (reduceMotion) return;
+    const isTouchDevice =
+      window.matchMedia("(pointer: coarse)").matches ||
+      window.matchMedia("(hover: none)").matches ||
+      navigator.maxTouchPoints > 0;
+
+    // Keep native momentum scrolling on touch devices to avoid
+    // jank during layout/animation updates on mobile browsers.
+    if (reduceMotion || isTouchDevice) return;
 
     let cleanup: (() => void) | undefined;
 

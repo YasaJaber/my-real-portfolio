@@ -26,7 +26,7 @@ export function BlogTeaserList({ posts }: Props) {
 
   return (
     <section className="section-wrapper">
-      <div className="mb-12 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
+      <div className="mb-10 flex flex-col items-start justify-between gap-4 md:mb-12 md:flex-row md:items-end">
         <div>
           <Reveal direction="up" distance={14}>
             <span className="font-mono text-xs uppercase tracking-[0.3em] text-white/45">
@@ -34,7 +34,7 @@ export function BlogTeaserList({ posts }: Props) {
             </span>
           </Reveal>
           <Reveal direction="up" delay={0.08}>
-            <h2 className="mt-5 max-w-2xl font-display text-3xl font-semibold leading-tight text-white md:text-4xl">
+            <h2 className="mt-5 max-w-2xl font-display text-3xl font-semibold leading-tight text-white sm:text-4xl">
               {t.blog.heading[locale]}
             </h2>
           </Reveal>
@@ -80,7 +80,7 @@ export function BlogTeaserList({ posts }: Props) {
           >
             <Link
               href={`/blog/${post.slug}`}
-              className="group relative grid gap-2 py-7 transition-colors hover:bg-white/[0.02] md:grid-cols-[160px_1fr_auto] md:items-center md:gap-10 md:px-2"
+              className="group relative grid gap-2 py-6 transition-colors hover:bg-white/[0.02] sm:py-7 md:grid-cols-[160px_1fr_auto] md:items-center md:gap-10 md:px-2"
               data-cursor-grow
             >
               <span

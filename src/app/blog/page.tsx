@@ -30,13 +30,13 @@ export default function BlogIndexPage() {
   const posts = getAllPosts();
 
   return (
-    <div className="section-wrapper pt-40">
+    <div className="section-wrapper pt-32 sm:pt-36 md:pt-40">
       {/* Header */}
       <div className="mb-14 max-w-3xl">
         <span className="font-mono text-xs uppercase tracking-[0.3em] text-white/45">
           Blog
         </span>
-        <h1 className="mt-5 font-display text-4xl font-semibold leading-tight text-white md:text-5xl">
+        <h1 className="mt-5 font-display text-3xl font-semibold leading-tight text-white sm:text-4xl md:text-5xl">
           Articles
         </h1>
         <p className="mt-5 text-base leading-relaxed text-white/65">
@@ -62,7 +62,7 @@ export default function BlogIndexPage() {
           <li key={post.slug}>
             <Link
               href={`/blog/${post.slug}`}
-              className="group grid gap-3 py-8 transition-colors hover:bg-white/[0.02] md:grid-cols-[1fr_auto] md:items-center md:gap-10 md:px-2"
+              className="group grid gap-3 py-6 transition-colors hover:bg-white/[0.02] sm:py-8 md:grid-cols-[1fr_auto] md:items-center md:gap-10 md:px-2"
               data-cursor-grow
             >
               <div>
@@ -74,7 +74,7 @@ export default function BlogIndexPage() {
                   <span>·</span>
                   <span>{post.readingTime}</span>
                 </div>
-                <h2 className="font-display text-2xl font-semibold leading-snug text-white transition-colors group-hover:text-accent-cyan md:text-3xl">
+                <h2 className="font-display text-xl font-semibold leading-snug text-white transition-colors group-hover:text-accent-cyan sm:text-2xl md:text-3xl">
                   {post.title}
                 </h2>
                 <p className="mt-3 max-w-2xl text-white/65">{post.summary}</p>

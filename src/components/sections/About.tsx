@@ -46,10 +46,10 @@ export function About() {
 
   return (
     <>
-      <section id="about" className="section-wrapper">
-        <div className="grid items-center gap-16 md:grid-cols-2 md:gap-24 lg:gap-32">
+      <section id="about" className="section-wrapper overflow-hidden">
+        <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16 lg:gap-24">
         {/* Left: bio text */}
-        <div className="flex flex-col">
+        <div className="order-2 flex flex-col md:order-1">
           <Reveal direction="up" distance={14}>
             <span className="font-mono text-xs uppercase tracking-[0.3em] text-white/45">
               {t.about.label[locale]}
@@ -57,13 +57,13 @@ export function About() {
           </Reveal>
 
           <Reveal direction="up" delay={0.08}>
-            <h2 className="mt-5 font-display text-4xl font-semibold leading-tight text-white md:text-5xl lg:text-6xl">
+            <h2 className="mt-5 font-display text-3xl font-semibold leading-tight text-white sm:text-4xl md:text-5xl lg:text-6xl">
               {t.about.heading[locale]}
             </h2>
           </Reveal>
 
           <Reveal direction="up" delay={0.16}>
-            <p className="mt-7 text-pretty text-base leading-relaxed text-white/65 md:text-lg">
+            <p className="mt-6 text-pretty text-base leading-relaxed text-white/65 md:text-lg">
               {locale === "en" ? (
                 <>
                   I&apos;m <span className="text-white font-medium">Yasa</span>, a
@@ -138,8 +138,8 @@ export function About() {
 
             {/* Experience highlight */}
             <Reveal direction="up" delay={0.36}>
-              <div className="mt-10 flex items-center gap-6 border-t border-white/10 pt-7">
-                <span className="font-display text-6xl font-semibold leading-none tracking-tight text-white md:text-7xl">
+              <div className="mt-10 flex items-center gap-4 border-t border-white/10 pt-7 sm:gap-6">
+                <span className="font-display text-5xl font-semibold leading-none tracking-tight text-white sm:text-6xl md:text-7xl">
                   3
                 </span>
                 <span aria-hidden className="h-12 w-px bg-white/15" />
@@ -158,7 +158,7 @@ export function About() {
           {/* Right: photo */}
           <Reveal direction="up" delay={0.12}>
             <motion.div
-              className="group relative mx-auto w-full max-w-sm md:max-w-none"
+              className="group relative order-1 mx-auto w-full max-w-sm overflow-hidden md:order-2 md:max-w-none"
               whileHover={{ scale: 1.01 }}
               transition={{ duration: 0.5, ease: easeOut }}
               onPointerEnter={() => {
@@ -252,7 +252,7 @@ export function About() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.4, ease: easeOut }}
-                className="absolute -bottom-4 -left-4 flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.05] px-4 py-2.5 backdrop-blur-md rtl:-left-auto rtl:-right-4"
+                className="absolute bottom-4 left-4 flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.05] px-4 py-2.5 backdrop-blur-md rtl:left-auto rtl:right-4"
               >
                 <span className="relative flex h-2.5 w-2.5">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
@@ -278,16 +278,16 @@ export function About() {
                   exit={{ opacity: 0 }}
                   onClick={() => setIsCvOpen(false)}
                 >
-                  <div className="flex min-h-dvh items-center justify-center px-4 py-6">
+                  <div className="flex min-h-dvh items-start justify-center px-3 py-4 sm:items-center sm:px-4 sm:py-6">
                     <motion.div
-                      className="glass-strong relative flex h-[85dvh] w-full max-w-6xl flex-col overflow-hidden rounded-3xl"
+                      className="glass-strong relative flex h-[88dvh] w-full max-w-6xl flex-col overflow-hidden rounded-2xl sm:h-[85dvh] sm:rounded-3xl"
                       initial={{ opacity: 0, y: 24, scale: 0.98 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 24, scale: 0.98 }}
                       transition={{ duration: 0.3, ease: easeOut }}
                       onClick={(event) => event.stopPropagation()}
                     >
-                      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-4 md:px-6">
+                      <div className="flex flex-col gap-3 border-b border-white/10 px-4 py-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between md:px-6">
                         <div>
                           <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-white/45">
                             {t.about.resume[locale]}
@@ -297,11 +297,11 @@ export function About() {
                           </h3>
                         </div>
 
-                        <div className="flex items-center gap-2">
+                        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
                           <motion.a
                             href={cvFileUrl}
                             download="Yasa-Jaber-CV.pdf"
-                            className="btn-ghost !px-4 !py-2.5"
+                            className="btn-ghost w-full !px-4 !py-2.5 sm:w-auto"
                             data-cursor-grow
                             whileHover={{ y: -2 }}
                             whileTap={{ scale: 0.97 }}
@@ -313,7 +313,7 @@ export function About() {
                           <motion.button
                             type="button"
                             onClick={() => setIsCvOpen(false)}
-                            className="btn-ghost !px-4 !py-2.5"
+                            className="btn-ghost w-full !px-4 !py-2.5 sm:w-auto"
                             aria-label="Close CV preview"
                             data-cursor-grow
                             whileHover={{ y: -2 }}
@@ -325,7 +325,7 @@ export function About() {
                         </div>
                       </div>
 
-                      <div className="min-h-0 flex-1 bg-black/30 p-3 md:p-4">
+                      <div className="min-h-0 flex-1 bg-black/30 p-2 sm:p-3 md:p-4">
                         <iframe
                           src={`${cvFileUrl}#view=FitH`}
                           title="Yasa Jaber CV Preview"

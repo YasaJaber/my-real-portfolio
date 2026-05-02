@@ -59,6 +59,8 @@ html.lenis body {
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    max-width: 100vw;
   }
 
   /* Fallback smooth scrolling for users with reduced motion / no Lenis */
@@ -73,6 +75,7 @@ html.lenis body {
     font-family: var(--font-inter), system-ui, sans-serif;
     background-color: var(--base);
     overflow-x: hidden;
+    max-width: 100vw;
   }
 
   ::selection {
@@ -127,7 +130,9 @@ html.lenis body {
 
   /* Section wrapper */
   .section-wrapper {
-    @apply relative mx-auto w-full max-w-7xl px-6 py-24 md:px-10 md:py-32;
+    @apply relative mx-auto w-full px-4 py-20 sm:px-6 sm:py-24 md:px-8 md:py-28 lg:px-10 lg:py-32;
+    max-width: min(80rem, 100vw);
+    overflow-x: hidden;
   }
 
   /* Hairline divider */
@@ -199,9 +204,15 @@ html.lenis body {
 
   /* Floating trigger button */
   .chatbot-trigger-wrap {
-    @apply fixed bottom-6 right-6 z-[900] flex flex-col items-end gap-3;
+    @apply fixed bottom-4 right-4 z-[900] flex flex-col items-end gap-3 sm:bottom-6 sm:right-6;
     /* Prevent any layout shift */
-    width: 80px;
+    width: 72px;
+  }
+
+  @media (min-width: 640px) {
+    .chatbot-trigger-wrap {
+      width: 80px;
+    }
   }
 
   .chatbot-trigger-hint {
@@ -264,7 +275,7 @@ html.lenis body {
   }
 
   .chatbot-trigger {
-    @apply relative flex h-20 w-20 items-center justify-center transition-all duration-300;
+    @apply relative flex h-16 w-16 items-center justify-center transition-all duration-300 sm:h-20 sm:w-20;
     background: transparent;
     border: none;
     filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.5));
@@ -687,10 +698,16 @@ html.is-rtl .text-center {
 /* ── Chatbot RTL — flip to left side ── */
 html.is-rtl .chatbot-trigger-wrap {
   right: auto;
-  left: 3rem; /* Balanced position - not too far right */
+  left: 1rem; /* Balanced position on mobile */
   align-items: flex-start;
   /* Prevent transition on language switch */
   transition: none !important;
+}
+
+@media (min-width: 640px) {
+  html.is-rtl .chatbot-trigger-wrap {
+    left: 3rem;
+  }
 }
 
 html.is-rtl .chatbot-trigger-wrap * {
@@ -842,3 +859,37 @@ html.is-rtl .pointer-events-none.-right-32.-top-32 {
   left: -8rem;
 }
 
+/* ══════════════════════════════════════════════════════════
+   Mobile responsive — prevent horizontal scroll / overflow
+   ══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  html,
+  body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  main {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  .section-wrapper {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  img,
+  video,
+  canvas,
+  iframe {
+    max-width: 100%;
+    height: auto;
+  }
+
+  [class*="-inset-"],
+  [class*="-left-"],
+  [class*="-right-"] {
+    max-width: 100vw;
+  }
+}

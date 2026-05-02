@@ -145,8 +145,8 @@ export function Work() {
   }, [openProject]);
 
   return (
-    <section id="projects" className="section-wrapper">
-      <div className="mb-12 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
+     <section id="projects" className="section-wrapper overflow-hidden">
+      <div className="mb-10 flex flex-col items-start justify-between gap-4 md:mb-12 md:flex-row md:items-end">
         <div>
           <Reveal direction="up" distance={14}>
             <span className="font-mono text-xs uppercase tracking-[0.3em] text-white/45">
@@ -154,7 +154,7 @@ export function Work() {
             </span>
           </Reveal>
           <Reveal direction="up" delay={0.08}>
-            <h2 className="mt-5 max-w-2xl font-display text-3xl font-semibold leading-tight text-white md:text-4xl">
+            <h2 className="mt-5 max-w-2xl font-display text-3xl font-semibold leading-tight text-white sm:text-4xl">
               {t.work.heading[locale]}
             </h2>
           </Reveal>
@@ -166,12 +166,12 @@ export function Work() {
         <div className="relative mx-auto w-full max-w-4xl">
           {/* Card stack viewport */}
           <div
-            className="relative min-h-[600px] sm:min-h-[650px] md:min-h-[700px]"
+            className="relative min-h-[460px] overflow-hidden sm:min-h-[560px] md:min-h-[700px]"
             onMouseEnter={() => setHoverPaused(true)}
             onMouseLeave={() => setHoverPaused(false)}
-            style={{ perspective: 1400 }}
+            style={{ perspective: 1400, contain: "layout paint", isolation: "isolate" }}
           >
-            <AnimatePresence initial={false} mode="popLayout">
+            <AnimatePresence initial={false} mode="sync">
               {Array.from({ length: VISIBLE }).map((_, offset) => {
                 const i = (active + offset) % total;
                 const project = projects[i];
@@ -189,7 +189,7 @@ export function Work() {
           </div>
 
           {/* Controls + progress */}
-          <div className="mt-8 flex items-center justify-between gap-4">
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-4 sm:flex-nowrap">
             <button
               type="button"
               onClick={prev}
@@ -199,7 +199,7 @@ export function Work() {
               <ChevronLeft size={16} />
             </button>
 
-            <div className="flex flex-1 items-center justify-center gap-2">
+            <div className="order-3 flex w-full items-center justify-center gap-2 sm:order-none sm:w-auto sm:flex-1">
               {projects.map((p, i) => {
                 const isActive = i === active;
                 return (
@@ -241,7 +241,7 @@ export function Work() {
           </div>
 
           {/* Auto-advance progress bar */}
-          <div className="relative mt-5 flex items-center gap-3">
+          <div className="relative mt-5 flex items-center gap-2 sm:gap-3">
             <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-white/55">
               {String(active + 1).padStart(2, "0")}
             </span>
@@ -316,7 +316,13 @@ function StackCard({
         transition: { duration: 0.55, ease: easeOut },
       }}
       transition={{ duration: 0.65, ease: easeOut }}
-      style={{ zIndex: 10 - offset, pointerEvents: isTop ? "auto" : "none" }}
+      style={{
+        zIndex: 10 - offset,
+        pointerEvents: isTop ? "auto" : "none",
+        willChange: "transform, opacity",
+        backfaceVisibility: "hidden",
+        WebkitBackfaceVisibility: "hidden",
+      }}
     >
       <Card project={project} interactive={isTop} onOpen={onOpen} />
     </motion.div>
@@ -359,7 +365,7 @@ function Card({
       data-cursor-grow={interactive ? "" : undefined}
       {...inertProps}
       className={cn(
-        "group relative flex h-full w-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0a0a0a] text-left shadow-[0_30px_80px_-40px_rgba(0,0,0,0.95)]",
+        "group relative flex h-full w-full flex-col overflow-hidden rounded-xl border border-white/10 bg-[#0a0a0a] text-left shadow-[0_30px_80px_-40px_rgba(0,0,0,0.95)] sm:rounded-2xl",
         !interactive && "select-none"
       )}>
       {/* Subtle white wash on top of the solid base for a touch of glass */}
@@ -398,7 +404,7 @@ function Card({
         />
       )}
 
-      <div className="relative flex flex-1 flex-col gap-6 p-6 text-white md:p-8">
+      <div className="relative flex flex-1 flex-col gap-5 p-5 text-white sm:p-6 md:gap-6 md:p-8">
         {/* Header row */}
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0 flex-1">
@@ -407,14 +413,14 @@ function Card({
               <span aria-hidden>·</span>
               <span>{project.year}</span>
             </div>
-            <h3 className="font-display text-2xl font-semibold leading-tight text-white md:text-3xl">
+            <h3 className="font-display text-xl font-semibold leading-tight text-white sm:text-2xl md:text-3xl">
               {title}
             </h3>
             <RoleLine project={project} className="mt-2 text-xs" />
           </div>
           <span
             aria-hidden
-            className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-white/15 bg-white/[0.06] text-white transition-all duration-500 group-hover:rotate-45 group-hover:border-white/40 group-hover:bg-white/[0.12]"
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/15 bg-white/[0.06] text-white transition-all duration-500 group-hover:rotate-45 group-hover:border-white/40 group-hover:bg-white/[0.12] sm:h-11 sm:w-11"
           >
             <ArrowUpRight size={16} />
           </span>
@@ -422,7 +428,7 @@ function Card({
 
         {/* Summary */}
         <p
-          className="text-sm leading-relaxed !text-white md:text-base"
+          className="text-sm leading-relaxed !text-white sm:text-base"
           style={{ color: "rgba(255,255,255,0.92)" }}
         >
           {summary}
@@ -524,7 +530,7 @@ function ProjectModal({
     <AnimatePresence>
       {project && (
         <motion.div
-          className="fixed inset-0 z-[80] flex items-center justify-center p-4 sm:p-8"
+          className="fixed inset-0 z-[80] flex items-center justify-center p-3 sm:p-6 md:p-8"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -547,7 +553,7 @@ function ProjectModal({
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 20, opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.45, ease: easeOut }}
-            className="relative z-10 flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0a0a0a] text-white shadow-[0_40px_120px_-30px_rgba(0,0,0,0.95)]"
+            className="relative z-10 flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-white/10 bg-[#0a0a0a] text-white shadow-[0_40px_120px_-30px_rgba(0,0,0,0.95)] sm:rounded-2xl"
           >
             {/* Accent halo */}
             <span
@@ -563,7 +569,7 @@ function ProjectModal({
               type="button"
               onClick={onClose}
               aria-label="Close"
-              className="absolute right-4 top-4 z-20 grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-black/50 text-white/70 backdrop-blur transition hover:border-white/30 hover:bg-black/70 hover:text-white"
+              className="absolute right-3 top-3 z-20 grid h-9 w-9 place-items-center rounded-full border border-white/10 bg-black/50 text-white/70 backdrop-blur transition hover:border-white/30 hover:bg-black/70 hover:text-white sm:right-4 sm:top-4 sm:h-10 sm:w-10"
             >
               <X size={16} />
             </button>
@@ -589,20 +595,20 @@ function ProjectModal({
                 }}
               />
             )}
-            <div className="relative shrink-0 px-6 pb-6 pt-8 md:px-8 md:pb-7 md:pt-10">
+            <div className="relative shrink-0 px-5 pb-5 pt-7 sm:px-6 sm:pb-6 sm:pt-8 md:px-8 md:pb-7 md:pt-10">
               <div className="mb-3 flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-white/80">
                 <span>{category}</span>
                 <span aria-hidden>·</span>
                 <span>{project.year}</span>
               </div>
-              <h3 className="font-display text-2xl font-semibold leading-tight text-white md:text-4xl">
+              <h3 className="font-display text-2xl font-semibold leading-tight text-white sm:text-3xl md:text-4xl">
                 {title}
               </h3>
               <RoleLine project={project} className="mt-3 text-sm" />
             </div>
 
             {/* Scrollable body */}
-            <div className="relative flex-1 overflow-y-auto p-6 md:p-8">
+            <div className="relative flex-1 overflow-y-auto p-5 sm:p-6 md:p-8">
               <p
                 className="text-base leading-relaxed !text-white"
                 style={{ color: "rgba(255,255,255,0.92)" }}
@@ -652,12 +658,12 @@ function ProjectModal({
             </div>
 
             {/* Footer with CTAs */}
-            <div className="relative flex flex-col gap-3 border-t border-white/10 bg-black/40 p-5 sm:flex-row sm:items-center sm:justify-end md:p-6">
+            <div className="relative flex flex-col gap-3 border-t border-white/10 bg-black/40 p-4 sm:flex-row sm:items-center sm:justify-end sm:p-5 md:p-6">
               <a
                 href={project.repoUrl}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-5 py-2.5 font-mono text-xs uppercase tracking-[0.2em] text-white/80 transition hover:border-white/35 hover:bg-white/[0.08] hover:text-white"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-5 py-2.5 font-mono text-xs uppercase tracking-[0.2em] text-white/80 transition hover:border-white/35 hover:bg-white/[0.08] hover:text-white sm:w-auto"
               >
                 <Github size={14} />
                 <ModalViewRepoLabel />
@@ -667,7 +673,7 @@ function ProjectModal({
                   href={project.liveUrl}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-2.5 font-mono text-xs uppercase tracking-[0.2em] text-black transition hover:bg-white/90"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-white px-5 py-2.5 font-mono text-xs uppercase tracking-[0.2em] text-black transition hover:bg-white/90 sm:w-auto"
                 >
                   <ExternalLink size={14} />
                   <ModalLivePreviewLabel />

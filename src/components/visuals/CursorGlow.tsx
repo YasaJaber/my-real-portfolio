@@ -1,17 +1,35 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * CursorGlow — a smooth, lerped cursor halo overlayed on top of content.
  * Hidden on touch devices.
  */
 export function CursorGlow() {
+  const [enabled, setEnabled] = useState(false);
   const dotRef = useRef<HTMLDivElement | null>(null);
   const ringRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (window.matchMedia("(hover: none)").matches) return;
+    const media = window.matchMedia(
+      "(min-width: 768px) and (hover: hover) and (pointer: fine)"
+    );
+
+    const syncEnabled = () => setEnabled(media.matches);
+    syncEnabled();
+
+    if (typeof media.addEventListener === "function") {
+      media.addEventListener("change", syncEnabled);
+      return () => media.removeEventListener("change", syncEnabled);
+    }
+
+    media.addListener(syncEnabled);
+    return () => media.removeListener(syncEnabled);
+  }, []);
+
+  useEffect(() => {
+    if (!enabled) return;
 
     let mx = window.innerWidth / 2;
     let my = window.innerHeight / 2;
@@ -59,7 +77,9 @@ export function CursorGlow() {
       window.removeEventListener("mouseover", onEnter);
       window.removeEventListener("mouseout", onLeave);
     };
-  }, []);
+  }, [enabled]);
+
+  if (!enabled) return null;
 
   return (
     <>

@@ -28,8 +28,8 @@ export function Footer() {
   const { locale, t } = useLanguage();
 
   return (
-    <footer className="relative z-10 mt-20 border-t border-white/10 bg-black/40 backdrop-blur-xl">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-6 py-14 md:flex-row md:items-end md:justify-between md:px-10">
+     <footer className="relative z-10 mt-20 max-w-[100vw] overflow-x-hidden border-t border-white/10 bg-black/40 backdrop-blur-xl">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 py-12 text-center sm:px-6 md:flex-row md:items-end md:justify-between md:px-10 md:text-left">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -52,7 +52,7 @@ export function Footer() {
             hidden: {},
             visible: { transition: { staggerChildren: 0.07 } },
           }}
-          className="flex flex-wrap items-center gap-2"
+          className="flex flex-wrap items-center justify-center gap-2 md:justify-end"
         >
           {[
             { href: siteConfig.links.linkedin, icon: Linkedin, label: "LinkedIn" },
@@ -96,7 +96,7 @@ export function Footer() {
       </div>
 
       <div className="border-t border-white/10">
-        <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-3 px-6 py-5 font-mono text-[11px] uppercase tracking-[0.2em] text-white/40 md:flex-row md:px-10">
+        <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-3 px-4 py-5 text-center font-mono text-[11px] uppercase tracking-[0.2em] text-white/40 sm:px-6 md:flex-row md:px-10 md:text-left">
           <p>© {new Date().getFullYear()} {siteConfig.name}</p>
           <p>{t.footer.builtWith[locale]}</p>
         </div>

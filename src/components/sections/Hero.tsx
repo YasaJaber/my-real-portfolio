@@ -152,18 +152,18 @@ export function Hero() {
     <section
       id="home"
       ref={sectionRef}
-      className="relative flex min-h-[100dvh] w-full items-center justify-center overflow-hidden"
+      className="relative flex min-h-[100dvh] w-full max-w-[100vw] items-center justify-center overflow-hidden overflow-x-hidden px-4 pb-16 pt-28 sm:px-6 sm:pb-20 sm:pt-32"
     >
       <motion.div
         style={{ y: contentY, opacity: contentOpacity, filter: contentBlur }}
-        className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-6 text-center md:px-10"
+        className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-4 text-center md:px-10"
       >
         {/* Profile avatar with video-call ring */}
         <motion.div
           initial={{ opacity: 0, scale: 0.85, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.9, ease: easeOut }}
-          className="relative mb-10"
+          className="relative mb-8 sm:mb-10"
           style={{
             transform:
               "translate3d(calc(var(--hero-x, 0px) * 0.4), calc(var(--hero-y, 0px) * 0.4), 0)",
@@ -172,7 +172,7 @@ export function Hero() {
         >
           {/* Avatar container */}
           <motion.div
-            className="group relative h-36 w-36 cursor-pointer md:h-44 md:w-44"
+            className="group relative h-28 w-28 cursor-pointer sm:h-36 sm:w-36 md:h-44 md:w-44"
             whileHover={{ scale: 1.06 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
           >
@@ -244,8 +244,8 @@ export function Hero() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.15, ease: easeOut }}
-          className={`font-mono text-xs uppercase tracking-[0.3em] text-white/50 ${
-            locale === "ar" ? "mb-8 md:mb-9" : "mb-6"
+          className={`font-mono text-[11px] uppercase tracking-[0.26em] text-white/50 sm:text-xs sm:tracking-[0.3em] ${
+            locale === "ar" ? "mb-6 sm:mb-8 md:mb-9" : "mb-5 sm:mb-6"
           }`}
           style={{
             transform:
@@ -273,10 +273,11 @@ export function Hero() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.55, ease: easeOut }}
-          className={`max-w-xl text-pretty text-base leading-relaxed text-white/60 md:text-lg ${
-            locale === "ar" ? "mt-10 md:mt-11" : "mt-8"
+          className={`max-w-2xl text-pretty text-sm font-medium leading-relaxed [text-shadow:0_1px_18px_rgba(0,0,0,0.55)] sm:text-base md:text-lg ${
+            locale === "ar" ? "mt-8 sm:mt-10 md:mt-11" : "mt-6 sm:mt-8"
           }`}
           style={{
+            color: "rgba(255, 255, 255, 0.9)",
             transform:
               "translate3d(calc(var(--hero-x, 0px) * 0.3), calc(var(--hero-y, 0px) * 0.3), 0)",
             transition: "transform 500ms cubic-bezier(0.22,1,0.36,1)",
@@ -290,15 +291,15 @@ export function Hero() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.7, ease: easeOut }}
-          className="mt-9 flex flex-wrap items-center justify-center gap-3"
+          className="mt-8 flex w-full flex-col items-stretch justify-center gap-3 sm:mt-9 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center"
         >
-          <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }}>
-            <Link href="#projects" className="btn-primary" data-cursor-grow>
+          <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }} className="w-full sm:w-auto">
+            <Link href="#projects" className="btn-primary w-full sm:w-auto" data-cursor-grow>
               <span>{t.hero.viewProjects[locale]}</span>
             </Link>
           </motion.div>
-          <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }}>
-            <Link href="#contact" className="btn-ghost" data-cursor-grow>
+          <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }} className="w-full sm:w-auto">
+            <Link href="#contact" className="btn-ghost w-full sm:w-auto" data-cursor-grow>
               <span>{t.hero.getInTouch[locale]}</span>
               <ArrowDownRight
                 size={16}
@@ -318,7 +319,7 @@ export function Hero() {
               transition: { staggerChildren: 0.07, delayChildren: 0.9 },
             },
           }}
-          className="mt-10 flex flex-wrap items-center justify-center gap-3"
+          className="mt-8 flex flex-wrap items-center justify-center gap-2 sm:mt-10 sm:gap-3"
           style={{
             transform:
               "translate3d(calc(var(--hero-x, 0px) * 0.25), calc(var(--hero-y, 0px) * 0.25), 0)",
@@ -350,7 +351,7 @@ export function Hero() {
                   }
                   aria-label={label}
                   title={label}
-                  className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.02] text-white/60 backdrop-blur-sm transition-all duration-300 hover:border-emerald-400/40 hover:bg-emerald-500/10 hover:text-white hover:shadow-[0_0_20px_rgba(16,185,129,0.25)]"
+                  className="grid h-9 w-9 place-items-center rounded-full border border-white/10 bg-white/[0.02] text-white/60 backdrop-blur-sm transition-all duration-300 hover:border-emerald-400/40 hover:bg-emerald-500/10 hover:text-white hover:shadow-[0_0_20px_rgba(16,185,129,0.25)] sm:h-10 sm:w-10"
                   data-cursor-grow
                 >
                   <Icon size={15} />
@@ -367,7 +368,7 @@ export function Hero() {
         animate={{ opacity: 1 }}
         transition={{ duration: 1.2, delay: 1.1 }}
         style={{ opacity: cueOpacity }}
-        className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3 text-[10px] uppercase tracking-[0.4em] text-white/30"
+        className="absolute bottom-8 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-3 text-[10px] uppercase tracking-[0.4em] text-white/30 sm:flex"
       >
         <span>{t.hero.scroll[locale]}</span>
         <span className="block h-8 w-px overflow-hidden bg-white/15">
