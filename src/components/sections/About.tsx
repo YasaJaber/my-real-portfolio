@@ -164,6 +164,11 @@ export function About() {
               onPointerEnter={() => {
                 setIsImageHovered(true);
                 setShutterTrigger((trigger) => trigger + 1);
+                try {
+                  const audio = new Audio("/sounds/camera-shutter.mp3");
+                  audio.volume = 0.5;
+                  audio.play().catch(() => {});
+                } catch {}
               }}
               onPointerLeave={() => setIsImageHovered(false)}
             >
