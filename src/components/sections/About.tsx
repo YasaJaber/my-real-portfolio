@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { Download, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import { Reveal } from "@/components/visuals/Reveal";
 import { CameraShutter } from "@/components/visuals/CameraShutter";
@@ -17,8 +17,40 @@ export function About() {
   const [shutterTrigger, setShutterTrigger] = useState(0);
   const [isCvOpen, setIsCvOpen] = useState(false);
   const { locale, t } = useLanguage();
+  const audioPreloadedRef = useRef(false);
 
   const canUseDOM = typeof document !== "undefined";
+
+  // Pre-load audio on first user interaction
+  useEffect(() => {
+    if (audioPreloadedRef.current) return;
+
+    const preloadAudio = () => {
+      if (audioPreloadedRef.current) return;
+      
+      try {
+        const audio = new Audio("/sounds/camera-shutter.mp3");
+        audio.volume = 0.5;
+        audio.preload = "auto";
+        audio.load();
+        audioPreloadedRef.current = true;
+      } catch {
+        // Ignore errors
+      }
+    };
+
+    // Listen for any user interaction to pre-load audio
+    const events = ["click", "touchstart", "keydown", "scroll"];
+    events.forEach((event) => {
+      document.addEventListener(event, preloadAudio, { once: true });
+    });
+
+    return () => {
+      events.forEach((event) => {
+        document.removeEventListener(event, preloadAudio);
+      });
+    };
+  }, []);
 
   useEffect(() => {
     if (!isCvOpen) {
