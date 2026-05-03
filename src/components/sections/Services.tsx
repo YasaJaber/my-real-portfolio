@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { Reveal, Stagger, RevealItem } from "@/components/visuals/Reveal";
 import {
   Code2,
@@ -13,6 +13,7 @@ import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import type { IconType } from "react-icons";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { useRef } from "react";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
 
@@ -85,6 +86,8 @@ const services: Service[] = [
 function ServiceCard({ service, index }: { service: Service; index: number }) {
   const { locale, t } = useLanguage();
   const Icon = service.icon;
+  const cardRef = useRef(null);
+  const isInView = useInView(cardRef, { once: false, margin: "-80px" });
 
   const serviceTranslation = t.services.items[service.key as keyof typeof t.services.items];
   const localizedTitle = serviceTranslation[locale].title;
@@ -94,359 +97,156 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
 
   return (
     <motion.div
-      variants={{
-        hidden: { opacity: 0, y: 40, scale: 0.92 },
-        visible: {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          transition: {
-            duration: 0.7,
-            ease: easeOut,
-            delay: index * 0.2,
-          },
-        },
+      ref={cardRef}
+      initial={{ opacity: 0, y: 60, scale: 0.9 }}
+      animate={isInView ? { 
+        opacity: 1, 
+        y: 0, 
+        scale: 1,
+      } : {
+        opacity: 0,
+        y: 60,
+        scale: 0.9
+      }}
+      transition={{
+        duration: 0.8,
+        ease: easeOut,
+        delay: index * 0.12,
       }}
       whileHover={{
-        y: -12,
+        y: -8,
         scale: 1.02,
-        transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+        transition: { 
+          duration: 0.3, 
+          ease: easeOut,
+        },
       }}
       className="group relative h-full"
     >
-      {/* Animated gradient background glow - continuous animation */}
-      <motion.div
-        className={`pointer-events-none absolute -inset-1 rounded-3xl bg-gradient-to-br ${service.gradient} blur-2xl`}
-        animate={{
-          scale: [1, 1.05, 1],
-          opacity: [0.15, 0.25, 0.15],
-        }}
-        transition={{
-          duration: 5,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: index * 0.5,
-        }}
-      />
-
-      {/* Rotating border gradient - always visible and rotating */}
-      <motion.div
-        className="pointer-events-none absolute -inset-[1px] rounded-3xl"
+      {/* Glow effect on hover */}
+      <div
+        className="pointer-events-none absolute -inset-1 rounded-3xl opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-100"
         style={{
-          background: `conic-gradient(from 0deg, transparent, ${service.color}20, transparent 60%)`,
-        }}
-        animate={{
-          rotate: 360,
-        }}
-        transition={{
-          duration: 12,
-          repeat: Infinity,
-          ease: "linear",
+          background: `radial-gradient(circle at 50% 50%, ${service.color}40, transparent 70%)`,
         }}
       />
 
       {/* Card container */}
-      <div className="relative flex h-full flex-col overflow-hidden rounded-3xl border border-white/[0.08] bg-white/[0.02] backdrop-blur-sm transition-all duration-500 group-hover:border-white/[0.15] group-hover:bg-white/[0.05]">
+      <div className="relative flex h-full flex-col overflow-hidden rounded-3xl border border-white/5 bg-white/[0.02] backdrop-blur-sm transition-all duration-500 group-hover:border-white/20 group-hover:bg-white/[0.05]">
         {/* Header with icon */}
-        <div className="relative overflow-hidden border-b border-white/[0.06] px-6 py-8 sm:px-8 sm:py-10">
-          {/* Animated background pattern */}
-          <motion.div
-            className="pointer-events-none absolute inset-0 opacity-15"
+        <div className="relative overflow-hidden border-b border-white/5 px-6 py-8 sm:px-8 sm:py-10 transition-colors duration-500 group-hover:border-white/10">
+          {/* Subtle gradient background */}
+          <div
+            className="pointer-events-none absolute inset-0 opacity-40 transition-opacity duration-500 group-hover:opacity-60"
             style={{
-              backgroundImage: `radial-gradient(circle at 1px 1px, ${service.color}10 1px, transparent 0)`,
-              backgroundSize: "24px 24px",
-            }}
-            animate={{
-              backgroundPosition: ["0px 0px", "24px 24px"],
-            }}
-            transition={{
-              duration: 25,
-              repeat: Infinity,
-              ease: "linear",
+              background: `linear-gradient(135deg, ${service.color}08, transparent 60%)`,
             }}
           />
 
-          {/* Floating particles effect */}
-          <motion.div
-            className="pointer-events-none absolute inset-0 overflow-hidden"
-          >
-            {[...Array(3)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute h-1 w-1 rounded-full"
-                style={{
-                  background: service.color,
-                  left: `${20 + i * 30}%`,
-                  top: `${30 + i * 20}%`,
-                  opacity: 0.2,
-                }}
-                animate={{
-                  y: [-20, 20, -20],
-                  x: [-10, 10, -10],
-                  opacity: [0.1, 0.3, 0.1],
-                  scale: [1, 1.3, 1],
-                }}
-                transition={{
-                  duration: 5 + i,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: i * 0.7,
-                }}
-              />
-            ))}
-          </motion.div>
-
-          {/* Icon container with continuous animations */}
+          {/* Icon container */}
           <motion.div
             className="relative mb-6 inline-flex"
-            animate={{
-              y: [0, -6, 0],
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: index * 0.3,
-            }}
-            whileHover={{ 
-              rotate: [0, -8, 8, -8, 0],
-              scale: 1.15,
+            whileHover={{
+              scale: 1.1,
+              rotate: [0, -5, 5, 0],
+              transition: {
+                duration: 0.5,
+                ease: easeOut,
+              },
             }}
           >
-            <motion.div
-              className="relative flex h-16 w-16 items-center justify-center rounded-2xl sm:h-20 sm:w-20"
+            <div
+              className="relative flex h-16 w-16 items-center justify-center rounded-2xl sm:h-20 sm:w-20 transition-all duration-500"
               style={{
-                background: `linear-gradient(135deg, ${service.color}15, ${service.color}08)`,
-                boxShadow: `0 0 0 1px ${service.color}20, 0 8px 32px ${service.color}15`,
-              }}
-              animate={{
-                boxShadow: [
-                  `0 0 0 1px ${service.color}20, 0 8px 32px ${service.color}15`,
-                  `0 0 0 1px ${service.color}30, 0 12px 40px ${service.color}25`,
-                  `0 0 0 1px ${service.color}20, 0 8px 32px ${service.color}15`,
-                ],
-              }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: "easeInOut",
+                background: `linear-gradient(135deg, ${service.color}20, ${service.color}10)`,
+                boxShadow: `0 0 0 1px ${service.color}30`,
               }}
             >
-              <motion.div
-                animate={{
-                  scale: [1, 1.08, 1],
-                  rotate: [0, 3, -3, 0],
-                }}
-                transition={{
-                  duration: 5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: index * 0.2,
-                }}
-              >
-                <Icon
-                  size={32}
-                  className="transition-all duration-500 group-hover:scale-110"
-                  style={{ color: service.color }}
-                />
-              </motion.div>
-            </motion.div>
-
-            {/* Multiple pulse rings - always animating */}
-            <motion.div
-              className="absolute -inset-2 rounded-2xl"
-              style={{ border: `1.5px solid ${service.color}30` }}
-              animate={{
-                scale: [1, 1.3, 1],
-                opacity: [0.4, 0, 0.4],
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: "easeOut",
-              }}
-            />
-            <motion.div
-              className="absolute -inset-2 rounded-2xl"
-              style={{ border: `1.5px solid ${service.color}25` }}
-              animate={{
-                scale: [1, 1.5, 1],
-                opacity: [0.3, 0, 0.3],
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: "easeOut",
-                delay: 0.5,
-              }}
-            />
-            <motion.div
-              className="absolute -inset-2 rounded-2xl"
-              style={{ border: `1.5px solid ${service.color}20` }}
-              animate={{
-                scale: [1, 1.7, 1],
-                opacity: [0.2, 0, 0.2],
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: "easeOut",
-                delay: 1,
-              }}
-            />
+              <Icon
+                size={32}
+                style={{ color: service.color }}
+                className="transition-all duration-500 group-hover:scale-110"
+              />
+            </div>
           </motion.div>
 
-          {/* Title & Description with continuous subtle animation */}
-          <motion.h3 
-            className="mb-3 font-display text-2xl font-semibold text-white sm:text-3xl"
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: index * 0.1 + 0.2, duration: 0.5 }}
-          >
-            <motion.span
-              className="inline-block"
-              animate={{
-                textShadow: [
-                  `0 0 8px ${service.color}00`,
-                  `0 0 15px ${service.color}20`,
-                  `0 0 8px ${service.color}00`,
-                ],
-              }}
-              transition={{
-                duration: 5,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            >
-              {localizedTitle}
-            </motion.span>
-          </motion.h3>
-          <motion.p 
-            className="text-sm leading-relaxed sm:text-base"
-            style={{ color: 'rgba(255, 255, 255, 0.7)' }}
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: index * 0.1 + 0.3, duration: 0.5 }}
-          >
+          {/* Title & Description */}
+          <h3 className="mb-3 font-display text-2xl font-semibold text-white sm:text-3xl">
+            {localizedTitle}
+          </h3>
+          <p className="text-sm leading-relaxed text-white/60 sm:text-base transition-colors duration-500 group-hover:text-white/80">
             {localizedDescription}
-          </motion.p>
+          </p>
         </div>
 
-        {/* Features list with stagger */}
+        {/* Features list */}
         <div className="flex-1 px-6 py-8 sm:px-8">
-          <motion.p 
-            className="mb-5 font-mono text-[10px] uppercase tracking-[0.3em] text-white/50"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: index * 0.1 + 0.4 }}
-          >
+          <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.3em] text-white/40 transition-colors duration-500 group-hover:text-white/60">
             {t.services.whatYouGet[locale]}
-          </motion.p>
+          </p>
 
           <ul className="space-y-3.5">
             {localizedFeatures.map((feature: string, i: number) => (
               <motion.li
                 key={i}
-                className="flex items-start gap-3"
                 initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
+                animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
                 transition={{ 
-                  delay: index * 0.1 + i * 0.08 + 0.5, 
-                  duration: 0.4,
+                  delay: index * 0.12 + i * 0.05, 
+                  duration: 0.5,
                   ease: easeOut,
                 }}
-                whileHover={{ x: 4 }}
               >
                 <motion.div
-                  animate={{
-                    rotate: [0, 360],
-                  }}
-                  transition={{
-                    duration: 12,
-                    repeat: Infinity,
-                    ease: "linear",
-                    delay: i * 0.8,
-                  }}
+                  className="flex items-start gap-3 cursor-default"
                   whileHover={{ 
-                    scale: 1.2,
+                    x: 4,
+                    transition: { duration: 0.2, ease: "easeOut" }
                   }}
                 >
                   <CheckCircle2
                     size={18}
-                    className="mt-0.5 shrink-0 transition-colors duration-300"
-                    style={{ color: `${service.color}70` }}
+                    className="mt-0.5 shrink-0 transition-all duration-300"
+                    style={{ color: service.color }}
                   />
+                  <span className="text-sm leading-relaxed text-white/60 transition-colors duration-300 group-hover:text-white/80">
+                    {feature}
+                  </span>
                 </motion.div>
-                <span className="text-sm leading-relaxed text-white/70">
-                  {feature}
-                </span>
               </motion.li>
             ))}
           </ul>
         </div>
 
-        {/* CTA Button with enhanced animations */}
-        <div className="border-t border-white/[0.06] px-6 py-6 sm:px-8">
+        {/* CTA Button */}
+        <div className="border-t border-white/5 px-6 py-6 sm:px-8 transition-colors duration-500 group-hover:border-white/10">
           <Link href={service.ctaLink} className="block">
             <motion.div
-              className="group/btn relative overflow-hidden rounded-xl px-6 py-4 text-center font-medium transition-all duration-300"
+              className="group/btn relative overflow-hidden rounded-xl px-6 py-4 text-center font-medium cursor-pointer border transition-all duration-300"
               style={{
-                background: `linear-gradient(135deg, ${service.color}15, ${service.color}08)`,
-                border: `1px solid ${service.color}30`,
+                background: `linear-gradient(135deg, ${service.color}12, ${service.color}08)`,
+                borderColor: `${service.color}25`,
               }}
               whileHover={{
                 scale: 1.02,
-                boxShadow: `0 0 30px ${service.color}35`,
+                borderColor: `${service.color}50`,
+                boxShadow: `0 0 30px ${service.color}30`,
+                transition: {
+                  duration: 0.3,
+                  ease: easeOut,
+                },
               }}
-              whileTap={{ scale: 0.97 }}
+              whileTap={{ 
+                scale: 0.98,
+                transition: { duration: 0.1 }
+              }}
             >
-              {/* Animated shimmer effect */}
-              <motion.div
-                className="absolute inset-0"
-                style={{
-                  background: `linear-gradient(90deg, transparent, ${service.color}20, transparent)`,
-                }}
-                animate={{
-                  x: ["-100%", "200%"],
-                }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "linear",
-                  repeatDelay: 2,
-                }}
-              />
-
-              {/* Hover gradient overlay */}
-              <motion.div
-                className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover/btn:opacity-100"
-                style={{
-                  background: `linear-gradient(135deg, ${service.color}25, ${service.color}15)`,
-                }}
-              />
-
-              <span className="relative flex items-center justify-center gap-2 text-white">
+              <span className="relative flex items-center justify-center gap-2 text-white transition-all duration-300 group-hover/btn:gap-3">
                 {localizedCtaText}
-                <motion.div
-                  animate={{
-                    x: [0, 4, 0],
-                    y: [0, -4, 0],
-                  }}
-                  transition={{
-                    duration: 1.5,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                >
-                  <ArrowUpRight
-                    size={16}
-                    className="transition-transform duration-300 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1"
-                  />
-                </motion.div>
+                <ArrowUpRight
+                  size={16}
+                  className="transition-transform duration-300 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5"
+                />
               </span>
             </motion.div>
           </Link>
