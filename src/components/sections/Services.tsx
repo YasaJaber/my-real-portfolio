@@ -227,10 +227,25 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
                 background: `linear-gradient(135deg, ${service.color}12, ${service.color}08)`,
                 borderColor: `${service.color}25`,
               }}
+              animate={isInView ? {
+                y: [0, -2, 0],
+                boxShadow: [
+                  `0 0 0 ${service.color}00`,
+                  `0 0 20px ${service.color}20`,
+                  `0 0 0 ${service.color}00`,
+                ],
+              } : {}}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: index * 0.5 + 1,
+              }}
               whileHover={{
                 scale: 1.02,
+                y: -4,
                 borderColor: `${service.color}50`,
-                boxShadow: `0 0 30px ${service.color}30`,
+                boxShadow: `0 0 30px ${service.color}40`,
                 transition: {
                   duration: 0.3,
                   ease: easeOut,
@@ -241,12 +256,42 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
                 transition: { duration: 0.1 }
               }}
             >
+              {/* Subtle shimmer effect */}
+              <motion.div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background: `linear-gradient(90deg, transparent, ${service.color}15, transparent)`,
+                }}
+                animate={isInView ? {
+                  x: ["-100%", "200%"],
+                } : { x: "-100%" }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: index * 0.7,
+                }}
+              />
+
               <span className="relative flex items-center justify-center gap-2 text-white transition-all duration-300 group-hover/btn:gap-3">
                 {localizedCtaText}
-                <ArrowUpRight
-                  size={16}
-                  className="transition-transform duration-300 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5"
-                />
+                <motion.div
+                  animate={isInView ? {
+                    x: [0, 2, 0],
+                    y: [0, -2, 0],
+                  } : {}}
+                  transition={{
+                    duration: 2.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: index * 0.5 + 0.5,
+                  }}
+                >
+                  <ArrowUpRight
+                    size={16}
+                    className="transition-transform duration-300 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5"
+                  />
+                </motion.div>
               </span>
             </motion.div>
           </Link>
