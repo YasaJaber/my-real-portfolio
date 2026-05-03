@@ -133,15 +133,32 @@ export function Hero() {
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
-    const onMove = (e: MouseEvent) => {
-      const rect = el.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - 0.5;
-      const y = (e.clientY - rect.top) / rect.height - 0.5;
-      el.style.setProperty("--hero-x", `${x * 14}px`);
-      el.style.setProperty("--hero-y", `${y * 14}px`);
+    let rect = el.getBoundingClientRect();
+    let frame = 0;
+
+    const updateRect = () => {
+      rect = el.getBoundingClientRect();
     };
+
+    const onMove = (e: MouseEvent) => {
+      if (frame) cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        el.style.setProperty("--hero-x", `${x * 14}px`);
+        el.style.setProperty("--hero-y", `${y * 14}px`);
+      });
+    };
+    updateRect();
+    window.addEventListener("resize", updateRect, { passive: true });
+    window.addEventListener("scroll", updateRect, { passive: true });
     el.addEventListener("mousemove", onMove);
-    return () => el.removeEventListener("mousemove", onMove);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("resize", updateRect);
+      window.removeEventListener("scroll", updateRect);
+      el.removeEventListener("mousemove", onMove);
+    };
   }, []);
 
   return (
@@ -156,9 +173,9 @@ export function Hero() {
       >
         {/* Profile avatar with video-call ring */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.85, y: 20 }}
+          initial={{ opacity: 0, scale: 0.9, y: 12 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.9, ease: easeOut }}
+          transition={{ duration: 0.65, ease: easeOut }}
           className="relative mb-8 sm:mb-10"
           style={{
             transform:
@@ -237,9 +254,9 @@ export function Hero() {
 
         {/* Role */}
         <motion.p
-          initial={{ opacity: 0, y: 14 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.15, ease: easeOut }}
+          transition={{ duration: 0.45, delay: 0.05, ease: easeOut }}
           className={`font-mono text-[11px] uppercase tracking-[0.26em] text-white/50 sm:text-xs sm:tracking-[0.3em] ${
             locale === "ar" ? "mb-6 sm:mb-8 md:mb-9" : "mb-5 sm:mb-6"
           }`}
@@ -266,9 +283,9 @@ export function Hero() {
 
         {/* Tagline */}
         <motion.p
-          initial={{ opacity: 0, y: 14 }}
+          initial={{ opacity: 0.55, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.55, ease: easeOut }}
+          transition={{ duration: 0.45, delay: 0.08, ease: easeOut }}
           className={`max-w-2xl text-pretty text-sm font-medium leading-relaxed [text-shadow:0_1px_18px_rgba(0,0,0,0.55)] sm:text-base md:text-lg ${
             locale === "ar" ? "mt-8 sm:mt-10 md:mt-11" : "mt-6 sm:mt-8"
           }`}
@@ -284,9 +301,9 @@ export function Hero() {
 
         {/* CTAs */}
         <motion.div
-          initial={{ opacity: 0, y: 14 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.7, ease: easeOut }}
+          transition={{ duration: 0.5, delay: 0.12, ease: easeOut }}
           className="mt-8 flex w-full flex-col items-stretch justify-center gap-3 sm:mt-9 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center"
         >
           <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }} className="w-full sm:w-auto">

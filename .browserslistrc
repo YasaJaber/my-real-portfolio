@@ -1,2 +1,7 @@
-last 2 versions and fully supports es6-module
+chrome >= 111
+edge >= 111
+firefox >= 128
+ios_saf >= 16.4
+safari >= 16.4
+samsung >= 22
 maintained node versions

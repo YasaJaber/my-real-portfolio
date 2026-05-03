@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
   motion,
@@ -304,7 +304,7 @@ export function InteractiveName({ text, isRTL = false }: InteractiveNameProps) {
     }
   }, []);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (typeof window === "undefined") return;
     let cancelled = false;
     let resizeRaf = 0;
