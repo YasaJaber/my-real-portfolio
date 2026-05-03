@@ -29,7 +29,7 @@ export function BlogTeaserList({ posts }: Props) {
       <div className="mb-10 flex flex-col items-start justify-between gap-4 md:mb-12 md:flex-row md:items-end">
         <div>
           <Reveal direction="up" distance={14}>
-            <span className="font-mono text-xs uppercase tracking-[0.3em] text-white/45">
+            <span className="font-mono text-xs uppercase tracking-[0.3em] text-white/60">
               {t.blog.label[locale]}
             </span>
           </Reveal>
@@ -88,11 +88,11 @@ export function BlogTeaserList({ posts }: Props) {
                 className="absolute left-0 top-1/2 h-px w-0 -translate-y-1/2 bg-white/40 transition-all duration-500 ease-out group-hover:w-6 rtl:left-auto rtl:right-0"
               />
 
-              <div className="font-mono text-xs uppercase tracking-[0.2em] text-white/45 transition-colors duration-300 md:pl-8 md:group-hover:pl-12 md:group-hover:text-white/70 rtl:md:pl-0 rtl:md:pr-8 rtl:md:group-hover:pl-0 rtl:md:group-hover:pr-12">
+              <div className="font-mono text-xs uppercase tracking-[0.2em] text-white/60 transition-colors duration-300 md:pl-8 md:group-hover:pl-12 md:group-hover:text-white/70 rtl:md:pl-0 rtl:md:pr-8 rtl:md:group-hover:pl-0 rtl:md:group-hover:pr-12">
                 {formatDate(post.date)}
               </div>
               <div>
-                <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.2em] text-white/45">
+                <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.2em] text-white/60">
                   {post.category} · {post.readingTime}
                 </div>
                 <h3 className="font-display text-lg font-semibold text-white transition-transform duration-500 ease-out group-hover:translate-x-1 rtl:group-hover:-translate-x-1 rtl:group-hover:translate-x-0 md:text-xl">

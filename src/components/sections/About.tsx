@@ -48,7 +48,7 @@ export function About() {
         {/* Left: bio text */}
         <div className="order-2 flex flex-col md:order-1">
           <Reveal direction="up" distance={14}>
-            <span className="font-mono text-xs uppercase tracking-[0.3em] text-white/45">
+            <span className="font-mono text-xs uppercase tracking-[0.3em] text-white/60">
               {t.about.label[locale]}
             </span>
           </Reveal>
@@ -291,7 +291,7 @@ export function About() {
                     >
                       <div className="flex flex-col gap-3 border-b border-white/10 px-4 py-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between md:px-6">
                         <div>
-                          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-white/45">
+                          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-white/60">
                             {t.about.resume[locale]}
                           </p>
                           <h3 className="mt-1 text-lg font-medium text-white">

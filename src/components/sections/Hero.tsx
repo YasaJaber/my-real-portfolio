@@ -388,7 +388,7 @@ export function Hero() {
         animate={{ opacity: 1 }}
         transition={{ duration: 1.2, delay: 1.1 }}
         style={{ opacity: cueOpacity }}
-        className="absolute bottom-8 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-3 text-[10px] uppercase tracking-[0.4em] text-white/30 sm:flex"
+        className="absolute bottom-8 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-3 text-[10px] uppercase tracking-[0.4em] text-white/60 sm:flex"
       >
         <span>{t.hero.scroll[locale]}</span>
         <span className="block h-8 w-px overflow-hidden bg-white/15">

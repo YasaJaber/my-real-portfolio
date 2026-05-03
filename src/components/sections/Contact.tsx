@@ -112,7 +112,7 @@ export function Contact() {
         />
 
         <Reveal direction="up" distance={14}>
-          <span className="font-mono text-xs uppercase tracking-[0.3em] text-white/45">
+          <span className="font-mono text-xs uppercase tracking-[0.3em] text-white/60">
             {t.contact.label[locale]}
           </span>
         </Reveal>
@@ -285,19 +285,19 @@ export function Contact() {
           delay={0.05}
         >
           <RevealItem>
-            <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.2em] text-white/45">
+            <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.2em] text-white/60">
               {t.contact.location[locale]}
             </div>
             <p className="text-white/85">{siteConfig.author.location}</p>
           </RevealItem>
           <RevealItem>
-            <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.2em] text-white/45">
+            <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.2em] text-white/60">
               {t.contact.availability[locale]}
             </div>
             <p className="text-white/85">{t.contact.availabilityValue[locale]}</p>
           </RevealItem>
           <RevealItem>
-            <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.2em] text-white/45">
+            <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.2em] text-white/60">
               {t.contact.responseTime[locale]}
             </div>
             <p className="text-white/85">{t.contact.responseTimeValue[locale]}</p>

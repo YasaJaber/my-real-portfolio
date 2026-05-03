@@ -256,7 +256,7 @@ function GroupHeader({ label, description, index }: { label: string; description
       }}
     >
       <div className="flex items-center gap-3">
-        <span className="flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] font-mono text-[10px] text-white/35">
+        <span className="flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] font-mono text-[10px] text-white/60">
           {String(index + 1).padStart(2, "0")}
         </span>
         <h3 className="font-display text-base font-semibold tracking-wide text-white/90 sm:text-lg">
@@ -264,7 +264,7 @@ function GroupHeader({ label, description, index }: { label: string; description
         </h3>
       </div>
       <div className="hidden h-px flex-1 bg-gradient-to-r from-white/10 to-transparent sm:block" />
-      <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/30 sm:text-[11px]">
+      <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/60 sm:text-[11px]">
         {description}
       </p>
     </motion.div>
@@ -280,7 +280,7 @@ export function Skills() {
       {/* Header */}
       <div className="mb-14 sm:mb-16">
         <Reveal direction="up" distance={14}>
-          <span className="font-mono text-xs uppercase tracking-[0.3em] text-white/45">
+          <span className="font-mono text-xs uppercase tracking-[0.3em] text-white/60">
             {t.skills.label[locale]}
           </span>
         </Reveal>
@@ -336,7 +336,7 @@ export function Skills() {
       <Reveal direction="up" delay={0.3}>
         <div className="mt-16 flex items-center justify-center gap-3 sm:mt-20">
           <div className="h-px w-8 bg-gradient-to-r from-transparent to-white/15 sm:w-12" />
-          <span className="text-center font-mono text-[10px] uppercase tracking-[0.3em] text-white/25 sm:tracking-[0.4em]">
+          <span className="text-center font-mono text-[10px] uppercase tracking-[0.3em] text-white/60 sm:tracking-[0.4em]">
             {t.skills.alwaysLearning[locale]}
           </span>
           <div className="h-px w-8 bg-gradient-to-l from-transparent to-white/15 sm:w-12" />

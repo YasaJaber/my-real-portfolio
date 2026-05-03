@@ -96,7 +96,7 @@ export function Footer() {
       </div>
 
       <div className="border-t border-white/10">
-        <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-3 px-4 py-5 text-center font-mono text-[11px] uppercase tracking-[0.2em] text-white/40 sm:px-6 md:flex-row md:px-10 md:text-left">
+        <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-3 px-4 py-5 text-center font-mono text-[11px] uppercase tracking-[0.2em] text-white/60 sm:px-6 md:flex-row md:px-10 md:text-left">
           <p>© {new Date().getFullYear()} {siteConfig.name}</p>
           <p>{t.footer.builtWith[locale]}</p>
         </div>

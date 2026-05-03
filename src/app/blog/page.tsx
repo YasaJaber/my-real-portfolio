@@ -89,7 +89,7 @@ export default function BlogIndexPage() {
       <div className="section-wrapper pt-32 sm:pt-36 md:pt-40">
       {/* Header */}
       <div className="mb-14 max-w-3xl">
-        <span className="font-mono text-xs uppercase tracking-[0.3em] text-white/45">
+        <span className="font-mono text-xs uppercase tracking-[0.3em] text-white/60">
           Blog
         </span>
         <h1 className="mt-5 font-display text-3xl font-semibold leading-tight text-white sm:text-4xl md:text-5xl">

@@ -149,7 +149,7 @@ export function Work() {
       <div className="mb-10 flex flex-col items-start justify-between gap-4 md:mb-12 md:flex-row md:items-end">
         <div>
           <Reveal direction="up" distance={14}>
-            <span className="font-mono text-xs uppercase tracking-[0.3em] text-white/45">
+            <span className="font-mono text-xs uppercase tracking-[0.3em] text-white/60">
               {t.work.label[locale]}
             </span>
           </Reveal>
@@ -209,13 +209,17 @@ export function Work() {
                     onClick={() => jumpTo(i)}
                     aria-label={`Go to ${p.title}`}
                     aria-current={isActive}
-                    className={cn(
-                      "h-1.5 rounded-full transition-all duration-500",
-                      isActive
-                        ? "w-8 bg-white/80"
-                        : "w-3 bg-white/20 hover:bg-white/40"
-                    )}
-                  />
+                    className="relative flex h-11 w-11 items-center justify-center"
+                  >
+                    <span
+                      className={cn(
+                        "block h-1.5 rounded-full transition-all duration-500",
+                        isActive
+                          ? "w-8 bg-white/80"
+                          : "w-3 bg-white/20 hover:bg-white/40"
+                      )}
+                    />
+                  </button>
                 );
               })}
             </div>
