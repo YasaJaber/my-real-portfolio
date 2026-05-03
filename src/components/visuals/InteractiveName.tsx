@@ -307,6 +307,7 @@ export function InteractiveName({ text, isRTL = false }: InteractiveNameProps) {
   useLayoutEffect(() => {
     if (typeof window === "undefined") return;
     let cancelled = false;
+    let resizeRaf = 0;
 
     const compute = () => {
       if (cancelled) return;
@@ -363,10 +364,14 @@ export function InteractiveName({ text, isRTL = false }: InteractiveNameProps) {
       document.fonts.ready.then(() => compute()).catch(() => undefined);
     }
 
-    const onResize = () => compute();
+    const onResize = () => {
+      cancelAnimationFrame(resizeRaf);
+      resizeRaf = requestAnimationFrame(() => compute());
+    };
     window.addEventListener("resize", onResize);
     return () => {
       cancelled = true;
+      cancelAnimationFrame(resizeRaf);
       window.removeEventListener("resize", onResize);
     };
   }, [chars]);

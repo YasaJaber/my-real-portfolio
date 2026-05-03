@@ -1,14 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Space_Grotesk, JetBrains_Mono, Noto_Sans_Arabic } from "next/font/google";
 import { siteConfig } from "@/config/site";
-import { AuroraBackground } from "@/components/visuals/AuroraBackground";
-import { CursorGlow } from "@/components/visuals/CursorGlow";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { Chatbot } from "@/components/layout/Chatbot";
 import { PageTransition } from "@/components/layout/PageTransition";
-import { SmoothScroll } from "@/components/layout/SmoothScroll";
-import { ScrollProgress } from "@/components/layout/ScrollProgress";
+import { ClientProviders } from "@/components/layout/ClientProviders";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 import {
   buildOrganizationJsonLd,
@@ -142,6 +138,8 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
@@ -160,19 +158,15 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <LanguageProvider>
-          <SmoothScroll />
-          <ScrollProgress />
-          <AuroraBackground />
-          <CursorGlow />
+          <ClientProviders>
+            <Navbar />
 
-          <Navbar />
+            <PageTransition>
+              <main className="relative z-10 max-w-[100vw] overflow-x-hidden">{children}</main>
+            </PageTransition>
 
-          <PageTransition>
-            <main className="relative z-10 max-w-[100vw] overflow-x-hidden">{children}</main>
-          </PageTransition>
-
-          <Footer />
-          <Chatbot />
+            <Footer />
+          </ClientProviders>
         </LanguageProvider>
       </body>
     </html>

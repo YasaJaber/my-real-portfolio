@@ -22,6 +22,14 @@ const nextConfig = {
       { protocol: "https", hostname: "raw.githubusercontent.com" },
     ],
   },
+  experimental: {
+    optimizePackageImports: [
+      "lucide-react",
+      "react-icons",
+      "framer-motion",
+      "gsap",
+    ],
+  },
 };
 
 // Use string-based plugin references so Turbopack can serialize them.

@@ -35,17 +35,21 @@ export function AuroraBackground() {
     let baseFill = isMobile ? "#030305" : "#050507";
     let vignetteAlpha = isMobile ? 0.96 : 0.85;
 
+    let resizeRaf = 0;
     const resize = () => {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      width = canvas.clientWidth;
-      height = canvas.clientHeight;
-      isMobile = mobileQuery.matches;
-      mobileScale = isMobile ? 0.5 : 1;
-      baseFill = isMobile ? "#030305" : "#050507";
-      vignetteAlpha = isMobile ? 0.96 : 0.85;
-      canvas.width = Math.floor(width * dpr);
-      canvas.height = Math.floor(height * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      cancelAnimationFrame(resizeRaf);
+      resizeRaf = requestAnimationFrame(() => {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        width = canvas.clientWidth;
+        height = canvas.clientHeight;
+        isMobile = mobileQuery.matches;
+        mobileScale = isMobile ? 0.5 : 1;
+        baseFill = isMobile ? "#030305" : "#050507";
+        vignetteAlpha = isMobile ? 0.96 : 0.85;
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      });
     };
     resize();
     window.addEventListener("resize", resize);
@@ -91,8 +95,6 @@ export function AuroraBackground() {
       mouse.x = e.clientX;
       mouse.y = e.clientY;
       mouse.active = true;
-      document.documentElement.style.setProperty("--mx", `${e.clientX}px`);
-      document.documentElement.style.setProperty("--my", `${e.clientY}px`);
     };
 
     const onClick = (e: MouseEvent) => {
@@ -196,6 +198,7 @@ export function AuroraBackground() {
 
     return () => {
       cancelAnimationFrame(raf);
+      cancelAnimationFrame(resizeRaf);
       window.removeEventListener("resize", resize);
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("click", onClick);
