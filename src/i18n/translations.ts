@@ -98,9 +98,123 @@ export const translations = {
     },
   },
 
+  // ── Services ──
+  services: {
+    label: { en: "03 — Services", ar: "03 — الخدمات" },
+    heading: { en: "What I offer", ar: "الخدمات اللي بقدمها" },
+    description: {
+      en: "Professional web development and design services tailored to bring your vision to life with quality and precision.",
+      ar: "خدمات تطوير وتصميم مواقع احترافية مصممة خصيصًا لتحويل رؤيتك إلى واقع بجودة ودقة عالية.",
+    },
+    startingFrom: { en: "Starting from", ar: "يبدأ من" },
+    whatYouGet: { en: "What you get", ar: "اللي هتحصل عليه" },
+    readyToStart: { en: "Ready to start your project?", ar: "جاهز تبدأ مشروعك؟" },
+    contactDescription: {
+      en: "Choose your preferred way to get in touch and let's discuss your project.",
+      ar: "اختار الطريقة اللي تناسبك للتواصل ويلا نتكلم عن مشروعك.",
+    },
+    letsWorkTogether: { en: "Let's work together", ar: "يلا نشتغل مع بعض" },
+    contactMethods: {
+      email: { en: "Email me", ar: "ابعتلي إيميل" },
+      whatsapp: { en: "WhatsApp", ar: "واتساب" },
+    },
+    items: {
+      frontend: {
+        en: {
+          title: "Front-End Development",
+          description: "Modern, responsive websites built with React, Next.js, and TypeScript for optimal performance and user experience.",
+          features: [
+            "Responsive web design",
+            "React & Next.js development",
+            "TypeScript integration",
+            "Performance optimization",
+            "SEO-friendly architecture",
+            "Modern UI/UX implementation",
+          ],
+          priceRange: "$500+",
+          ctaText: "Start a project",
+        },
+        ar: {
+          title: "تطوير الواجهات الأمامية",
+          description: "مواقع حديثة ومتجاوبة مبنية بـ React و Next.js و TypeScript لأفضل أداء وتجربة مستخدم.",
+          features: [
+            "تصميم ويب متجاوب",
+            "تطوير بـ React و Next.js",
+            "دمج TypeScript",
+            "تحسين الأداء",
+            "بنية صديقة لمحركات البحث",
+            "تنفيذ واجهات حديثة",
+          ],
+          priceRange: "500$+",
+          ctaText: "ابدأ مشروع",
+        },
+      },
+      design: {
+        en: {
+          title: "Graphic Design",
+          description: "Creative visual solutions including branding, logos, social media content, and marketing materials that stand out.",
+          features: [
+            "Brand identity & logos",
+            "Social media graphics",
+            "Marketing materials",
+            "UI/UX design",
+            "Print design",
+            "Motion graphics",
+          ],
+          priceRange: "$200+",
+          ctaText: "let's go",
+        },
+        ar: {
+          title: "تصميم الجرافيك",
+          description: "حلول بصرية إبداعية تشمل الهوية البصرية، الشعارات، محتوى السوشيال ميديا، ومواد تسويقية مميزة.",
+          features: [
+            "هوية بصرية وشعارات",
+            "تصاميم سوشيال ميديا",
+            "مواد تسويقية",
+            "تصميم UI/UX",
+            "تصميم طباعي",
+            "موشن جرافيك",
+          ],
+          priceRange: "200$+",
+          ctaText: "شوف البورتفوليو",
+        },
+      },
+      wordpress: {
+        en: {
+          title: "WordPress Development",
+          description: "Custom WordPress solutions from theme development to e-commerce, optimized for performance and security.",
+          features: [
+            "Custom theme development",
+            "Plugin integration",
+            "E-commerce solutions",
+            "Performance optimization",
+            "Security hardening",
+            "Maintenance & support",
+          ],
+          priceRange: "$400+",
+          ctaText: "Get started",
+        },
+        ar: {
+          title: "تطوير ووردبريس",
+          description: "حلول ووردبريس مخصصة من تطوير القوالب للتجارة الإلكترونية، محسّنة للأداء والأمان.",
+          features: [
+            "تطوير قوالب مخصصة",
+            "دمج الإضافات",
+            "حلول تجارة إلكترونية",
+            "تحسين الأداء",
+            "تعزيز الأمان",
+            "صيانة ودعم",
+          ],
+          priceRange: "400$+",
+          ctaText: "ابدأ الآن",
+        },
+      },
+    },
+  },
+
   // ── Work ──
   work: {
-    label: { en: "03 — Projects", ar: "03 — المشاريع" },
+    label: { en: "04 — Projects", ar: "04 — المشاريع" },
     heading: { en: "Selected projects", ar: "مشاريع مختارة" },
     clickToView: { en: "Click to view details", ar: "اضغط لعرض التفاصيل" },
     highlights: { en: "Highlights", ar: "أبرز المميزات" },
@@ -111,14 +225,14 @@ export const translations = {
 
   // ── Blog ──
   blog: {
-    label: { en: "04 — Blog", ar: "04 — المدونة" },
+    label: { en: "05 — Blog", ar: "05 — المدونة" },
     heading: { en: "Latest articles", ar: "أحدث المقالات" },
     viewAll: { en: "View all", ar: "عرض الكل" },
   },
 
   // ── Contact ──
   contact: {
-    label: { en: "05 — Contact", ar: "05 — تواصل" },
+    label: { en: "06 — Contact", ar: "06 — تواصل" },
     heading: { en: "Got a project in mind?", ar: "عندك مشروع في بالك؟" },
     description: {
       en: "The fastest way to reach me is by email. I usually reply within 24 hours.",
