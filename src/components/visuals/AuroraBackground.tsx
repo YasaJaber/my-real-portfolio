@@ -26,11 +26,12 @@ export function AuroraBackground() {
       "(prefers-reduced-motion: reduce)"
     ).matches;
     const mobileQuery = window.matchMedia("(max-width: 767px)");
+    const coarsePointerQuery = window.matchMedia("(pointer: coarse)");
 
     let dpr = Math.min(window.devicePixelRatio || 1, 2);
     let width = 0;
     let height = 0;
-    let isMobile = mobileQuery.matches;
+    let isMobile = mobileQuery.matches || coarsePointerQuery.matches;
     let mobileScale = isMobile ? 0.5 : 1;
     let baseFill = isMobile ? "#030305" : "#050507";
     let vignetteAlpha = isMobile ? 0.96 : 0.85;
@@ -39,10 +40,10 @@ export function AuroraBackground() {
     const resize = () => {
       cancelAnimationFrame(resizeRaf);
       resizeRaf = requestAnimationFrame(() => {
-        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        isMobile = mobileQuery.matches || coarsePointerQuery.matches;
+        dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.1 : 2);
         width = canvas.clientWidth;
         height = canvas.clientHeight;
-        isMobile = mobileQuery.matches;
         mobileScale = isMobile ? 0.5 : 1;
         baseFill = isMobile ? "#030305" : "#050507";
         vignetteAlpha = isMobile ? 0.96 : 0.85;
@@ -103,8 +104,10 @@ export function AuroraBackground() {
       ripples.push({ x: e.clientX, y: e.clientY, t: 0 });
     };
 
-    window.addEventListener("mousemove", onMouseMove, { passive: true });
-    window.addEventListener("click", onClick, { passive: true });
+    if (!isMobile) {
+      window.addEventListener("mousemove", onMouseMove, { passive: true });
+      window.addEventListener("click", onClick, { passive: true });
+    }
 
     let raf = 0;
     const draw = () => {
@@ -118,7 +121,7 @@ export function AuroraBackground() {
         const b = blobs[i];
         const r = b.baseR * mobileScale;
 
-        if (!reduceMotion) {
+        if (!reduceMotion && !isMobile) {
           b.x += b.vx;
           b.y += b.vy;
 
@@ -192,7 +195,9 @@ export function AuroraBackground() {
       ctx.fillStyle = vignette;
       ctx.fillRect(0, 0, width, height);
 
-      raf = requestAnimationFrame(draw);
+      if (!isMobile) {
+        raf = requestAnimationFrame(draw);
+      }
     };
     draw();
 

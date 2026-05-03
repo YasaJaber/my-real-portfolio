@@ -218,6 +218,13 @@ export function InteractiveName({ text, isRTL = false }: InteractiveNameProps) {
     if (typeof window === "undefined" || !window.matchMedia) return false;
     return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   });
+  const [enhancementReady, setEnhancementReady] = useState(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return true;
+    return !(
+      window.matchMedia("(max-width: 767px)").matches ||
+      window.matchMedia("(pointer: coarse)").matches
+    );
+  });
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const chars = useMemo(() => buildSegments(text, isRTL), [text, isRTL]);
@@ -296,16 +303,56 @@ export function InteractiveName({ text, isRTL = false }: InteractiveNameProps) {
   }, [chars]);
 
   useEffect(() => {
-    if (typeof window !== "undefined" && window.matchMedia) {
-      const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-      const onChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
-      mq.addEventListener?.("change", onChange);
-      return () => mq.removeEventListener?.("change", onChange);
-    }
+    if (typeof window === "undefined" || !window.matchMedia) return;
+
+    const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const mobileWidthQuery = window.matchMedia("(max-width: 767px)");
+    const coarsePointerQuery = window.matchMedia("(pointer: coarse)");
+    let idleCallbackId: number | null = null;
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+    const updateReducedMotion = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    const updateMobileOptimized = () => {
+      const isMobileDevice = mobileWidthQuery.matches || coarsePointerQuery.matches;
+
+      if (!isMobileDevice) {
+        setEnhancementReady(true);
+        return;
+      }
+
+      setEnhancementReady(false);
+
+      if (typeof window.requestIdleCallback === "function") {
+        idleCallbackId = window.requestIdleCallback(() => setEnhancementReady(true), {
+          timeout: 1400,
+        });
+      } else {
+        timeoutId = setTimeout(() => setEnhancementReady(true), 900);
+      }
+    };
+
+    updateMobileOptimized();
+
+    reducedMotionQuery.addEventListener?.("change", updateReducedMotion);
+    mobileWidthQuery.addEventListener?.("change", updateMobileOptimized);
+    coarsePointerQuery.addEventListener?.("change", updateMobileOptimized);
+
+    return () => {
+      if (typeof window.cancelIdleCallback === "function" && idleCallbackId !== null) {
+        window.cancelIdleCallback(idleCallbackId);
+      }
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+      }
+      reducedMotionQuery.removeEventListener?.("change", updateReducedMotion);
+      mobileWidthQuery.removeEventListener?.("change", updateMobileOptimized);
+      coarsePointerQuery.removeEventListener?.("change", updateMobileOptimized);
+    };
   }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    if (!enhancementReady) return;
     let cancelled = false;
     let resizeRaf = 0;
 
@@ -374,7 +421,7 @@ export function InteractiveName({ text, isRTL = false }: InteractiveNameProps) {
       cancelAnimationFrame(resizeRaf);
       window.removeEventListener("resize", onResize);
     };
-  }, [chars]);
+  }, [chars, enhancementReady]);
 
   const { scrollY } = useScroll();
 
@@ -396,7 +443,7 @@ export function InteractiveName({ text, isRTL = false }: InteractiveNameProps) {
   });
 
   const canUseDOM = typeof document !== "undefined";
-  const ready = canUseDOM && letterRects.length === chars.length;
+  const ready = enhancementReady && canUseDOM && letterRects.length === chars.length;
 
   return (
     <>
