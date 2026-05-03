@@ -24,11 +24,17 @@ const LanguageContext = createContext<LanguageContextValue | null>(null);
 const STORAGE_KEY = "portfolio_locale";
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>(() => {
-    if (typeof window === "undefined") return "en";
+  // Always start with "en" to match server-rendered HTML and avoid hydration mismatch (React #418).
+  // The saved locale is restored from localStorage after hydration in the useEffect below.
+  const [locale, setLocaleState] = useState<Locale>("en");
+
+  // After hydration, read the saved locale from localStorage (client-only).
+  useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY) as Locale | null;
-    return saved === "ar" || saved === "en" ? saved : "en";
-  });
+    if (saved === "ar" || saved === "en") {
+      setLocaleState(saved);
+    }
+  }, []);
 
   // Apply locale to <html> element: lang, dir, and font-family adjustments
   useEffect(() => {
