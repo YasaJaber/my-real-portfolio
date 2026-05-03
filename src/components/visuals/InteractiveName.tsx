@@ -214,24 +214,11 @@ export function InteractiveName({ text, isRTL = false }: InteractiveNameProps) {
   const [letterRects, setLetterRects] = useState<LetterRect[]>([]);
   const [fontSize, setFontSize] = useState(0);
   const [viewport, setViewport] = useState({ w: 0, h: 0 });
-  const [isMobileStatic, setIsMobileStatic] = useState(() => {
-    if (typeof window === "undefined" || !window.matchMedia) return false;
-    return (
-      window.matchMedia("(max-width: 767px)").matches ||
-      window.matchMedia("(pointer: coarse)").matches
-    );
-  });
-  const [reducedMotion, setReducedMotion] = useState(() => {
-    if (typeof window === "undefined" || !window.matchMedia) return false;
-    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  });
-  const [enhancementReady, setEnhancementReady] = useState(() => {
-    if (typeof window === "undefined" || !window.matchMedia) return true;
-    return !(
-      window.matchMedia("(max-width: 767px)").matches ||
-      window.matchMedia("(pointer: coarse)").matches
-    );
-  });
+  // Always start with server-safe defaults to avoid hydration mismatch (React #418).
+  // The useEffect below corrects these values after hydration via matchMedia.
+  const [isMobileStatic, setIsMobileStatic] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const [enhancementReady, setEnhancementReady] = useState(true);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const chars = useMemo(() => buildSegments(text, isRTL), [text, isRTL]);
@@ -324,6 +311,8 @@ export function InteractiveName({ text, isRTL = false }: InteractiveNameProps) {
       setEnhancementReady(!isMobileDevice);
     };
 
+    // Set correct values after hydration
+    setReducedMotion(reducedMotionQuery.matches);
     updateMobileOptimized();
 
     reducedMotionQuery.addEventListener?.("change", updateReducedMotion);
