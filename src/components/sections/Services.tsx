@@ -303,20 +303,24 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ delay: index * 0.1 + 0.2, duration: 0.5 }}
-            animate={{
-              textShadow: [
-                `0 0 8px ${service.color}00`,
-                `0 0 15px ${service.color}20`,
-                `0 0 8px ${service.color}00`,
-              ],
-            }}
-            transition={{
-              duration: 5,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
           >
-            {localizedTitle}
+            <motion.span
+              className="inline-block"
+              animate={{
+                textShadow: [
+                  `0 0 8px ${service.color}00`,
+                  `0 0 15px ${service.color}20`,
+                  `0 0 8px ${service.color}00`,
+                ],
+              }}
+              transition={{
+                duration: 5,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            >
+              {localizedTitle}
+            </motion.span>
           </motion.h3>
           <motion.p 
             className="text-sm leading-relaxed sm:text-base"
