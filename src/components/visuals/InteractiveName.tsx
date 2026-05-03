@@ -214,6 +214,13 @@ export function InteractiveName({ text, isRTL = false }: InteractiveNameProps) {
   const [letterRects, setLetterRects] = useState<LetterRect[]>([]);
   const [fontSize, setFontSize] = useState(0);
   const [viewport, setViewport] = useState({ w: 0, h: 0 });
+  const [isMobileStatic, setIsMobileStatic] = useState(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return false;
+    return (
+      window.matchMedia("(max-width: 767px)").matches ||
+      window.matchMedia("(pointer: coarse)").matches
+    );
+  });
   const [reducedMotion, setReducedMotion] = useState(() => {
     if (typeof window === "undefined" || !window.matchMedia) return false;
     return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -308,27 +315,13 @@ export function InteractiveName({ text, isRTL = false }: InteractiveNameProps) {
     const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     const mobileWidthQuery = window.matchMedia("(max-width: 767px)");
     const coarsePointerQuery = window.matchMedia("(pointer: coarse)");
-    let idleCallbackId: number | null = null;
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
     const updateReducedMotion = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
     const updateMobileOptimized = () => {
       const isMobileDevice = mobileWidthQuery.matches || coarsePointerQuery.matches;
 
-      if (!isMobileDevice) {
-        setEnhancementReady(true);
-        return;
-      }
-
-      setEnhancementReady(false);
-
-      if (typeof window.requestIdleCallback === "function") {
-        idleCallbackId = window.requestIdleCallback(() => setEnhancementReady(true), {
-          timeout: 1400,
-        });
-      } else {
-        timeoutId = setTimeout(() => setEnhancementReady(true), 900);
-      }
+      setIsMobileStatic(isMobileDevice);
+      setEnhancementReady(!isMobileDevice);
     };
 
     updateMobileOptimized();
@@ -338,12 +331,6 @@ export function InteractiveName({ text, isRTL = false }: InteractiveNameProps) {
     coarsePointerQuery.addEventListener?.("change", updateMobileOptimized);
 
     return () => {
-      if (typeof window.cancelIdleCallback === "function" && idleCallbackId !== null) {
-        window.cancelIdleCallback(idleCallbackId);
-      }
-      if (timeoutId !== null) {
-        clearTimeout(timeoutId);
-      }
       reducedMotionQuery.removeEventListener?.("change", updateReducedMotion);
       mobileWidthQuery.removeEventListener?.("change", updateMobileOptimized);
       coarsePointerQuery.removeEventListener?.("change", updateMobileOptimized);
@@ -443,7 +430,8 @@ export function InteractiveName({ text, isRTL = false }: InteractiveNameProps) {
   });
 
   const canUseDOM = typeof document !== "undefined";
-  const ready = enhancementReady && canUseDOM && letterRects.length === chars.length;
+  const ready =
+    !isMobileStatic && enhancementReady && canUseDOM && letterRects.length === chars.length;
 
   return (
     <>

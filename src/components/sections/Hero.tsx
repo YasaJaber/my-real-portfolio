@@ -133,6 +133,13 @@ export function Hero() {
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
+    const isTouchDevice =
+      window.matchMedia("(pointer: coarse)").matches ||
+      window.matchMedia("(hover: none)").matches ||
+      navigator.maxTouchPoints > 0;
+
+    if (isTouchDevice) return;
+
     let rect = el.getBoundingClientRect();
     let frame = 0;
 
