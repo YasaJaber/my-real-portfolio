@@ -36,13 +36,13 @@ function XIcon({ size = 15 }: { size?: number }) {
 
 
 const SOCIAL_LINKS = [
-  { href: siteConfig.links.linkedin, icon: Linkedin, label: "LinkedIn" },
-  { href: siteConfig.links.instagram, icon: Instagram, label: "Instagram" },
-  { href: siteConfig.links.behance, icon: FaBehance, label: "Behance" },
-  { href: siteConfig.links.x, icon: XIcon, label: "X" },
-  { href: siteConfig.links.facebook, icon: Facebook, label: "Facebook" },
-  { href: siteConfig.links.youtube, icon: Youtube, label: "YouTube" },
-  { href: `mailto:${siteConfig.author.email}`, icon: Mail, label: "Email" },
+  { href: siteConfig.links.linkedin, icon: Linkedin, label: "LinkedIn", hoverClass: "hover:border-[#0077B5]/40 hover:bg-[#0077B5]/10 hover:text-[#0077B5] hover:shadow-[0_0_20px_rgba(0,119,181,0.25)]" },
+  { href: siteConfig.links.instagram, icon: Instagram, label: "Instagram", hoverClass: "hover:border-[#E4405F]/40 hover:bg-[#E4405F]/10 hover:text-[#E4405F] hover:shadow-[0_0_20px_rgba(228,64,95,0.25)]" },
+  { href: siteConfig.links.behance, icon: FaBehance, label: "Behance", hoverClass: "hover:border-[#1769FF]/40 hover:bg-[#1769FF]/10 hover:text-[#1769FF] hover:shadow-[0_0_20px_rgba(23,105,255,0.25)]" },
+  { href: siteConfig.links.x, icon: XIcon, label: "X", hoverClass: "hover:border-white/40 hover:bg-white/10 hover:text-white hover:shadow-[0_0_20px_rgba(255,255,255,0.25)]" },
+  { href: siteConfig.links.facebook, icon: Facebook, label: "Facebook", hoverClass: "hover:border-[#1877F2]/40 hover:bg-[#1877F2]/10 hover:text-[#1877F2] hover:shadow-[0_0_20px_rgba(24,119,242,0.25)]" },
+  { href: siteConfig.links.youtube, icon: Youtube, label: "YouTube", hoverClass: "hover:border-[#FF0000]/40 hover:bg-[#FF0000]/10 hover:text-[#FF0000] hover:shadow-[0_0_20px_rgba(255,0,0,0.25)]" },
+  { href: `mailto:${siteConfig.author.email}`, icon: Mail, label: "Email", hoverClass: "hover:border-emerald-400/40 hover:bg-emerald-500/10 hover:text-emerald-400 hover:shadow-[0_0_20px_rgba(16,185,129,0.25)]" },
 ] as const;
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
@@ -346,7 +346,7 @@ export function Hero() {
             transition: "transform 500ms cubic-bezier(0.22,1,0.36,1)",
           }}
         >
-          {SOCIAL_LINKS.map(({ href, icon: Icon, label }) => (
+          {SOCIAL_LINKS.map(({ href, icon: Icon, label, hoverClass }) => (
             <motion.li
               key={label}
               variants={{
@@ -371,7 +371,7 @@ export function Hero() {
                   }
                   aria-label={label}
                   title={label}
-                  className="grid h-9 w-9 place-items-center rounded-full border border-white/10 bg-white/[0.02] text-white/60 backdrop-blur-sm transition-all duration-300 hover:border-emerald-400/40 hover:bg-emerald-500/10 hover:text-white hover:shadow-[0_0_20px_rgba(16,185,129,0.25)] sm:h-10 sm:w-10"
+                  className={`grid h-9 w-9 place-items-center rounded-full border border-white/10 bg-white/[0.02] text-white/60 backdrop-blur-sm transition-all duration-300 sm:h-10 sm:w-10 ${hoverClass}`}
                   data-cursor-grow
                 >
                   <Icon size={15} />
