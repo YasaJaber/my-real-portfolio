@@ -15,9 +15,34 @@ export default function manifest(): MetadataRoute.Manifest {
     categories: ["portfolio", "developer", "technology", "blog"],
     icons: [
       {
-        src: "/yasa-jaber-logo.ico",
+        src: "/favicon_io/favicon.ico",
         sizes: "16x16 32x32 48x48",
         type: "image/x-icon",
+      },
+      {
+        src: "/favicon_io/favicon-16x16.png",
+        sizes: "16x16",
+        type: "image/png",
+      },
+      {
+        src: "/favicon_io/favicon-32x32.png",
+        sizes: "32x32",
+        type: "image/png",
+      },
+      {
+        src: "/favicon_io/apple-touch-icon.png",
+        sizes: "180x180",
+        type: "image/png",
+      },
+      {
+        src: "/favicon_io/android-chrome-192x192.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
+      {
+        src: "/favicon_io/android-chrome-512x512.png",
+        sizes: "512x512",
+        type: "image/png",
       },
       {
         src: "/yasaJaberLogo.svg",

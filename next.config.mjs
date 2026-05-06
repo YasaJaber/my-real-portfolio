@@ -18,7 +18,12 @@ const nextConfig = {
     return [
       {
         source: "/favicon.ico",
-        destination: "/yasa-jaber-logo.ico",
+        destination: "/favicon_io/favicon.ico",
+        permanent: true,
+      },
+      {
+        source: "/yasa-jaber-logo.ico",
+        destination: "/favicon_io/favicon.ico",
         permanent: true,
       },
     ];
