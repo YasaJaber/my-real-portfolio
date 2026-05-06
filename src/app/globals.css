@@ -207,6 +207,8 @@ html.lenis body {
     @apply fixed bottom-4 right-4 z-[900] flex flex-col items-end gap-3 sm:bottom-6 sm:right-6;
     /* Prevent any layout shift */
     width: 72px;
+    /* Keep layout isolation without clipping the hint bubble above the button. */
+    contain: layout style;
   }
 
   @media (min-width: 640px) {
@@ -230,7 +232,6 @@ html.lenis body {
       rgba(88, 28, 135, 0.3) 100%
     );
     backdrop-filter: blur(18px);
-    position: relative;
     overflow: hidden;
   }
 
@@ -238,7 +239,7 @@ html.lenis body {
     content: '';
     position: absolute;
     top: 0;
-    left: -100%;
+    left: 0;
     width: 100%;
     height: 100%;
     background: linear-gradient(
@@ -247,15 +248,18 @@ html.lenis body {
       rgba(255, 255, 255, 0.15),
       transparent
     );
+    /* GPU-composited transform replaces left-based animation for the same visual effect. */
+    will-change: transform;
+    transform: translate3d(-100%, 0, 0);
     animation: chatbot-shimmer 3s infinite;
   }
 
   @keyframes chatbot-shimmer {
     0% {
-      left: -100%;
+      transform: translate3d(-100%, 0, 0);
     }
     50%, 100% {
-      left: 200%;
+      transform: translate3d(200%, 0, 0);
     }
   }
 
@@ -280,6 +284,9 @@ html.lenis body {
     border: none;
     filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.5));
     animation: chatbot-float 3s ease-in-out infinite;
+    /* Promote to a compositor layer so the float animation does not trigger paint each frame. */
+    will-change: transform;
+    contain: layout style;
   }
 
   @keyframes chatbot-float {
@@ -301,6 +308,7 @@ html.lenis body {
     background: transparent;
     border: none;
     animation: botFloat 3.4s ease-in-out infinite;
+    will-change: transform;
   }
 
   .chatbot-trigger-status {
@@ -329,6 +337,8 @@ html.lenis body {
       rgba(3, 3, 3, 0.98) 100%
     );
     backdrop-filter: blur(24px);
+    /* Keep the heavy backdrop-filter from re-rasterizing the rest of the page. */
+    contain: layout paint;
   }
 
   @media (max-width: 440px) {

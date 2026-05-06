@@ -30,6 +30,59 @@ export function AuroraBackground() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    let started = false;
+    let teardown: (() => void) | null = null;
+    let idleId: number | null = null;
+    let fallbackTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const start = () => {
+      if (started) return;
+      started = true;
+      teardown = setupAurora(canvas, ctx);
+    };
+
+    // Defer the heavy canvas init until the browser is idle so we don't compete with LCP work.
+    const ric = (window as Window & {
+      requestIdleCallback?: (cb: IdleRequestCallback, opts?: IdleRequestOptions) => number;
+      cancelIdleCallback?: (id: number) => void;
+    }).requestIdleCallback;
+    if (typeof ric === "function") {
+      idleId = ric(start, { timeout: 1500 });
+    } else {
+      fallbackTimer = setTimeout(start, 600);
+    }
+
+    return () => {
+      const cic = (window as Window & {
+        cancelIdleCallback?: (id: number) => void;
+      }).cancelIdleCallback;
+      if (idleId !== null && typeof cic === "function") cic(idleId);
+      if (fallbackTimer !== null) clearTimeout(fallbackTimer);
+      teardown?.();
+    };
+  }, []);
+
+  return (
+    <>
+      <canvas
+        ref={canvasRef}
+        aria-hidden
+        className="pointer-events-none fixed inset-0 z-0 h-full w-full"
+      />
+      {/* Enhanced film grain for subtle texture */}
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-0 z-[1] opacity-[0.03] mix-blend-overlay"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+        }}
+      />
+    </>
+  );
+}
+
+function setupAurora(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
@@ -240,24 +293,4 @@ export function AuroraBackground() {
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("click", onClick);
     };
-  }, []);
-
-  return (
-    <>
-      <canvas
-        ref={canvasRef}
-        aria-hidden
-        className="pointer-events-none fixed inset-0 z-0 h-full w-full"
-      />
-      {/* Enhanced film grain for subtle texture */}
-      <div
-        aria-hidden
-        className="pointer-events-none fixed inset-0 z-[1] opacity-[0.03] mix-blend-overlay"
-        style={{
-          backgroundImage:
-            "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
-        }}
-      />
-    </>
-  );
 }

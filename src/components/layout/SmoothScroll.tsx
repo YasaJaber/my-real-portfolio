@@ -26,11 +26,17 @@ export function SmoothScroll() {
     if (reduceMotion || isTouchDevice) return;
 
     let cleanup: (() => void) | undefined;
+    let cancelled = false;
+    let idleId: number | null = null;
+    let fallbackTimer: ReturnType<typeof setTimeout> | null = null;
+    let firstInputCleanup: (() => void) | undefined;
 
-    (async () => {
+    const boot = async () => {
+      if (cancelled) return;
       const Lenis = (await import("lenis")).default;
       const { gsap } = await import("gsap");
       const { ScrollTrigger } = await import("gsap/ScrollTrigger");
+      if (cancelled) return;
       gsap.registerPlugin(ScrollTrigger);
 
       const lenis = new Lenis({
@@ -68,9 +74,63 @@ export function SmoothScroll() {
         document.removeEventListener("click", handleAnchorClick);
         lenis.destroy();
       };
-    })();
+    };
 
-    return () => cleanup?.();
+    // Defer Lenis + GSAP (~80 KB combined) until after first idle or first user
+    // interaction so they never block LCP/TBT.
+    const ric = (window as Window & {
+      requestIdleCallback?: (cb: IdleRequestCallback, opts?: IdleRequestOptions) => number;
+      cancelIdleCallback?: (id: number) => void;
+    }).requestIdleCallback;
+    if (typeof ric === "function") {
+      idleId = ric(() => {
+        idleId = null;
+        boot();
+      }, { timeout: 2500 });
+    } else {
+      fallbackTimer = setTimeout(() => {
+        fallbackTimer = null;
+        boot();
+      }, 1500);
+    }
+
+    // If the user interacts before idle fires, boot immediately so smooth scroll
+    // is ready when they start scrolling.
+    const onFirstInput = () => {
+      firstInputCleanup?.();
+      firstInputCleanup = undefined;
+      if (idleId !== null) {
+        const cic = (window as Window & {
+          cancelIdleCallback?: (id: number) => void;
+        }).cancelIdleCallback;
+        if (typeof cic === "function") cic(idleId);
+        idleId = null;
+      }
+      if (fallbackTimer !== null) {
+        clearTimeout(fallbackTimer);
+        fallbackTimer = null;
+      }
+      boot();
+    };
+    window.addEventListener("wheel", onFirstInput, { passive: true, once: true });
+    window.addEventListener("keydown", onFirstInput, { once: true });
+    firstInputCleanup = () => {
+      window.removeEventListener("wheel", onFirstInput);
+      window.removeEventListener("keydown", onFirstInput);
+    };
+
+    return () => {
+      cancelled = true;
+      firstInputCleanup?.();
+      if (idleId !== null) {
+        const cic = (window as Window & {
+          cancelIdleCallback?: (id: number) => void;
+        }).cancelIdleCallback;
+        if (typeof cic === "function") cic(idleId);
+      }
+      if (fallbackTimer !== null) clearTimeout(fallbackTimer);
+      cleanup?.();
+    };
   }, []);
 
   return null;

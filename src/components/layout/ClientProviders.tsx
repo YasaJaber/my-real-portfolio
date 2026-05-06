@@ -23,6 +23,11 @@ const Chatbot = dynamic(
   () => import("@/components/layout/Chatbot").then((m) => m.Chatbot),
   { ssr: false }
 );
+// Vercel Analytics is non-critical telemetry — only load it after the page is idle.
+const Analytics = dynamic(
+  () => import("@vercel/analytics/next").then((m) => m.Analytics),
+  { ssr: false }
+);
 
 export function ClientProviders({ children }: { children: React.ReactNode }) {
   const [showDeferredUi, setShowDeferredUi] = useState(false);
@@ -116,6 +121,7 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
       {showCursorGlow ? <CursorGlow /> : null}
       {children}
       {showDeferredUi && showMobileChatbot ? <Chatbot /> : null}
+      {showDeferredUi ? <Analytics /> : null}
     </>
   );
 }

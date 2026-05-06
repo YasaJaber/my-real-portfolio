@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Space_Grotesk, JetBrains_Mono, Noto_Sans_Arabic } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
 import { siteConfig } from "@/config/site";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -139,6 +138,15 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        {/* Preload the hero/LCP image so the browser starts fetching it during HTML parse. */}
+        <link
+          rel="preload"
+          as="image"
+          href="/yasa-jaber-hero.jpg"
+          fetchPriority="high"
+        />
+        {/* Preconnect to Vercel Analytics origin so the deferred script connects faster. */}
+        <link rel="dns-prefetch" href="https://va.vercel-scripts.com" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
@@ -167,7 +175,6 @@ export default function RootLayout({
             <Footer />
           </ClientProviders>
         </LanguageProvider>
-        <Analytics />
       </body>
     </html>
   );

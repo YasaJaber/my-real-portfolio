@@ -4,6 +4,16 @@ import createMDX from "@next/mdx";
 const nextConfig = {
   pageExtensions: ["ts", "tsx", "mdx"],
   reactStrictMode: true,
+  // Strip the X-Powered-By header to shave a few bytes off every response.
+  poweredByHeader: false,
+  productionBrowserSourceMaps: false,
+  compiler: {
+    // Drop console.* (except error/warn) from the production bundle to save bytes and main-thread time.
+    removeConsole:
+      process.env.NODE_ENV === "production"
+        ? { exclude: ["error", "warn"] }
+        : false,
+  },
   async redirects() {
     return [
       {
@@ -13,8 +23,23 @@ const nextConfig = {
       },
     ];
   },
+  async headers() {
+    return [
+      {
+        // Cache the hero/LCP image aggressively in the browser; Next already long-caches /_next/static.
+        source: "/yasa-jaber-hero.jpg",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+    ];
+  },
   images: {
     formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "cdn.jsdelivr.net" },
@@ -28,6 +53,7 @@ const nextConfig = {
       "react-icons",
       "framer-motion",
       "gsap",
+      "@vercel/analytics",
     ],
   },
 };

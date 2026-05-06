@@ -140,30 +140,29 @@ export function Hero() {
 
     if (isTouchDevice) return;
 
-    let rect = el.getBoundingClientRect();
+    // Cache rect dimensions; only refresh on resize (top changes are read inside rAF).
     let frame = 0;
-
-    const updateRect = () => {
-      rect = el.getBoundingClientRect();
-    };
+    let pendingX = 0;
+    let pendingY = 0;
 
     const onMove = (e: MouseEvent) => {
-      if (frame) cancelAnimationFrame(frame);
+      pendingX = e.clientX;
+      pendingY = e.clientY;
+      if (frame) return;
       frame = requestAnimationFrame(() => {
-        const x = (e.clientX - rect.left) / rect.width - 0.5;
-        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        frame = 0;
+        // Reading layout inside rAF avoids forced reflow during scroll/style mutations.
+        const rect = el.getBoundingClientRect();
+        const x = (pendingX - rect.left) / rect.width - 0.5;
+        const y = (pendingY - rect.top) / rect.height - 0.5;
         el.style.setProperty("--hero-x", `${x * 14}px`);
         el.style.setProperty("--hero-y", `${y * 14}px`);
       });
     };
-    updateRect();
-    window.addEventListener("resize", updateRect, { passive: true });
-    window.addEventListener("scroll", updateRect, { passive: true });
-    el.addEventListener("mousemove", onMove);
+
+    el.addEventListener("mousemove", onMove, { passive: true });
     return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("resize", updateRect);
-      window.removeEventListener("scroll", updateRect);
+      if (frame) cancelAnimationFrame(frame);
       el.removeEventListener("mousemove", onMove);
     };
   }, []);
@@ -222,8 +221,10 @@ export function Hero() {
                 src="/yasa-jaber-hero.jpg"
                 alt="Yasa Jaber"
                 fill
+                sizes="(min-width: 768px) 176px, (min-width: 640px) 144px, 112px"
                 className="object-cover object-[center_20%] transition-all duration-700 group-hover:scale-110 group-hover:brightness-110"
                 priority
+                fetchPriority="high"
               />
               {/* Hover overlay gradient */}
               <div className="absolute inset-0 rounded-full bg-gradient-to-t from-emerald-900/30 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
