@@ -162,24 +162,10 @@ Your content in MDX.
 
 Licensed under the **Apache License 2.0** — see [LICENSE](LICENSE) for details.
 
-## 🌟 Features Roadmap
-
-- [x] Interactive hero with particle effects
-- [x] Aurora mesh gradient background
-- [x] AI-powered chatbot
-- [x] Multilingual support (Arabic/English)
-- [x] MDX blog with syntax highlighting
-- [x] RSS feed generation
-- [x] PWA support
-- [x] **Comments system for blog posts** — Users can leave comments with their name on each article
-- [ ] Dark/Light theme toggle
-- [ ] Blog search functionality
-
----
 
 <div align="center">
 
-Crafted with care by **Yasa Jaber** — Front-End Developer & Graphic Designer from Sohag, Egypt 🇪🇬
+Crafted with care by **Yasa Jaber** — Front-End Developer & Graphic Designer from Sohag, Egypt 
 
 **[Visit yasajaber.me](https://yasajaber.me)**
 
