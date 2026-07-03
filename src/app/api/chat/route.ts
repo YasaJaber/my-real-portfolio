@@ -128,7 +128,27 @@ Repository: https://github.com/Mo7amed-3bnaser/e-learning-platform
 Live Demo: https://masar-zsel.onrender.com/
 Accent Color: Purple (#A855F7)
 
-**2. Church Management System (2026)**
+**2. Tamkeen — E-Learning Platform (2026)**
+Category: Full-Stack Web Application
+Role: Full-Stack Developer · Co-built with Mohamed Abdelnaser (https://3bnaser.tech/)
+Summary: A multi-tenant Arabic e-learning platform for Tamkeen Center with teacher pages, instant course activation codes, protected video lessons, and admin/teacher dashboards.
+
+Description: Tamkeen is an Arabic-first multi-tenant e-learning platform built for Tamkeen Center. It supports:
+- Dedicated public profiles for each teacher
+- Student registration with Arabic RTL flows
+- Course browsing, filtering, and instant activation-code redemption
+- Code-based course activation where students redeem a course code and get access immediately
+- Payment-ready architecture for upcoming payment gateway integrations
+- Teacher dashboard for courses, lessons, videos, pricing, coupons, and earnings
+- Central admin dashboard for teachers, content, activation codes, and financial reports
+- Bunny Stream protected playback with signed lesson access checks
+- Supabase PostgreSQL with Row Level Security for teacher/student data isolation
+
+Stack: Next.js, TypeScript, Tailwind CSS, Supabase, PostgreSQL, RLS, Supabase Auth, Bunny Stream, Vercel
+Live Site: https://www.tamkeeen.online/
+Accent Color: Green (#22C55E)
+
+**3. Church Management System (2026)**
 Category: Full-Stack Web Application
 Summary: A bilingual (Arabic/English) management platform for Sunday Schools with attendance tracking, pastoral follow-up, analytics, and comprehensive audit logging.
 
@@ -164,7 +184,7 @@ Repository: https://github.com/YasaJaber/Church-Management-System
 Live Demo: https://church-management-system-1-i51l.onrender.com
 Accent Color: Cyan (#06B6D4)
 
-**3. Yasa Jaber — Real Portfolio (2026)**
+**4. Yasa Jaber — Real Portfolio (2026)**
 Category: Personal Portfolio Website
 Summary: This very website — a high-performance SPA portfolio showcasing the intersection of front-end engineering and graphic design with cinematic animations and interactive elements.
 
@@ -215,7 +235,7 @@ Repository: https://github.com/YasaJaber/my-real-portfolio
 Live Site: https://yasajaber.me
 Accent Color: Rose (#F43F5E)
 
-**4. Login / Register System (2025)**
+**5. Login / Register System (2025)**
 Category: Authentication System
 Summary: A production-ready, secure user authentication platform supporting email/password and social login via Google and GitHub OAuth 2.0.
 
@@ -252,7 +272,7 @@ Repository: https://github.com/YasaJaber/login-register--system
 Live Demo: https://login-register-system-sxto.onrender.com/
 Accent Color: Cyan (#22D3EE)
 
-**5. Yasa — Portfolio (v1) (2025)**
+**6. Yasa — Portfolio (v1) (2025)**
 Category: Personal Portfolio Website
 Summary: First iteration of personal portfolio, deliberately built from scratch using only vanilla HTML, CSS, and JavaScript — zero frameworks or libraries.
 

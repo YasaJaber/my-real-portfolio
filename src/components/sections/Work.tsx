@@ -659,15 +659,17 @@ function ProjectModal({
 
             {/* Footer with CTAs */}
             <div className="relative flex flex-col gap-3 border-t border-white/10 bg-black/40 p-4 sm:flex-row sm:items-center sm:justify-end sm:p-5 md:p-6">
-              <a
-                href={project.repoUrl}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-5 py-2.5 font-mono text-xs uppercase tracking-[0.2em] text-white/80 transition hover:border-white/35 hover:bg-white/[0.08] hover:text-white sm:w-auto"
-              >
-                <Github size={14} />
-                <ModalViewRepoLabel />
-              </a>
+              {project.repoUrl && (
+                <a
+                  href={project.repoUrl}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-5 py-2.5 font-mono text-xs uppercase tracking-[0.2em] text-white/80 transition hover:border-white/35 hover:bg-white/[0.08] hover:text-white sm:w-auto"
+                >
+                  <Github size={14} />
+                  <ModalViewRepoLabel />
+                </a>
+              )}
               {project.liveUrl && (
                 <a
                   href={project.liveUrl}

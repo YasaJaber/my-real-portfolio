@@ -14,7 +14,7 @@ export type Project = {
   features: string[];
   featuresAr: string[];
   stack: string[];
-  repoUrl: string;
+  repoUrl?: string;
   liveUrl?: string;
   /** Hex color used for the accent halo / glow */
   accent: string;
@@ -84,6 +84,59 @@ export const projects: Project[] = [
       href: "https://3bnaser.tech/",
     },
     accent: "#A855F7",
+  },
+  {
+    slug: "tamkeen-e-learning-platform",
+    title: "Tamkeen — E-Learning Platform",
+    titleAr: "تمكين — منصة تعليمية",
+    category: "Web App",
+    categoryAr: "تطبيق ويب",
+    year: 2026,
+    cover: "/projects/tamkeen.png",
+    summary:
+      "A multi-tenant Arabic e-learning platform for Tamkeen Center with teacher pages, instant course activation codes, protected video lessons, and admin/teacher dashboards.",
+    summaryAr:
+      "منصة تعليمية عربية متعددة المدرسين لسنتر تمكين، فيها صفحات مدرسين، أكواد تفعيل فورية للكورسات، فيديوهات محمية، ولوحات تحكم للمدرس والإدارة.",
+    description:
+      "Tamkeen is an Arabic-first multi-tenant e-learning platform built for Tamkeen Center. It brings multiple teachers into one organized storefront, giving each teacher a dedicated public profile and dashboard while the center admin manages teachers, content, activation codes, and financial reporting from a central control panel. The current course activation flow is code-based: students receive an activation code, redeem it, and the course unlocks instantly. The platform is also structured for upcoming payment gateway integrations, so online payments can plug into the same activation model later. Lessons are delivered through Bunny Stream with signed playback checks, while Supabase PostgreSQL and RLS keep teacher, student, and course data isolated.",
+    descriptionAr:
+      "تمكين منصة تعليمية عربية متعددة المدرسين اتبنت لسنتر تمكين. بتجمع أكتر من مدرس في مكان واحد، مع صفحة عامة ولوحة تحكم لكل مدرس، ولوحة إدارة مركزية للسنتر لإدارة المدرسين، المحتوى، أكواد التفعيل، والتقارير المالية. نظام التفعيل الحالي قائم على الأكواد: الطالب ياخد كود تفعيل للكورس، يفعّله، والكورس يتفتح له فورًا. المنصة كمان متجهزة لتكامل قريب مع بوابات دفع، بحيث الدفع الأونلاين يقدر يدخل على نفس منطق التفعيل لاحقًا. تشغيل الدروس بيتم عبر Bunny Stream بروابط مؤقتة بعد التحقق، مع Supabase PostgreSQL و RLS لعزل بيانات المدرسين والطلاب والكورسات.",
+    features: [
+      "Multi-tenant teacher storefront with dedicated teacher profiles",
+      "Student registration, course browsing, filtering, and instant activation-code flow",
+      "Teacher dashboard for lessons, videos, pricing, coupons, and earnings",
+      "Central admin dashboard for teachers, content, activation codes, and financial reports",
+      "Code-based course unlock flow prepared for upcoming payment gateway integrations",
+      "Bunny Stream playback with signed access checks per lesson",
+      "Supabase PostgreSQL with RLS for strict teacher and student data isolation",
+    ],
+    featuresAr: [
+      "منصة متعددة المدرسين مع صفحة مخصصة لكل مدرس",
+      "تسجيل طلاب، تصفح كورسات، فلاتر بحث، وتفعيل فوري بالكود",
+      "لوحة مدرس لإدارة الدروس، الفيديوهات، الأسعار، الكوبونات، والأرباح",
+      "لوحة إدارة مركزية للمدرسين، المحتوى، أكواد التفعيل، والتقارير المالية",
+      "نظام فتح كورسات بالأكواد جاهز لتكامل قريب مع بوابات دفع",
+      "تشغيل فيديوهات Bunny Stream بروابط مؤقتة بعد التحقق من صلاحية الدرس",
+      "Supabase PostgreSQL مع RLS لعزل بيانات المدرسين والطلاب بشكل محكم",
+    ],
+    stack: [
+      "Next.js",
+      "TypeScript",
+      "Tailwind CSS",
+      "Supabase",
+      "PostgreSQL",
+      "RLS",
+      "Bunny Stream",
+      "Vercel",
+    ],
+    liveUrl: "https://www.tamkeeen.online/",
+    role: "Full-Stack Developer · Co-built with",
+    roleAr: "مطور Full-Stack · بالتعاون مع",
+    roleLink: {
+      label: "Mohamed Abdelnaser",
+      href: "https://3bnaser.tech/",
+    },
+    accent: "#22C55E",
   },
   {
     slug: "church-management-system",
