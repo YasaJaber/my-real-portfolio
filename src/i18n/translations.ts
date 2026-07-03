@@ -212,9 +212,92 @@ export const translations = {
     },
   },
 
+  // ── Process ──
+  process: {
+    label: { en: "04 — Process", ar: "04 — طريقة الشغل" },
+    heading: {
+      en: "A clear path from idea to launch",
+      ar: "طريق واضح من الفكرة لحد الإطلاق",
+    },
+    description: {
+      en: "Every project moves through a focused workflow, so expectations stay clear, decisions are documented, and the final website feels intentional from the first screen to the last detail.",
+      ar: "كل مشروع بيمشي بخطوات واضحة عشان التوقعات تبقى مفهومة، القرارات متسجلة، والموقع النهائي يطلع مقصود ومتماسك من أول شاشة لآخر تفصيلة.",
+    },
+    phasesLabel: { en: "Focused phases", ar: "مراحل واضحة" },
+    outputLabel: { en: "Main output", ar: "الناتج الأساسي" },
+    outputValue: { en: "Launch-ready product", ar: "منتج جاهز للإطلاق" },
+    deliverableLabel: { en: "You get", ar: "هتستلم" },
+    steps: {
+      discovery: {
+        en: {
+          title: "Discovery",
+          description:
+            "We define the goal, audience, pages, features, priorities, and what success should look like before touching the interface.",
+          deliverable:
+            "A clear scope, content checklist, and project direction everyone can agree on.",
+        },
+        ar: {
+          title: "فهم المشروع",
+          description:
+            "بنحدد الهدف، الجمهور، الصفحات، المميزات، الأولويات، وشكل النجاح قبل ما نبدأ في الواجهة.",
+          deliverable:
+            "نطاق واضح للمشروع، قائمة محتوى، واتجاه متفق عليه من البداية.",
+        },
+      },
+      design: {
+        en: {
+          title: "Design",
+          description:
+            "We shape the layout, visual direction, UX flow, and responsive behavior so the product feels polished before development starts.",
+          deliverable:
+            "A visual direction, key screen structure, and interaction plan ready for build.",
+        },
+        ar: {
+          title: "التصميم",
+          description:
+            "بنحدد شكل الصفحات، الاتجاه البصري، تجربة المستخدم، وطريقة ظهور الموقع على كل الأجهزة قبل التنفيذ.",
+          deliverable:
+            "اتجاه بصري واضح، هيكل للشاشات المهمة، وخطة تفاعل جاهزة للتنفيذ.",
+        },
+      },
+      build: {
+        en: {
+          title: "Build",
+          description:
+            "The approved direction becomes a fast, responsive, SEO-friendly website or app with clean code and thoughtful motion.",
+          deliverable:
+            "A working implementation with responsive layouts, performance care, and core integrations.",
+        },
+        ar: {
+          title: "التنفيذ",
+          description:
+            "بنحوّل الاتجاه المتفق عليه لموقع أو تطبيق سريع ومتجاوب وصديق لمحركات البحث بكود نظيف وحركة محسوبة.",
+          deliverable:
+            "نسخة شغالة بتصميم متجاوب، اهتمام بالأداء، وربط الأساسيات المطلوبة.",
+        },
+      },
+      launch: {
+        en: {
+          title: "Launch",
+          description:
+            "We test the final experience, connect the domain or hosting, check metadata, and make sure the handoff is smooth.",
+          deliverable:
+            "A live website, final checks, and a clean handoff for future updates.",
+        },
+        ar: {
+          title: "الإطلاق",
+          description:
+            "بنختبر التجربة النهائية، نربط الدومين أو الاستضافة، نراجع بيانات السيو، ونسلّم المشروع بشكل مرتب.",
+          deliverable:
+            "موقع live، مراجعة نهائية، وتسليم واضح يساعد في أي تحديثات بعد كده.",
+        },
+      },
+    },
+  },
+
   // ── Work ──
   work: {
-    label: { en: "04 — Projects", ar: "04 — المشاريع" },
+    label: { en: "05 — Projects", ar: "05 — المشاريع" },
     heading: { en: "Selected projects", ar: "مشاريع مختارة" },
     clickToView: { en: "Click to view details", ar: "اضغط لعرض التفاصيل" },
     highlights: { en: "Highlights", ar: "أبرز المميزات" },
@@ -225,14 +308,14 @@ export const translations = {
 
   // ── Blog ──
   blog: {
-    label: { en: "05 — Blog", ar: "05 — المدونة" },
+    label: { en: "06 — Blog", ar: "06 — المدونة" },
     heading: { en: "Latest articles", ar: "أحدث المقالات" },
     viewAll: { en: "View all", ar: "عرض الكل" },
   },
 
   // ── Contact ──
   contact: {
-    label: { en: "06 — Contact", ar: "06 — تواصل" },
+    label: { en: "07 — Contact", ar: "07 — تواصل" },
     heading: { en: "Got a project in mind?", ar: "عندك مشروع في بالك؟" },
     description: {
       en: "The fastest way to reach me is by email. I usually reply within 24 hours.",
