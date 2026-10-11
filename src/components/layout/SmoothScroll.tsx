@@ -60,7 +60,13 @@ export function SmoothScroll() {
           destination.pathname !== window.location.pathname ||
           !destination.hash
         ) return;
-        const el = document.querySelector(destination.hash);
+        let id: string;
+        try {
+          id = decodeURIComponent(destination.hash.slice(1));
+        } catch {
+          return;
+        }
+        const el = document.getElementById(id);
         if (!el) return;
         e.preventDefault();
         window.history.replaceState(null, "", destination.hash);

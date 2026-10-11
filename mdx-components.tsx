@@ -38,6 +38,11 @@ export function getMDXComponents(components: MDXComponents): MDXComponents {
         {children}
       </h3>
     ),
+    h4: ({ children }) => (
+      <h4 className="font-mono text-sm font-semibold uppercase tracking-[0.12em] text-accent-cyan/90">
+        {children}
+      </h4>
+    ),
     p: ({ children }) => (
       <p className="text-lg leading-[1.95] text-white/75">{children}</p>
     ),
