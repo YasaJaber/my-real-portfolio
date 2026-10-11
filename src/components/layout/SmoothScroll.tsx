@@ -50,13 +50,20 @@ export function SmoothScroll() {
       const handleAnchorClick = (e: MouseEvent) => {
         const target = e.target as HTMLElement | null;
         if (!target) return;
-        const anchor = target.closest<HTMLAnchorElement>("a[href^='#']");
+        const anchor = target.closest<HTMLAnchorElement>(
+          "a[href^='#'], a[href^='/#']"
+        );
         if (!anchor) return;
-        const href = anchor.getAttribute("href");
-        if (!href || href.length < 2) return;
-        const el = document.querySelector(href);
+        const destination = new URL(anchor.href, window.location.href);
+        if (
+          destination.origin !== window.location.origin ||
+          destination.pathname !== window.location.pathname ||
+          !destination.hash
+        ) return;
+        const el = document.querySelector(destination.hash);
         if (!el) return;
         e.preventDefault();
+        window.history.replaceState(null, "", destination.hash);
         lenis.scrollTo(el as HTMLElement, { offset: -80, duration: 1.4 });
       };
       document.addEventListener("click", handleAnchorClick);

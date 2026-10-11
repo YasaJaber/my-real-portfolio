@@ -14,6 +14,15 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import DOMPurify from "dompurify";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
+const portfolioSectionIds = new Set([
+  "home",
+  "about",
+  "skills",
+  "services",
+  "process",
+  "projects",
+  "contact",
+]);
 
 interface ChatMessage {
   id: string;
@@ -141,8 +150,21 @@ export function Chatbot() {
 
   // Format message content — handle markdown bold, links, line breaks
   const formatMessage = (text: string) => {
-    // Convert markdown links [text](url) to anchor tags
+    // Turn known homepage section links into compact in-chat navigation buttons.
     let formatted = text.replace(
+      /\[([^\]]+)\]\((?:https:\/\/yasajaber\.me)?\/?#([a-z-]+)\)/gi,
+      (match, label: string, sectionId: string) =>
+        portfolioSectionIds.has(sectionId.toLowerCase())
+          ? `<a href="/#${sectionId.toLowerCase()}" class="chatbot-section-link">${label}</a>`
+          : match
+    );
+    formatted = formatted.replace(
+      /\[([^\]]+)\]\((\/blog)\)/gi,
+      '<a href="/blog" class="chatbot-section-link">$1</a>'
+    );
+
+    // Convert markdown links [text](url) to anchor tags
+    formatted = formatted.replace(
       /\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g,
       '<a href="$2" target="_blank" rel="noreferrer" class="chatbot-link">$1</a>'
     );
