@@ -3,10 +3,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { compileMDX } from "next-mdx-remote/rsc";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronDown, ListTree } from "lucide-react";
 import { getAllPostSlugs, getPostBySlug } from "@/lib/posts";
 import { getMDXComponents } from "../../../../mdx-components";
-import { formatDate } from "@/lib/utils";
+import { formatDate, slugifyHeading } from "@/lib/utils";
 import { siteConfig } from "@/config/site";
 import {
   absoluteUrl,
@@ -91,6 +91,13 @@ export default async function BlogPostPage({ params }: { params: Params }) {
   const { meta } = post;
   const isRTL = meta.lang === "ar";
   const BackArrow = isRTL ? ArrowRight : ArrowLeft;
+  const sections = post.content
+    .split("\n")
+    .filter((line) => line.startsWith("## "))
+    .map((line) => {
+      const title = line.slice(3).trim();
+      return { title, id: slugifyHeading(title) };
+    });
   const articleBody = post.content.replace(/\n{2,}/g, "\n").trim();
   const jsonLd = buildBlogPostingJsonLd(meta, articleBody);
   const breadcrumbJsonLd = buildBreadcrumbList([
@@ -182,7 +189,43 @@ export default async function BlogPostPage({ params }: { params: Params }) {
 
             <div className="my-10 hairline" />
 
-            <div className={`prose prose-invert max-w-none ${isRTL ? "prose-rtl text-right leading-[2]" : ""}`}>
+            {sections.length > 0 && (
+              <details className="article-toc group mb-12" dir={isRTL ? "rtl" : "ltr"}>
+                <summary className="article-toc-summary">
+                  <span className="article-toc-icon" aria-hidden="true">
+                    <ListTree size={18} />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-semibold text-white">
+                      {isRTL ? "محتويات الدليل" : "In this guide"}
+                    </span>
+                    <span className="mt-1 block text-xs text-white/50">
+                      {isRTL
+                        ? `${sections.length} قسم — اضغط للانتقال مباشرةً`
+                        : `${sections.length} sections · jump to a topic`}
+                    </span>
+                  </span>
+                  <ChevronDown className="article-toc-chevron" size={18} aria-hidden="true" />
+                </summary>
+                <nav
+                  className="article-toc-nav"
+                  aria-label={isRTL ? "أقسام المقالة" : "Article sections"}
+                >
+                  <ol className="article-toc-list">
+                    {sections.map((section, index) => (
+                      <li key={section.id}>
+                        <a href={`#${section.id}`}>
+                          <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+                          {section.title}
+                        </a>
+                      </li>
+                    ))}
+                  </ol>
+                </nav>
+              </details>
+            )}
+
+            <div className={`article-content prose prose-invert max-w-none ${isRTL ? "prose-rtl text-right leading-[2]" : ""}`}>
               {content}
             </div>
 

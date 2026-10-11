@@ -1,6 +1,18 @@
 import type { MDXComponents } from "mdx/types";
+import { Children, isValidElement, type ReactNode } from "react";
 import Link from "next/link";
 import Image, { type ImageProps } from "next/image";
+import { slugifyHeading } from "@/lib/utils";
+
+function getTextContent(value: ReactNode): string {
+  return Children.toArray(value)
+    .map((child) => {
+      if (typeof child === "string" || typeof child === "number") return String(child);
+      if (isValidElement<{ children?: ReactNode }>(child)) return getTextContent(child.props.children);
+      return "";
+    })
+    .join("");
+}
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return getMDXComponents(components);
@@ -14,17 +26,20 @@ export function getMDXComponents(components: MDXComponents): MDXComponents {
       </h1>
     ),
     h2: ({ children }) => (
-      <h2 className="mt-10 mb-4 font-display text-3xl font-semibold tracking-tight text-white">
+      <h2
+        id={slugifyHeading(getTextContent(children))}
+        className="font-display text-2xl font-semibold leading-snug tracking-tight text-white sm:text-3xl"
+      >
         {children}
       </h2>
     ),
     h3: ({ children }) => (
-      <h3 className="mt-8 mb-3 font-display text-2xl font-semibold text-white/90">
+      <h3 className="font-display text-xl font-semibold leading-snug text-white/90 sm:text-2xl">
         {children}
       </h3>
     ),
     p: ({ children }) => (
-      <p className="my-5 text-lg leading-relaxed text-white/75">{children}</p>
+      <p className="text-lg leading-[1.95] text-white/75">{children}</p>
     ),
     a: ({ href, children }) => (
       <Link
@@ -35,13 +50,13 @@ export function getMDXComponents(components: MDXComponents): MDXComponents {
       </Link>
     ),
     ul: ({ children }) => (
-      <ul className="my-5 list-disc space-y-2 pl-6 text-white/75">{children}</ul>
+      <ul className="text-white/75">{children}</ul>
     ),
     ol: ({ children }) => (
-      <ol className="my-5 list-decimal space-y-2 pl-6 text-white/75">{children}</ol>
+      <ol className="my-6 list-decimal space-y-2 ps-6 text-white/75">{children}</ol>
     ),
     blockquote: ({ children }) => (
-      <blockquote className="my-6 border-l-4 border-accent-purple/60 bg-glass px-5 py-3 italic text-white/80">
+      <blockquote className="my-7 rounded-e-2xl border-e-2 border-accent-cyan/70 bg-white/[0.035] px-5 py-4 italic leading-relaxed text-white/80 shadow-[0_15px_50px_-35px_rgba(6,182,212,0.65)]">
         {children}
       </blockquote>
     ),

@@ -25,3 +25,14 @@ export function formatDate(input: string | Date) {
     year: "numeric",
   });
 }
+
+/** Create a stable, readable fragment ID for article section links. */
+export function slugifyHeading(value: string) {
+  return value
+    .toLocaleLowerCase()
+    .normalize("NFKC")
+    .replace(/[`*_~]/g, "")
+    .replace(/[^\p{L}\p{N}\s-]/gu, "")
+    .trim()
+    .replace(/\s+/g, "-");
+}
