@@ -412,6 +412,62 @@ html.lenis body {
     line-height: 1.8;
   }
 
+  .article-content .purchase-checklists {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+
+  .article-content .purchase-checklists > section {
+    min-width: 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    padding: 1.15rem;
+    background: linear-gradient(145deg, rgba(168, 85, 247, 0.08), rgba(255, 255, 255, 0.025));
+    box-shadow: 0 18px 45px -38px rgba(6, 182, 212, 0.7);
+  }
+
+  .article-content .purchase-checklists h3 {
+    margin: 0 0 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0 0 0.85rem;
+    font-size: 1.15rem;
+  }
+
+  .article-content .purchase-checklists ul {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .article-content .purchase-checklists li {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    min-width: 0;
+    border: 1px solid rgba(255, 255, 255, 0.065);
+    border-radius: 0.65rem;
+    padding: 0.6rem 0.7rem;
+    background: rgba(0, 0, 0, 0.2);
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.92rem;
+    line-height: 1.55;
+    list-style: none;
+  }
+
+  .article-content .purchase-checklists li::before {
+    width: 1rem;
+    height: 1rem;
+    flex: 0 0 auto;
+    border: 1px solid rgba(103, 232, 249, 0.75);
+    border-radius: 0.28rem;
+    background: rgba(6, 182, 212, 0.08);
+    content: "";
+  }
+
   @media (max-width: 640px) {
     .article-content > h2 {
       gap: 0.65rem;
@@ -426,6 +482,15 @@ html.lenis body {
     .article-content > p:first-of-type {
       padding: 0.9rem 1rem;
       font-size: 1rem;
+    }
+
+    .article-content .purchase-checklists {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.85rem;
+    }
+
+    .article-content .purchase-checklists > section {
+      padding: 0.9rem;
     }
   }
 
