@@ -43,8 +43,7 @@ export async function generateMetadata({
     alternates: {
       canonical: url,
       languages: {
-        "en-US": url,
-        "ar-EG": url,
+        [meta.lang === "ar" ? "ar-EG" : "en-US"]: url,
       },
     },
     openGraph: {
@@ -59,13 +58,12 @@ export async function generateMetadata({
       images: [
         {
           url: absoluteUrl(meta.cover),
-          width: 1200,
-          height: 630,
+          ...(meta.coverWidth ? { width: meta.coverWidth } : {}),
+          ...(meta.coverHeight ? { height: meta.coverHeight } : {}),
           alt: meta.title,
         },
       ],
       locale: meta.lang === "ar" ? "ar_AR" : "en_US",
-      alternateLocale: meta.lang === "ar" ? ["en_US"] : ["ar_AR"],
     },
     twitter: {
       card: "summary_large_image",
@@ -131,7 +129,14 @@ export default async function BlogPostPage({ params }: { params: Params }) {
 
           {/* Centered contained image */}
           <div className="relative mx-auto max-w-3xl px-4 pb-0 pt-8 sm:px-6 sm:pt-10">
-            <div className="relative aspect-[3/4] w-full overflow-hidden rounded-3xl border border-white/10 shadow-[0_25px_100px_-20px_rgba(168,85,247,0.35)] ring-1 ring-white/5">
+            <div
+              className="relative aspect-[3/4] w-full overflow-hidden rounded-3xl border border-white/10 shadow-[0_25px_100px_-20px_rgba(168,85,247,0.35)] ring-1 ring-white/5"
+              style={
+                meta.coverWidth && meta.coverHeight
+                  ? { aspectRatio: `${meta.coverWidth} / ${meta.coverHeight}` }
+                  : undefined
+              }
+            >
               <Image
                 src={meta.cover}
                 alt={meta.title}

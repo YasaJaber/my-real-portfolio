@@ -42,8 +42,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
     alternates: {
       languages: {
-        en: `${base}/blog/${p.slug}`,
-        ar: `${base}/blog/${p.slug}`,
+        [p.lang === "ar" ? "ar" : "en"]: `${base}/blog/${p.slug}`,
       },
     },
   }));

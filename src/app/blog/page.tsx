@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
-import { getAllPosts, type PostCategory } from "@/lib/posts";
-import { formatDate } from "@/lib/utils";
+import { getAllPosts, getPostBySlug } from "@/lib/posts";
+import { BlogSearch } from "@/components/sections/BlogSearch";
 import { siteConfig } from "@/config/site";
 import {
   buildBlogJsonLd,
@@ -56,15 +54,13 @@ export const metadata: Metadata = {
   },
 };
 
-const categories: ("All" | PostCategory)[] = [
-  "All",
-  "Programming",
-  "Design",
-  "WordPress",
-];
-
 export default function BlogIndexPage() {
-  const posts = getAllPosts();
+  const posts = getAllPosts().map((post) => ({
+    ...post,
+    searchText: Array.from(
+      new Set((getPostBySlug(post.slug)?.content ?? "").split(/\s+/).filter(Boolean)),
+    ).join(" "),
+  }));
   const blogJsonLd = buildBlogJsonLd(posts);
   const collectionJsonLd = buildCollectionPageJsonLd(posts);
   const breadcrumbJsonLd = buildBreadcrumbList([
@@ -100,57 +96,7 @@ export default function BlogIndexPage() {
         </p>
       </div>
 
-      {/* Category chips (visual only on this static version) */}
-      <div className="mb-10 flex flex-wrap gap-2">
-        {categories.map((c) => (
-          <span
-            key={c}
-            className="cursor-default rounded-full border border-white/10 bg-white/[0.02] px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.15em] text-white/65 transition hover:border-white/25 hover:bg-white/[0.05] hover:text-white"
-          >
-            {c}
-          </span>
-        ))}
-      </div>
-
-      {/* Posts list */}
-      <ul className="divide-y divide-white/10 border-y border-white/10">
-        {posts.map((post) => (
-          <li key={post.slug}>
-            <Link
-              href={`/blog/${post.slug}`}
-              className="group grid gap-3 py-6 transition-colors hover:bg-white/[0.02] sm:py-8 md:grid-cols-[1fr_auto] md:items-center md:gap-10 md:px-2"
-              data-cursor-grow
-            >
-              <div>
-                <div className="mb-3 flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-white/50">
-                  <span className="rounded-full border border-white/15 bg-white/5 px-2 py-1 text-white/70">
-                    {post.category}
-                  </span>
-                  <span>{formatDate(post.date)}</span>
-                  <span>·</span>
-                  <span>{post.readingTime}</span>
-                </div>
-                <h2 className="font-display text-xl font-semibold leading-snug text-white transition-colors group-hover:text-accent-cyan sm:text-2xl md:text-3xl">
-                  {post.title}
-                </h2>
-                <p className="mt-3 max-w-2xl text-white/65">{post.summary}</p>
-              </div>
-              <span
-                className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-white/15 bg-white/[0.04] text-white transition-all duration-500 group-hover:rotate-45 group-hover:bg-white group-hover:text-black"
-                aria-hidden
-              >
-                <ArrowUpRight size={18} />
-              </span>
-            </Link>
-          </li>
-        ))}
-      </ul>
-
-      {posts.length === 0 && (
-        <div className="rounded-3xl border border-dashed border-white/15 bg-white/[0.02] p-10 text-center text-white/60">
-          No posts yet — check back soon.
-        </div>
-      )}
+      <BlogSearch posts={posts} />
     </div>
     </>
   );

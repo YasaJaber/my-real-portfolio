@@ -38,7 +38,7 @@ export async function GET() {
       <title>${escapeXml(`${siteConfig.name} Blog`)}</title>
       <link>${siteConfig.url}/blog</link>
       <description>${escapeXml(siteConfig.description)}</description>
-      <language>en-us</language>
+      <language>${posts[0]?.lang === "ar" ? "ar" : "en-us"}</language>
       <atom:link href="${siteConfig.url}/feed.xml" rel="self" type="application/rss+xml" />
       ${items}
     </channel>

@@ -3,7 +3,7 @@ import path from "node:path";
 import matter from "gray-matter";
 import readingTime from "reading-time";
 
-export type PostCategory = "Programming" | "Design" | "WordPress";
+export type PostCategory = "Programming" | "Design" | "WordPress" | "Hardware";
 
 export type PostMeta = {
   slug: string;
@@ -12,6 +12,8 @@ export type PostMeta = {
   date: string;
   category: PostCategory;
   cover: string;
+  coverWidth?: number;
+  coverHeight?: number;
   tags: string[];
   readingTime: string;
   lang: "en" | "ar";
@@ -49,6 +51,8 @@ export function getPostBySlug(slug: string): {
     date: String(data.date ?? new Date().toISOString()),
     category: (data.category as PostCategory) ?? "Programming",
     cover: String(data.cover ?? "/og.png"),
+    coverWidth: Number.isFinite(Number(data.coverWidth)) ? Number(data.coverWidth) : undefined,
+    coverHeight: Number.isFinite(Number(data.coverHeight)) ? Number(data.coverHeight) : undefined,
     tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
     readingTime: stats.text,
     lang: (data.lang as "en" | "ar") ?? "en",
